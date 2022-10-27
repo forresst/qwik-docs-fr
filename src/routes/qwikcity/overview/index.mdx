@@ -1,5 +1,5 @@
 ---
-title: Qwik City - Overview
+title: Qwik City - Vue d'ensemble
 contributors:
   - manucorporat
   - strogonoff
@@ -11,50 +11,50 @@ contributors:
   - adamdbradley
 ---
 
-# Qwik City (routing)
-*aka. Qwik Router*
+# Qwik City (routage)
+*aussi appelé routeur de Qwik*
 
-Learning Qwik and Qwik City are not two different things, Qwik City is built on top of Qwik, bringing opinionated routing and goodies to make your life easier.
+Apprendre Qwik et Qwik City ne sont pas deux choses différentes, Qwik City est construit au dessus de Qwik, apportant un routage assisté et des astuces pour vous faciliter la vie.
 
 > Qwik¹ City²
 >
-> [**Qwik¹**](../../docs/overview/index.mdx): Core framework, stable, primitives, component model.
+> [**Qwik¹**](../../docs/overview/index.mdx) : Le coeur du framework, stable, primitifs, modèle de composants.
 >
-> [**City²**](../directory-layout/index.mdx): Opinionated file-based router, build fast.
+> [**City²**](../directory-layout/index.mdx) : Un routeur opiniâtre basé sur des fichiers, pour construire rapidement.
 
-We call it a **meta-framework** for Qwik. Qwik City is to Qwik, what [Next.js](https://nextjs.org/) is to React, what [Nuxt](https://nuxtjs.org/) is to Vue, or [SvelteKit](https://kit.svelte.dev/) to Svelte.
+Nous appelons cela un **méta-framework** pour Qwik. Qwik City est à Qwik, ce que [Next.js](https://nextjs.org/) est à React, ce que [Nuxt](https://nuxtjs.org/) est à Vue, ou [SvelteKit](https://kit.svelte.dev/) à Svelte.
 
-Qwik (core) and Qwik City (routing) solve problems at two layers of abstraction. **Qwik can stay stable**, without breaking changes, focusing on long-term and stable primitives, while Qwik City brings an **opinionated and performant way to build sites at scale**. We don't want to lock the ecosystem into a single correct way of building sites, in fact we encourage the community to build alternative solutions on top Qwik.
+Qwik (cœur) et Qwik City (routage) résolvent les problèmes à deux niveaux d'abstraction. **Qwik peut rester stable**, sans changements de rupture, en se concentrant sur des primitives stables et à long terme, tandis que Qwik City apporte une **manière simplifiée et performante de construire des sites à grande échelle**. Nous ne voulons pas enfermer l'écosystème dans une seule façon correcte de construire des sites, en fait nous encourageons la communauté à construire des solutions alternatives au dessus de Qwik.
 
-> As a user, using Qwik City today for your app is a no-brainer. Thanks to Qwik architecture, it comes with zero overhead, meaning that no extra JS will be delivered to the browser.
+> En tant qu'utilisateur, utiliser Qwik City aujourd'hui pour votre appli est une évidence. Grâce à l'architecture de Qwik, il est livré sans aucune surcharge, ce qui signifie qu'aucun JS supplémentaire ne sera fourni au navigateur.
 
 
-Use Qwik City to build an e-commerce website, blog site, or any other website that needs routing, layouts, templating, or data retrieval/updates. Qwik City is built on Qwik, and therefore Qwik City sites are resumable and only download the minimal amount of JavaScript with fine-grained lazy loading.
+Utilisez Qwik City pour construire un site web de commerce électronique, un site de blog ou tout autre site web qui nécessite un routage, des mises en page, des templates, ou des récupérations/mises à jour de données. Qwik City est construit sur Qwik, et donc les sites Qwik City sont résumables et ne téléchargent que le minimum de JavaScript avec un chargement différé fin.
 
-Qwik City provides:
+Qwik City fournit :
 
-- Directory-based routing
-- Nested layouts
-- File-based menus
-- Breadcrumbs
-- Support authoring content with `.tsx` or `.mdx` file formats
-- Data endpoints
+- Routage basé sur les répertoires
+- Mise en page imbriquée
+- Menus basés sur des fichiers
+- Fil d'Ariane
+- Support de la création de contenu avec les formats de fichiers `.tsx` ou `.mdx`.
+- Points d'accès aux données
 
-By default, Qwik City sites are fast because they:
+Par défaut, les sites Qwik City sont rapides car :
 
-- Are resumable
-- Download minimal JavaScript
-- Come with [Partytown](https://partytown.builder.io)
+- Ils sont résumables
+- Ils chargent un minimum de JavaScript
+- Ils sont livrés avec [Partytown](https://partytown.builder.io)
 
-To follow along with this guide, run the Qwik CLI in your command line:
+Pour suivre ce guide, exécutez le CLI de Qwik dans votre ligne de commande :
 
 ```bash
 npm create qwik@latest
 ```
 
-When prompted, choose a name for your project and Basic as your starter.
+Lorsque vous y êtes invité, choisissez un nom pour votre projet et Basic comme starter.
 
-> Note: the `start` script attempts to launch the site in system’s browser,
-> which in headless environments (e.g., within a container)
-> could cause the command to fail with an error.
-> Edit `package.json` to remove the `--open` flag.
+> Remarque : le script `start` tente de lancer le site dans le navigateur du système,
+> ce qui dans les environnements sans entête (par exemple, dans un conteneur)
+> peut faire échouer la commande avec une erreur.
+> Modifiez `package.json` pour supprimer l'indicateur `--open`.

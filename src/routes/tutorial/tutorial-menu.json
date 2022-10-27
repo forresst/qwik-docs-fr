@@ -1,11 +1,11 @@
 [
   {
     "id": "welcome",
-    "title": "Start here",
+    "title": "Commencez ici",
     "apps": [
       {
         "id": "overview",
-        "title": "Qwik Tutorial Overview",
+        "title": "Aperçu du tutoriel Qwik",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": false
@@ -14,32 +14,32 @@
   },
   {
     "id": "introduction",
-    "title": "Simple Application",
+    "title": "Application simple",
     "apps": [
       {
         "id": "component",
-        "title": "Basic Component",
+        "title": "Composant de base",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "store",
-        "title": "State management",
+        "title": "Gestion de l'état",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "listeners",
-        "title": "Event listeners",
+        "title": "Écouteurs d'événements",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "resource",
-        "title": "Fetching resource on state change",
+        "title": "Récupération des ressources en cas de changement d'état",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -48,32 +48,32 @@
   },
   {
     "id": "component",
-    "title": "Components",
+    "title": "Composants",
     "apps": [
       {
         "id": "basic",
-        "title": "Basic Component",
+        "title": "Composant de base",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "binding",
-        "title": "Binding Expressions",
+        "title": "Expressions de liaison",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "composition",
-        "title": "Composing Components",
+        "title": "Composition des composants",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "inline",
-        "title": "Inline Components",
+        "title": "Composants en ligne",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true
@@ -82,39 +82,39 @@
   },
   {
     "id": "events",
-    "title": "Events",
+    "title": "Événements",
     "apps": [
       {
         "id": "basic",
-        "title": "Listening on events",
+        "title": "Écoute des événements",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true
       },
       {
         "id": "document",
-        "title": "Listening on document/window",
+        "title": "Écoute sur document/window",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "preventdefault",
-        "title": "Preventing default behavior",
+        "title": "Empêcher le comportement par défaut",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "synchronous",
-        "title": "Synchronous Events",
+        "title": "Événements synchrones",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "programmatic",
-        "title": "useOn() / useOnDocument() / useOnWindow() - Programmatic Listeners",
+        "title": "useOn() / useOnDocument() / useOnWindow() - Écouteurs programmés",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -127,28 +127,28 @@
     "apps": [
       {
         "id": "basic",
-        "title": "Storing State",
+        "title": "Stockage de l'état",
         "enableHtmlOutput": true,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "recursive",
-        "title": "Recursive Store",
+        "title": "Store récursif",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "serialization",
-        "title": "Serialization Graph",
+        "title": "Graphe de sérialisation",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "no-serialize",
-        "title": "Non-serializable Properties",
+        "title": "Propriétés non sérialisables",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -157,25 +157,25 @@
   },
   {
     "id": "props",
-    "title": "Component Props",
+    "title": "Props de composant",
     "apps": [
       {
         "id": "basic",
-        "title": "Passing Data to Components",
+        "title": "Transmission de données aux composants",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "store",
-        "title": "Passing Stores",
+        "title": "En passant des stores",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "closures",
-        "title": "Passing Closures",
+        "title": "En passant des closures",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -184,25 +184,25 @@
   },
   {
     "id": "reactivity",
-    "title": "Reactivity",
+    "title": "Réactivité",
     "apps": [
       {
         "id": "template",
-        "title": "Implicit Template Updates",
+        "title": "Mises à jour implicites des templates",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "explicit",
-        "title": "useWatch$() - Explicit Reactivity",
+        "title": "useWatch$() - Réactivité explicite",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "resource",
-        "title": "useResource$() - Explicit Reactivity",
+        "title": "useResource$() - Réactivité explicite",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -211,11 +211,11 @@
   },
   {
     "id": "context",
-    "title": "Context",
+    "title": "Contexte",
     "apps": [
       {
         "id": "basic",
-        "title": "Using context",
+        "title": "Utilisation du contexte",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -224,7 +224,7 @@
   },
   {
     "id": "hooks",
-    "title": "Lifecycle Hooks",
+    "title": "Hooks de cycle de vie",
     "apps": [
       {
         "id": "use-mount",
@@ -276,21 +276,21 @@
     "apps": [
       {
         "id": "basic",
-        "title": "Basic Projection",
+        "title": "Projection de base",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "slots",
-        "title": "Named Slots",
+        "title": "Slots nommés",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "fallback",
-        "title": "Fallback content",
+        "title": "Contenu de secours",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -299,7 +299,7 @@
   },
   {
     "id": "style",
-    "title": "Styling",
+    "title": "Style",
     "apps": [
       {
         "id": "styles",
@@ -310,7 +310,7 @@
       },
       {
         "id": "scoped",
-        "title": "useStylesScoped() - Scoped styles",
+        "title": "useStylesScoped() - Styles dans la portée",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -319,25 +319,25 @@
   },
   {
     "id": "qrl",
-    "title": "$ and QRL",
+    "title": "$ et QRL",
     "apps": [
       {
         "id": "optimizer",
-        "title": "Optimizer",
+        "title": "Optimiseur",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true
       },
       {
         "id": "data",
-        "title": "Lazy Loading constants",
+        "title": "Chargement différé des constantes",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true
       },
       {
         "id": "closures",
-        "title": "Lazy Loading closures",
+        "title": "Chargement différé des closures",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true
@@ -346,18 +346,18 @@
   },
   {
     "id": "composing",
-    "title": "Composing new APIs",
+    "title": "Composition de nouvelles API",
     "apps": [
       {
         "id": "dollar",
-        "title": "Creating APIs with $",
+        "title": "Création d'API avec $",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
       },
       {
         "id": "use",
-        "title": "Composing use Hooks",
+        "title": "Création de hooks use",
         "enableHtmlOutput": false,
         "enableClientOutput": false,
         "enableSsrOutput": false
@@ -366,15 +366,15 @@
   },
   {
     "id": "understanding",
-    "title": "Understanding Qwik difference",
+    "title": "Comprendre la différence de Qwik",
     "apps": [
       {
         "id": "treeshaking",
-        "title": "Tree-shaking static components"
+        "title": "Tree-shaking composants statiques"
       },
       {
         "id": "capturing",
-        "title": "Capturing lexical scope"
+        "title": "Capture de la portée lexicale"
       }
     ]
   }

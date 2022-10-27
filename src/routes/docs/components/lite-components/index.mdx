@@ -1,36 +1,36 @@
 ---
-title: Lite components
+title: Composants légers
 contributors:
   - RATIU5
   - ykou
   - adamdbradley
 ---
 
-# Lite Components
+# Composants légers
 
-In addition to standard Qwik components that have all of its lazy-loaded properties, Qwik also supports lightweight (lite) components that act more like traditional frameworks.
+En plus des composants standards de Qwik qui ont toutes les propriétés de chargement différé, Qwik supporte aussi les composants de faible poids (léger) qui se comportent plus comme dans des frameworks traditionnels.
 
 ```tsx
-// Lite component: declared using a standard function.
+// Composant léger : déclaré à l'aide d'une fonction standard.
 export const MyButton = (props: { text: string }) => {
   return <button>{props.text}</button>;
 };
 
-// Component: declared using `component$()`.
+// Composant : déclaré en utilisant `component$()`.
 export const MyApp = component$(() => {
   return (
     <div>
-      Some text:
-      <MyButton text="Click me" />
+      Du texte :
+      <MyButton text="Cliquez-moi" />
     </div>
   );
 });
 ```
 
-In the above example, the `MyButton` is a lite component. Lite components' lazy loading is merged with the regular component they are part of. In this case:
+Dans l'exemple ci-dessus, le `MyButton` est un composant léger. Le chargement différé des composants légers est fusionné avec le composant courant dont ils font partie. Dans ce cas :
 
-- `MyButton` will get bundled with the `MyApp` render function.
-- Whenever the render function of `MyApp` executes, it will also force the execution of `MyButton`.
-- `MyButton` does not have a host element.
+- `MyButton` sera mis dans un bundle avec la fonction de rendu de `MyApp`.
+- Chaque fois que la fonction de rendu de `MyApp` s'exécute, elle forcera également l'exécution de `MyButton`.
+- `MyButton` n'a pas d'élément hôte.
 
-You can think of lightweight components as being inlined into the component, where they are instantiated.
+On peut considérer que les composants légers sont intégrés dans le composant, où ils sont instanciés.

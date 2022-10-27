@@ -1,28 +1,28 @@
 ---
-title: Qwik City Adaptors and Middleware
+title: Qwik City Adaptateurs et middleware
 contributors:
   - adamdbradley
 ---
 
-# Adaptors and Middleware
+# Adaptateurs et middleware
 
-Qwik City middleware is a glue code that connects server rendering framework (such as Cloudflare, Netlify, Express etc.) with the Qwik City meta-framework.
+Le middleware de Qwik City est un code qui connecte le framework de rendu du serveur (tel que Cloudflare, Netlify, Express etc.) avec le meta-framework de Qwik City.
 
-Qwik City comes pre-bundle with:
+Qwik City est livré en pré-bundle avec :
 
 - [cloudflare-pages](../cloudflare-pages/index.mdx)
 - [netlify-edge](../netlify-edge/index.mdx)
 - [node](../node/index.mdx)
 
-## Build
+## Construction
 
-Use Qwik City vite cli `--ssr` to specify the SSR entry
+Utiliser le cli vite de Qwik City `--ssr` pour spécifier l'entrée SSR
 
 ```bash
 vite build --ssr src/entry.MIDDLEWARE.ts
 ```
 
-default output directory is `./server` and it is configurable by setting `qwikVite` plugin option
+le répertoire de sortie par défaut est `./server` et il est configurable en mettant l'option du plugin `qwikVite`.
 
 ```typescript
 // file vite.config.ts
@@ -31,7 +31,7 @@ import { qwikVite } from '@builder.io/qwik/optimizer';
 export default defineConfig(() => {
   return {
     plugins: [
-      // ...other plugins
+      // ...autres plugins
       qwikVite({
         ssr: {
           outDir: 'CUSTOM_DIR',
@@ -42,8 +42,8 @@ export default defineConfig(() => {
 });
 ```
 
-## Advanced
+## Avancé
 
-The `requestHandler()` utility is what each of the above middleware bundles uses in order to translate their request/response to a standard format for Qwik City to use. This function can be used to provide middleware for specific server frameworks.
+L'utilitaire `requestHandler()` est ce que chacun des bundles ci-dessus utilise afin de traduire leur requête/réponse dans un format standard pour Qwik City. Cette fonction peut être utilisée pour fournir un middleware pour des frameworks de serveur spécifiques.
 
-If there's middleware missing and you'd like it added, take a look at how the `requestHandler()` utility is used to handle requests for each of the middleware source-code above. Better yet, we'd love to have your middleware contributions! [PR's are welcome](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware)!
+S'il y a un middleware manquant et que vous souhaitez l'ajouter, jetez un oeil à la façon dont l'utilitaire `requestHandler()` est utilisé pour gérer les requêtes pour chacun des codes sources de middleware ci-dessus. Mieux encore, nous serions ravis d'avoir vos contributions au middleware ! [Les PR sont les bienvenues](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware) !

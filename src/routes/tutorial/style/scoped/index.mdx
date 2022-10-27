@@ -1,15 +1,15 @@
 ---
-title: Scoped Styling
+title: Style dans la portée
 contributors:
   - manucorporat
   - adamdbradley
   - mhevery
 ---
 
-In previous sections, we have discussed how styles can be loaded lazily as they are needed using `useStyles$()` hook. Browser styles are global and apply to all DOM elements, for this reason, Qwik also provides a way to load styles that are specific to a specific component. This is achieved by generating a unique class for each component and then inserting that unique class id into the stylesheet.
+Dans les sections précédentes, nous avons discuté de la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook `useStyles$()`. Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
 
-Use `useStylesScoped$()` to load and scope the style to a specific component only.
+Utilisez `useStylesScoped$()` pour charger et porter le style à un composant spécifique uniquement.
 
-### Example
+### Exemple
 
-In this example, there are two components both of which have a class with the same name. Because of that, the two styles collide which results in undesirable behavior. Use the `useStylesScoped$()` hook to scope the styles to a specific component and fix the collision.
+Dans cet exemple, il y a deux composants qui ont tous deux une classe avec le même nom. De ce fait, les deux styles entrent en collision, ce qui entraîne un comportement indésirable. Utilisez le hook `useStylesScoped$()` pour étendre les styles à un composant spécifique et corriger la collision.

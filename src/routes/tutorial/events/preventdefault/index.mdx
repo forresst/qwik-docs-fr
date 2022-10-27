@@ -1,16 +1,16 @@
 ---
-title: Event Prevent Default
+title: Empêcher l'événement par défaut
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-For some events browsers have default behavior. For example, when you click a link, the browser will usually navigate to the link's `href`. There are times when we would like to prevent that. For this reason `Event` API contains `preventDefault()` method.
+Pour certains événements, les navigateurs ont un comportement par défaut. Par exemple, lorsque vous cliquez sur un lien, le navigateur va généralement naviguer vers le `href` du lien. Il arrive que l'on veuille empêcher cela. C'est pourquoi l'API `Event` contient la méthode `preventDefault()`.
 
-Browser events are synchronous, but because Qwik is fine-grained loadable Qwik execution model is asynchronous. This means that at the time when the event is triggered, the event handler is not yet loaded. By the time the event is loaded the event has already been processed by the browser and calling `preventDefault()` will have no effect.
+Les événements du navigateur sont synchrones, mais comme Qwik est un chargeur à grain fin, le modèle d'exécution de Qwik est asynchrone. Cela signifie qu'au moment où l'événement est déclenché, le gestionnaire d'événement n'est pas encore chargé. Au moment où l'événement est chargé, l'événement a déjà été traité par le navigateur et appeler `preventDefault()` n'aura aucun effet.
 
-To solve this Qwik provides a declarative API to automatically call `preventDefault()` when the event is triggered. This is achieved by adding `preventdefault:<event-name>` attribute to the element. This allows the Qwikloader to synchronously call `preventDefault()` when the event is triggered.
+Pour résoudre ce problème, Qwik fournit une API déclarative pour appeler automatiquement `preventDefault()` quand l'événement est déclenché. Ceci est réalisé en ajoutant l'attribut `preventdefault:<event-name>` à l'élément. Cela permet au Qwikloader d'appeler de manière synchrone `preventDefault()` lorsque l'événement est déclenché.
 
-### Example
+### Exemple
 
-Clicking on the link will cause a navigation event. We wish to prevent this and call our callback instead. Add `preventdefault:click` to the `<a href>` to achieve this.
+Le fait de cliquer sur le lien provoquera un événement de navigation. Nous souhaitons empêcher cela et appeler notre callback à la place. Ajoutez `preventdefault:click` au `<a href>` pour y parvenir.

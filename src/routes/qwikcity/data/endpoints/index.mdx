@@ -1,20 +1,20 @@
 ---
-title: Qwik City Endpoints and RESTful API
+title: Qwik City Endpoints et API RESTful
 contributors:
   - adamdbradley
-  - aalaap
+  - aalaap  
 ---
 
-# Endpoints and RESTful API
+# Endpoints et API RESTful
 
-Qwik City is able to create a RESTful API for your application using Endpoints. Endpoint routes are created the same as how you would create a "page", except the filename should end with `.ts` instead of `.tsx`. An `index.ts` in the `src/routes` directory is only for data, such as a `json` response, while an `index.tsx` is for an HTML page. There is no need to put the "endpoint" routes into a specific `api` directory within `src/routes`.
+Qwik City est capable de créer une API RESTful pour votre application en utilisant les Endpoints. Les routes de Endpoint sont créées de la même façon que vous créez une « page », sauf que le nom de fichier doit se terminer par `.ts` au lieu de `.tsx`. Un `index.ts` dans le répertoire `src/routes` est uniquement pour les données, comme une réponse `json`, alors qu'un `index.tsx` est pour une page HTML. Il n'y a pas besoin de mettre les routes « endpoint » dans un répertoire `api` spécifique dans `src/routes`.
 
-Both "page" and "endpoints" are the same except for one difference: a page exports a `default component$()` to render HTML, whereas an endpoint exports only HTTP request and response handlers. To learn about defining a page component, you can [read more here](../../content/component/index.mdx). An endpoint route however, is used only for the purpose of responding with data.
+La « page » et le « endpoint » sont identiques à une différence près : une page exporte un `default component$()` pour rendre le HTML, alors qu'un endpoint n'exporte que des gestionnaires de requêtes et de réponses HTTP. Pour en savoir plus sur la définition d'un composant de page, vous pouvez [lire ceci] (../../content/component/index.mdx). Une route de endpoint, en revanche, n'est utilisée que pour répondre avec des données.
 
-## Example API endpoint route
+## Exemple de route de endpoint de l'API
 
 ```ts
-// File: src/routes/product/[skuId]/index.ts
+// Fichier : src/routes/product/[skuId]/index.ts
 import type { RequestHandler } from '@builder.io/qwik-city';
 
 interface ProductData {
@@ -24,11 +24,11 @@ interface ProductData {
 }
 
 export const onGet: RequestHandler<ProductData> = async ({ params }) => {
-  // put your DB access here, we are hard coding a response for simplicity.
+  // mettez votre accès à la base de données ici, nous codons en dur une réponse pour la simplicité.
   return {
     skuId: params.skuId,
     price: 123.45,
-    description: `Description for ${params.skuId}`,
+    description: `Description pour ${params.skuId}`,
   };
 };
 

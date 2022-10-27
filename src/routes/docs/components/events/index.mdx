@@ -1,5 +1,5 @@
 ---
-title: Events
+title: Événements
 contributors:
   - voluntadpear
   - the-r3aper7
@@ -9,9 +9,9 @@ contributors:
   - adamdbradley
 ---
 
-# Events
+# Événements
 
-For a web application to be interactive, there needs to be a way to respond to user events. This is done by registering callback functions in the JSX template.
+Pour qu'une application web soit interactive, il faut pouvoir répondre aux événements de l'utilisateur. Cela se fait en enregistrant des fonctions de callback dans le template JSX.
 
 ```tsx
 export const Counter = component$(() => {
@@ -21,13 +21,13 @@ export const Counter = component$(() => {
 });
 ```
 
-In the above example, the `onClick$` attribute of the `<button>` element is used to let Qwik know that a callback `() => store.count++` should be executed whenever the `click` event is fired by the `<button>`.
+Dans l'exemple ci-dessus, l'attribut `onClick$` de l'élément `<button>` est utilisé pour indiquer à Qwik qu'un callback `() => store.count++` doit être exécuté à chaque fois que l'évènement `click` est déclenché par le `<button>`.
 
-Notice that `onClick$` ends with `$`. This is a hint to both the Qwik Optimizer and the developer that a special transformation occurs at this location. The presence of the `$` suffix implies a lazy-loaded boundary here. The code associated with the `click` handler will not download until the user triggers the `click` event. See [Optimizer Rules](../../advanced/optimizer/index.mdx) for more details.
+Remarquez que `onClick$` se termine par `$`. C'est une indication à la fois pour l'Optimiseur Qwik et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique ici une zone de chargement différé. Le code associé au gestionnaire de `click` ne sera pas téléchargé jusqu'à ce que l'utilisateur déclenche l'évènement `click`. Voir les [règles de l'Optimiseur](../../advanced/optimizer/index.mdx) pour plus de détails.
 
-In the above example, the `click` listener is trivial in implementation. But in real applications, the listener may refer to complex code. By creating a lazy-loaded boundary, Qwik can tree-shake all of the code behind the click listener and delay its loading until the user clicks the button.
+Dans l'exemple ci-dessus, l'implémentation de l'écouteur `click` est simple. Mais dans les applications réelles, l'écouteur peut faire référence à un code complexe. En créant une zone de chargement différé, Qwik peut faire du [tree shaking](https://developer.mozilla.org/fr/docs/Glossary/Tree_shaking) sur tout le code derrière l'écouteur `click` et retarder son chargement jusqu'à ce que l'utilisateur clique sur le bouton.
 
-You can also pass QRLs as values for event listeners. For instance, the above example could also be written in the following way:
+Vous pouvez également transmettre des QRL comme valeurs pour les écouteurs d'événements. Par exemple, l'exemple ci-dessus pourrait également être écrit de la manière suivante :
 
 ```tsx
 import { component$, useStore, $ } from "@builder.io/qwik";
@@ -42,29 +42,29 @@ export const Counter = component$(() => {
 
 ## Prevent default
 
-Because of the async nature of Qwik, an event's handler execution might be delayed because the implementation has not been downloaded yet. This introduces a problem when the event's handler needs to prevent the default behavior of the event. Traditional `event.preventDefault()` will not work, so instead use Qwik's `preventdefault:{eventName}` attribute:
+En raison de la nature asynchrone de Qwik, une exécution du gestionnaire d'événement peut être retardée parce que l'implémentation n'a pas encore été chargée. Cela introduit un problème lorsque le gestionnaire d'événement a besoin d'empêcher le comportement par défaut de l'événement. Le traditionnel `event.preventDefault()` ne fonctionnera pas, donc utilisez plutôt l'attribut `preventdefault:{eventName}` de Qwik :
 
 ```tsx
 export const PreventDefaultExample = component$(() => {
   return (
     <a
       href="/about"
-      preventdefault:click // This will prevent the default behavior of the "click" event.
+      preventdefault:click // Cela empêchera le comportement par défaut de l'événement "click".
       onClick$={(event) => {
-        // PreventDefault will not work here, because handle is dispatched asynchronously.
+        // PreventDefault ne fonctionnera pas ici, car le gestionnaire est distribué de manière asynchrone.
         // event.preventDefault();
         singlePageNavigate('/about');
       }}
     >
-      Go to about page
+      Aller à la page d'accueil
     </a>
   );
 });
 ```
 
-## Window and Document events
+## Événements de window et de document
 
-So far, we have discussed how to listen to events that originate from elements. There are events (for example, `scroll` and `mousemove`) that require that we listen to them on the `window` or `document`. For this reason, Qwik allows for the `document:on` and `window:on` prefixes when listening for events.
+Jusqu'à présent, nous avons vu comment écouter les événements qui proviennent des éléments. Il y a des événements (par exemple, `scroll` et `mousemove`) qui nécessitent que nous les écoutions sur `window` ou `document`. Pour cette raison, Qwik autorise les préfixes `document:on` et `window:on` lors de l'écoute des événements.
 
 ```tsx
 export const EventExample = component$(() => {
@@ -91,16 +91,16 @@ export const EventExample = component$(() => {
 });
 ```
 
-The purpose of the `window:on`/`document:` is to register an event at a current DOM location of the component but have it receive events from the `window`/`document`. There are two advantages to this:
+Le but de `window:on`/`document:` est d'enregistrer un événement sur un emplacement courant du DOM du composant tout en lui permettant de recevoir des événements de `window`/`document`. Il y a deux avantages à cela :
 
-1. The events can be registered declaratively in your JSX
-2. The events get automatically cleaned up when the component is destroyed. (No explicit bookkeeping and cleanup is needed)
+1. Les événements peuvent être enregistrés de manière déclarative dans votre JSX
+2. Les événements sont automatiquement nettoyés lorsque le composant est détruit. (Aucune gestion et aucun nettoyage explicites ne sont nécessaires)
 
-## Events and Components
+## Événements et composants
 
-Components are functions, not elements. Since DOM events do not exist naturally, it's possible to define custom events as props.
+Les composants sont des fonctions, pas des éléments. Comme les événements DOM n'existent pas naturellement, il est possible de définir des événements personnalisés en tant que props.
 
-Now let's look at how one declares a child component that can be used with events.
+Voyons maintenant comment on déclare un composant enfant qui peut être utilisé avec des événements.
 
 ```tsx
 import { PropFunction } from '@builder.io/qwik';
@@ -118,17 +118,17 @@ export const CmpButton = component$((props: CmpButtonProps) => {
 });
 ```
 
-As far as Qwik is concerned, passing events to a component is equivalent to passing as props. In our example, we declare all props in `CmpButtonProps` interface. Specifically, notice `onClick$: PropFunction<() => void>` declaration.
+En ce qui concerne Qwik, passer des évènements à un composant est équivalent à passer des props. Dans notre exemple, nous déclarons tous les props dans l'interface `CmpButtonProps`. Spécifiquement, remarquez la déclaration `onClick$: PropFunction<() => void>`.
 
-On the usage side, when referring to the `<CmpButton>`:
+Du côté de l'utilisation, lorsqu'on fait référence à l'interface `<CmpButton>` :
 
 ```tsx
 <CmpButton onClick$={() => store.cmpCount++}>{store.cmpCount}</CmpButton>
 ```
 
-## Working with QRLs
+## Travailler avec des QRL
 
-Let's look at a variation of the above `<CmpButton>` implementation. In this example, we would like to demonstrate the passing of callbacks to components. For this reason, we have created an additional listener `onClick$`
+Examinons une variante de l'implémentation de `<CmpButton>` ci-dessus. Dans cet exemple, nous souhaitons démontrer le passage de callbacks aux composants. Pour cette raison, nous avons créé un écouteur supplémentaire `onClick$`.
 
 ```tsx
 interface CmpButtonProps {
@@ -150,16 +150,16 @@ export const CmpButton = component$((props: CmpButtonProps) => {
 });
 ```
 
-Notice that we can pass the `props.onClick$` method directly to the `onDblclick$` attribute as seen on `<button>` element. (see attribute `onDblclick$={props.onClick$}`) This is because both the inputting prop `onClick$` as well as JSX prop `onDblclick` are of type `PropFunction<?>` (and both have `$` suffix).
+Remarquez que nous pouvons passer la méthode `props.onClick$` directement à l'attribut `onDblclick$` tel que nous le voyons sur l'élément `<button>` (voir l'attribut `onDblclick$={props.onClick$}`). Cela s'explique par le fait que l'attribut de saisie `onClick$` ainsi que l'attribut JSX `onDblclick` sont tous deux de type `PropFunction<?>` (et ont tous deux le suffixe `$`).
 
-However, it is not possible to pass `props.onClick$` to `onClick$` because the types don't match. (This would result in the type error: `onClick$={props.onClick$}`) Instead, the `$` is reserved for inlined closures. In our example, we would like to `console.log("clicked")` after we process the `props.onClick` callback. We can do so with the `props.onClick$()` method. This method will:
-  1. Lazy load the code
-  2. Restore the closure state
-  3. Invoke the closure
- 
- The operation is asynchronous and therefore returns a promise, which we can resolve using the `await` statement.
+Cependant, il n'est pas possible de passer `props.onClick$` à `onClick$` car les types ne correspondent pas. (Il en résulterait l'erreur de type : `onClick$={props.onClick$}`). Au lieu de cela, le `$` est réservé aux closures en ligne. Dans notre exemple, nous aimerions faire `console.log("clicked")` après avoir traité le callback `props.onClick`. Nous pouvons le faire avec la méthode `props.onClick$()`. Cette méthode permettra :
+  1. de charger le code de manière différée
+  2. de restaurer l'état de la closure
+  3. d'appeller la closure
 
-## State recovery
+L'opération est asynchrone et renvoie donc une promesse, que nous pouvons résoudre en utilisant l'instruction `await`.
+
+## Récupération de l'état
 
 ```tsx
 export const Counter = component$(() => {
@@ -169,11 +169,11 @@ export const Counter = component$(() => {
 });
 ```
 
-At first sight, it may appear that Qwik simply lazy loads the `onClick$` function. But upon closer inspection, it is important to realize that Qwik lazy loads a closure rather than a function. (A closure is a function that lexically captures the state inside its variables. In other words, closures carry state, whereas functions do not.) The capturing of the state is what allows the Qwik application to simply resume where the server left off because the recovered closure carries the state of the application with it.
+A première vue, il peut sembler que Qwik charge simplement de manière différée la fonction `onClick$`. Mais en regardant de plus près, il est important de réaliser que Qwik charge de manière différée une closure plutôt qu'une fonction. (Une closure est une fonction qui capture lexicalement l'état de ses variables. En d'autres termes, les closures portent l'état, alors que les fonctions ne le font pas). La capture de l'état est ce qui permet à l'application Qwik de simplement reprendre là où le serveur s'est arrêté parce que la closure récupérée porte l'état de l'application avec elle.
 
-In our case, the `onClick$` closure captures `store`. The capturing of `store` allows the application to increment the `count` property on `click` without having to re-run the whole application. Let's look at how closure capturing works in Qwik.
+Dans notre cas, la closure `onClick$` capture `store`. La capture de `store` permet à l'application d'incrémenter la propriété `count` sur `click` sans avoir à réexécuter toute l'application. Regardons comment la capture de closure fonctionne dans Qwik.
 
-The HTML generated by the above code would look something like this:
+Le HTML généré par le code ci-dessus ressemblerait à quelque chose comme ceci :
 
 ```html
 <div>
@@ -181,17 +181,17 @@ The HTML generated by the above code would look something like this:
 </div>
 ```
 
-Notice that `on:click` attribute contains three pieces of information:
+Remarquez que l'attribut `on:click` contient trois informations :
 
-1. `./chunk-a.js`: The file which needs to be lazy-loaded.
-2. `Counter_button_onClick`: The symbol which needs to be retrieved from the lazy-loaded chunk.
-3. `[0]`: An array of lexically captured variable references (State of the closure).
+1. `./chunk-a.js` : Le fichier qui doit être chargé de manière différée.
+2. `Counter_button_onClick` : Le symbole qui doit être récupéré à partir du morceau chargé de manière différée.
+3. `[0]` : Un tableau de références de variables capturées lexicalement (état de la closure).
 
-In our case `() => store.count++` only captures `store`, and hence it contains only a single reference `0`. `0` is an index into the `q:obj` attribute that contains a reference to the actual serialized object, referring to `store`. (The exact mechanisms and syntax is an implementation detail that can change at any time)
+Dans notre cas, `() => store.count++` ne capture que `store`, et donc il ne contient qu'une seule référence `0`. `0` est un index dans l'attribut `q:obj` qui contient une référence à l'objet sérialisé actuel faisant référence à `store`. (Les mécanismes et la syntaxe exacts sont des détails d'implémentation qui peuvent changer à tout moment).
 
 ## Qwikloader
 
-For the browser to understand the `on:click` attribute syntax, a small JavaScript script known as the Qwikloader is needed. The Qwikloader is small (about 1kb) and fast (about 5ms) in execution. The Qwikloader script is inlined into the HTML so that it can be executed quickly.
-When a user interacts with the application, the browser fires relevant events that bubble up the DOM. At the root of the DOM, the Qwikloader listens for the events and then tries to locate the corresponding `on:<event>` attribute. If such an attribute is found, then the value of the attribute is used to resolve the location where code can be downloaded from and then executes it.
+Pour que le navigateur comprenne la syntaxe de l'attribut `on:click`, un petit script JavaScript connu sous le nom de Qwikloader est nécessaire. Le Qwikloader est petit (environ 1 kb) et rapide (environ 5 ms) dans son exécution. Le script Qwikloader est intégré dans le HTML afin de pouvoir être exécuté rapidement.
+Lorsqu'un utilisateur interagit avec l'application, le navigateur déclenche des événements pertinents qui remontent le DOM. A la racine du DOM, le Qwikloader écoute les événements et essaie de localiser l'attribut correspondant `on:<event>`. Si un tel attribut est trouvé, alors la valeur de l'attribut est utilisée pour résoudre l'emplacement où le code peut être chargé et ensuite l'exécuter.
 
-See [Qwikloader](../../advanced/qwikloader/index.mdx) for more details.
+Consultez [Qwikloader](../../advanced/qwikloader/index.mdx) pour plus de détails.

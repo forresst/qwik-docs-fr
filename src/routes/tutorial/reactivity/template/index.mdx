@@ -1,18 +1,18 @@
 ---
-title: Implicit Template Updates
+title: Mises à jour implicites des templates
 contributors:
   - adamdbradley
   - manucorporat
 ---
 
-This example demonstrates how mutating stores automatically update the templates.
+Cet exemple montre comment les stores en mutation mettent automatiquement à jour les templates.
 
-During SSR rendering the server needs to render all of the components in the application. As it is rendering the components the bindings in those components perform reads on store properties. For example, when `<DisplayA>` reads the `countA` property from the store, Qwik records that as a subscription. Qwik now knows that if `countA` changes then `<DisplayA>` needs to be re-rendered. Rendering templates will automatically set up subscriptions on the store. Each time the template re-renders the old subscriptions are thrown away and new subscriptions are created. This means that the template can change the set of things it is listening to during its lifecycle.
+Pendant le rendu SSR, le serveur doit rendre tous les composants de l'application. Pendant le rendu des composants, les liaisons dans ces composants effectuent des lectures sur les propriétés du store. Par exemple, quand `<DisplayA>` lit la propriété `countA` du store, Qwik enregistre cela comme un abonnement. Qwik sait maintenant que si `countA` change alors `<DisplayA>` a besoin d'être re-rendu. Les templates de rendu vont automatiquement mettre en place des abonnements sur le store. Chaque fois que le template fait un re-rendu, les anciens abonnements sont éliminés et de nouveaux abonnements sont créés. Cela signifie que le template peut modifier l'ensemble des éléments qu'il écoute au cours de son cycle de vie.
 
-Currently, the buttons don't do anything. Implement the buttons to increment the respective store properties.
+Actuellement, les boutons ne font rien. Implémentez les boutons pour incrémenter les propriétés respectives du store.
 
-Once you make the buttons work, notice that even though all state is stored in a single store, the updates are very focused. `a++` button will only cause the re-rendering of `<DisplayA>` and `b++` button will only cause re-rendering of `<DisplayB>`. The fine-grained re-rendering is an important property of Qwik. It is what allows Qwik applications to stay lean and not download too much code unnecessarily.
+Une fois que vous avez fait fonctionner les boutons, remarquez que même si tout l'état est stocké dans un seul store, les mises à jour sont très ciblées. Le bouton `a++` provoquera seulement le re-rendu de `<DisplayA>` et le bouton `b++` provoquera seulement le re-rendu de `<DisplayB>`. Le rendu fin est une propriété importante de Qwik. C'est ce qui permet aux applications Qwik de rester légères et de ne pas télécharger trop de code inutilement.
 
-Template subscriptions are automatically created and released when the component is removed. There is no need to keep track of them or release them manually.
+Les abonnements aux templates sont automatiquement créés et libérés lorsque le composant est supprimé. Il n'est pas nécessaire d'en assurer le suivi ou de les libérer manuellement.
 
-Qwik is a reactive system. All reactive systems require a single full execution of the application to create subscriptions. Qwik applications also require full execution to set up all subscriptions. However, Qwik applications perform the full execution on the server and transfer the subscription information to the client. In this way, the client knows which component needs to be re-rendered when without being forced to do one full rendering of the whole application. Doing so would force all components to be eagerly downloaded, and Qwik wants to avoid that.
+Qwik est un système réactif. Tous les systèmes réactifs nécessitent une seule exécution complète de l'application pour créer des abonnements. Les applications Qwik nécessitent aussi une exécution complète pour mettre en place tous les abonnements. Cependant, les applications Qwik effectuent l'exécution complète sur le serveur et transfèrent les informations d'abonnement au client. De cette façon, le client sait quel composant a besoin d'être rendu à quel moment sans être forcé de faire un rendu complet de l'application entière. Faire cela obligerait tous les composants à être par avance téléchargés, et Qwik veut éviter cela.

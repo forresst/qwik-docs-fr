@@ -1,18 +1,18 @@
 ---
-title: Qwik City - Node Middleware
+title: Qwik City - Middleware de Node
 contributors:
   - adamdbradley
 ---
 
-# Node Middleware
+# Middleware de Node
 
-Qwik City Node middleware allows you to connect Qwik City to an Nodejs server which uses the common middleware functionality. Some Node servers include:
+Le middleware Node de Qwik City vous permet de connecter Qwik City à un serveur Nodejs qui utilise les fonctionnalités communes du middleware. Certains serveurs Node incluent :
 
 - [Express](https://expressjs.com/)
 - [Connect](https://www.npmjs.com/package/connect)
 - [Polka](https://www.npmjs.com/package/polka)
 
-Below is an example of using the built-in Node middleware within a user's [Express](https://expressjs.com/) app. Note that the user can decide the order of the middleware, including handling static assets, and how to handle 404 responses.
+Vous trouverez ci-dessous un exemple d'utilisation du middleware Node intégré dans l'appli [Express](https://expressjs.com/) d'un utilisateur. Notez que l'utilisateur peut décider de l'ordre des middlewares, y compris la gestion des ressources statiques et la façon de traiter les réponses 404.
 
 ```typescript
 import { qwikCity } from '@builder.io/qwik-city/middleware/node';
@@ -21,28 +21,28 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import render from './entry.ssr';
 
-// Directories where the static assets are located
+// Répertoires où se trouvent les ressources statiques
 const distDir = join(fileURLToPath(import.meta.url), '..', '..', 'dist');
 const buildDir = join(distDir, 'build');
 
-// Create the Qwik City middleware
+// Crée le middleware Qwik City
 const { router, notFound } = qwikCity(render);
 
-// Create the express server
+// Crée le serveur express
 const app = express();
 
-// Use Qwik City's page and endpoint router
+// Utilise le routeur de pages et le endpoint de Qwik City
 app.use(router);
 
-// Static asset handlers
+// Gestionnaires de ressources statiques
 app.use(`/build`, express.static(buildDir, { immutable: true, maxAge: '1y', index: false }));
 app.use(express.static(distDir, { index: false }));
 
-// Use Qwik City's 404 handler
+// Utilise le gestionnaire 404 de Qwik City
 app.use(notFound);
 
-// Start the express server
+// Démarre le serveur express
 app.listen(3000);
 ```
 
-- [Node Middleware Source](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/node/index.ts)
+- [Source du Middleware Node](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/node/index.ts)

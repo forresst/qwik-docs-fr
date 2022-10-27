@@ -1,21 +1,21 @@
 ---
-title: Serialization & Serialization Boundaries
+title: Sérialisation et zones de sérialisation
 contributors:
   - fabien0102
   - wuweiweiwu
   - manucorporat
   - adamdbradley
----
+  ---
 
-# `$` Boundaries
+# Zones de `$`
 
-## Rules
+## Règles
 
-- Only serializable data can cross a `$` boundary.
+- Seules les données sérialisables peuvent traverser une zone `$`.
 
-## Serialization Boundary
+## Zone de sérialisation
 
-A serialization boundary occurs whenever you cross a lexical scope of a function that is converted into lazy loadable form. It is always denoted by `$(...)` (or `____$(...)`) See example:
+Une zone de sérialisation se produit lorsque vous traversez la portée lexicale d'une fonction qui est convertie en une forme chargeable de manière différée. Elle est toujours indiquée par `$(...)` (ou `____$(...)`) Voir l'exemple :
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -23,38 +23,38 @@ import { component$ } from '@builder.io/qwik';
 export const topLevel = Promise.resolve('nonserializable data');
 
 export const Greeter = component$(() => {
-  // BEGIN component serialization boundary
+  // DEBUT de la zone de sérialisation du composant
 
-  // Referring to top level symbols that are exported is always allowed.
+  // La référence à des symboles de niveau supérieur qui sont exportés est toujours autorisée.
   console.log(topLevel); // OK
 
   const captureSerializable = 'serializable data';
   const captureNonSerializable = Promise.resolve('nonserializable data');
-
+  
   return (
     <button
       onClick$={() => {
-        // BEGIN onClick serialization boundary
+        // DEBUT de la zone de sérialisation du onClick
 
-        // Referring to top level symbols that are exported is always allowed,
-        // even if the value is non-serializable.
+        // La référence à des symboles de haut niveau qui sont exportés est toujours autorisée,
+        // même si la valeur n'est pas sérialisable.
         console.log(topLevel); // OK
 
-        // Capturing a non-top-level variable is allowed only if:
-        // - declared as `const`
-        // - is serializable (runtime error)
+        // La capture d'une variable qui n'est pas de niveau supérieur est autorisée uniquement si :
+        // - déclarée comme `const`
+        // - est sérialisable (erreur d'exécution)
         console.log(captureSerializable); // OK
 
-        // Referring to captureNonSerializable will pass static analysis but
-        // will fail at runtime because Qwik does not know how to serialize it.
-        console.log(captureNonSerializable); // RUNTIME ERROR
+        // La référence à captureNonSerializable passera l'analyse statique mais
+        // échouera à l'exécution car Qwik ne sait pas comment la sérialiser.
+        console.log(captureNonSerializable); // ERREUR D'EXÉCUTION
 
-        // END onClick serialization boundary
+        // FIN de la zone de sérialisation du onClick
       }}
     >
       click
     </button>
   );
-  // END component serialization boundary
+  // FIN de la zone de sérialisation du composant
 });
 ```

@@ -1,5 +1,5 @@
 ---
-title: Qwik City - Routing
+title: Qwik City - Routage
 contributors:
   - manucorporat
   - nnelgxorz
@@ -9,17 +9,17 @@ contributors:
   - adamdbradley
 ---
 
-# Routing
+# Routage
 
-Routing is a way to map public URLs for a site to specific components declared in your application.
+Le routage est un moyen de faire correspondre les URL publiques d'un site à des composants spécifiques déclarés dans votre application.
 
-Qwik City uses directory-based routing. This means that the structure of your routes directory drives the public-facing URLs that the user will see for your application. However, it differs slightly from traditional file-based routing, which we will discuss shortly.
+Qwik City utilise un routage basé sur les répertoires. Cela signifie que la structure du chemin d'accès du répertoire détermine les URL publiques que l'utilisateur verra pour votre application. Cependant, il diffère légèrement du routage traditionnel basé sur les fichiers, que nous allons aborder prochainement.
 
-## Directory-based Routing
+## Routage basé sur les répertoires
 
-Qwik City supports the following filetypes for routes
+Qwik City prend en charge les types de fichiers suivants pour les routes
 
-In the Qwik City routes directory, `folder-path` plus an `index` file map to a URL path. For example, if the user sees `https://example.com/some/path`, the component exported at `src/routes/some/path/index` (either `.mdx` or `.tsx`) will be shown.
+Dans le répertoire des routes de Qwik City, `folder-path` plus un fichier `index` correspondent à un chemin URL. Par exemple, si l'utilisateur voit `https://example.com/some/path`, le composant exporté dans `src/routes/some/path/index` (soit `.mdx` ou `.tsx`) sera présenté.
 
 ```
 src/
@@ -29,11 +29,11 @@ src/
             └── index.tsx       # https://example.com/some/path
 ```
 
-Note that the leaf file at the end of the route is named index. This is **important**. In other meta-frameworks you may be familiar with, there is a distinction made between `pages` and `data endpoints` or `API routes`. In Qwik City, there is no distinction, they are all `endpoints`.
+Notez que le fichier à la fin de la route est nommé index. C'est **important**. Dans d'autres méta-frameworks avec lesquelles vous êtes familiers, il y a une distinction faite entre les `pages` et les `data endpoints` ou `API routes`. Dans Qwik City, il n'y a pas de distinction, ce sont tous des `endpoints`.
 
-To define an endpoint, you must define an `index.[filetype]` where [filetype] can be one of `.ts`, `.tsx`, `.js`, `.jsx`, `.md`, or `.mdx`.
+Pour définir un endpoint, vous devez définir un `index.[filetype]` où [filetype] peut être `.ts`, `.tsx`, `.js`, `.jsx`, `.md`, ou `.mdx`.
 
-While the following directory structure:
+Alors que la structure de répertoire suivante :
 
 ```
 src/
@@ -44,7 +44,7 @@ src/
     └── index.tsx
 ```
 
-may work in other meta-frameworks that use file-based routing, Qwik City will not register a route for any non-index files. In Qwik City, the equivalent file structure would look like this:
+peut fonctionner dans d'autres méta-frameworks qui utilisent le routage par fichier, Qwik City n'enregistrera pas de route pour les fichiers non-indexés. Dans Qwik City, la structure de fichier équivalente ressemblerait à ceci :
 
 ```
 src/
@@ -59,7 +59,7 @@ src/
         └── index.tsx          # https://example.com/index
 ```
 
-At first, this may seem like extra work, but there are advantages to this approach. One advantage is being able to define component files in a route directory without them being rendered. Consider the following:
+Au début, cela peut sembler un travail supplémentaire, mais cette approche présente des avantages. L'un d'eux est la possibilité de définir des fichiers de composants dans un répertoire de route sans qu'ils soient rendus. Prenons l'exemple suivant :
 
 ```
 src/
@@ -69,14 +69,14 @@ src/
         ├── index.tsx                 # https://example.com/some
         └── path/
             ├── index.tsx             # https://example.com/some/path
-            └── other_component.tsx   # this file is ignored and not mapped to any URL because it is not an index.
+            └── other_component.tsx   # ce fichier est ignoré et ne correspond à aucune URL car il ne s'agit pas d'un index.
 ```
 
-The `other_component.tsx` file can be imported and used inside of `path/index.tsx`, but is otherwise ignored by Qwik City.
+Le fichier `other_component.tsx` peut être importé et utilisé à l'intérieur de `path/index.tsx`, mais est par ailleurs ignoré par Qwik City.
 
-## Implementing a Component
+## Implémentation d'un composant
 
-To return HTML for a specific route you will need to implement a component. For `.tsx` files the component must be exported as `default`. Alternatively, you can use `.mdx` extension discussed [later](../../../qwikcity/content/mdx/index.mdx).
+Pour renvoyer du HTML pour une route spécifique, vous devez implémenter un composant. Pour les fichiers `.tsx`, le composant doit être exporté comme `default`. Sinon, vous pouvez utiliser l'extension `.mdx` décrite [plus tard](../../../qwikcity/content/mdx/index.mdx).
 
 ```typescript
 export default component$(() => {
@@ -86,20 +86,20 @@ export default component$(() => {
 
 ## `@qwik-city-plan`
 
-Qwik City stores route information in files on disk. This is great for developer ergonomics but not useful for creating bundles and chunks. Additionally, in some environments - such as edge functions - there is no file system that can be accessed. For this reason, it is necessary to serialize the route information into a single file. This is done through the `@qwik-city-plan` import.
+Qwik City stocke les informations des routes dans des fichiers sur le disque. C'est très bien pour l'ergonomie du développeur mais pas utile pour créer des bundles et des morceaux. De plus, dans certains environnements - comme les fonctions périphériques - il n'y a pas de système de fichier accessible. Pour cette raison, il est nécessaire de sérialiser les informations de route dans un seul fichier. Ceci est fait à travers l'import de `@qwik-city-plan`.
 
 ```typescript
 import cityPlan from '@qwik-city-plan';
 ```
 
-The `@qwik-city-plan` import is synthetic, meaning that it is created as part of the build step. It contains all of the information in the `/src/routes` folder in JavaScript format. The synthetic import is provided by the `qwikCity()` vite plugin available from `@builder.io/qwik-city/vite`.
+L'importation de `@qwik-city-plan` est synthétique, ce qui signifie qu'elle est créée lors de l'étape de construction. Il contient toutes les informations du dossier `/src/routes` au format JavaScript. L'importation synthétique est fournie par le plugin `qwikCity()` de vite disponible à partir de `@builder.io/qwik-city/vite`.
 
-## Advanced routing
+## Routage avancé
 
-Qwik City also supports:
+Qwik City prend également en charge :
 
-- [Route Parameters](../../../qwikcity/routing/route-parameters/index.mdx)
-- [Nested layouts](../../../qwikcity/layout/overview/index.mdx)
+- [Paramètres de route](../../../qwikcity/routing/route-parameters/index.mdx)
+- [Les mises en page imbriquées](../../../qwikcity/layout/overview/index.mdx)
 - [Menus](../../../qwikcity/content/menu/index.mdx)
 
-These are discussed later.
+Nous y reviendrons plus tard.

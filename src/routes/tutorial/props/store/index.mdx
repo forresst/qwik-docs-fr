@@ -1,22 +1,22 @@
 ---
-title: Passing Stores
+title: En passant des stores
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-The previous tutorial introduced you how you could pass primitives and objects to components. In this tutorial, we will learn how to pass stores to components, which is way more efficient in terms of rerendering.
+Le tutoriel précédent vous a présenté la manière dont vous pouviez transmettre des primitives et des objets aux composants. Dans ce tutoriel, nous allons apprendre à passer des stores aux composants, ce qui est beaucoup plus efficace en termes de rendu.
 
-When you click on the `+1` button, the `<App>` is re-rendered to update the `<Display>` bindings. The re-rendering of `<App>` is needed to update the props of `<Display>`, but this process doesn't update to what the user sees, so it is a waste of resources.
+Lorsque vous cliquez sur le bouton `+1`, le rendu de `<App>` est modifié pour mettre à jour les liaisons de `<Display>`. Le rendu `<App>` est nécessaire pour mettre à jour les props de `<Display>`, mais ce processus ne correspond pas à ce que l'utilisateur voit, c'est donc un gaspillage de ressources.
 
-A better approach is to only re-render `<Display>` component by passing in the `CountStore` rather than the `count` value. Since the store reference never changes, the `<App>` component doesn't need to re-render.
+Une meilleure approche consiste à ne refaire que le rendu du composant `<Display>` en passant la référence `CountStore` plutôt que la valeur `count`. Comme la référence au store ne change jamais, le composant `<App>` n'a pas besoin d'être re-rendu.
 
-> **Your task**: Change the code to pass in `store` rather than `store.count`.
+> **Votre tâche** : Changez le code pour passer dans `store` plutôt que `store.count`.
 
-Two benefits emerge by making the above change:
+La modification ci-dessus présente deux avantages :
 
-- The `<App>` component doesn't need to be downloaded or re-rendered.
+- Le composant `<App>` n'a pas besoin d'être chargé ou re-rendu.
 
-## Best Practice
+## Bonne pratique
 
-A best practice to follow in Qwik features passing a store to child components rather than individual primitives. When you use primitives, the parent component needs to rerender just to pass in the new value. When you pass in a store, the parent component doesn't need to rerender.
+Une bonne pratique à suivre dans Qwik est de passer un store aux composants enfants plutôt que des primitives individuelles. Lorsque vous utilisez des primitives, le composant parent doit effectuer un nouveau rendu juste pour transmettre la nouvelle valeur. Lorsque vous passez par un store, le composant parent n'a pas besoin de faire un re-rendu.

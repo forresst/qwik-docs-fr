@@ -1,12 +1,12 @@
 ---
-title: Composing use Hooks
+title: Création de hooks use
 contributors:
   - adamdbradley
   - manucorporat
 ---
 
-Hooks are a way to abstract common logic away from the components that use it. They are a way to share logic between components. While Qwik provides many hooks, there will always be one that is not provided out of the box. This tutorial will show you how to create your own hook.
+Les hooks sont un moyen de séparer la logique commune des composants qui l'utilisent. Ils sont un moyen de partager la logique entre les composants. Alors que Qwik fournit beaucoup de hooks, il y en aura toujours un qui ne sera pas fourni dans la boite. Ce tutoriel va vous montrer comment créer votre propre hook.
 
-In this example, the registering of `mousemove` events is something that could be shared between multiple components. Refactor the code by pulling out the code before JSX into its own `useMousePosition()` function.
+Dans cet exemple, l'enregistrement des événements `mousemove` est quelque chose qui pourrait être partagé entre plusieurs composants. Refaites le code en retirant le code avant le JSX dans sa propre fonction `useMousePosition()`.
 
-Congratulations, you have successfully created your own hook! You can now use it in any component that needs to listen to the mouse position.
+Félicitations, vous avez réussi à créer votre propre hook ! Vous pouvez maintenant l'utiliser dans n'importe quel composant qui a besoin d'écouter la position de la souris.

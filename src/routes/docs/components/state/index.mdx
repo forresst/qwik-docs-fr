@@ -8,27 +8,27 @@ contributors:
   - RATIU5
   - manucorporat
 ---
-# State
+# État
 
-State management is an important part of any app. In Qwik, we can differentiate between two types of state, reactive and static.
+La gestion de l'état est une partie importante de toute appli. Dans Qwik, nous pouvons différencier deux types d'état, réactif et statique.
 
-Static state is anything that can be serialized: a string, number, object, array... anything. Reactive state on the other hand is created with `useStore()`.
+L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombre, un objet, un tableau... n'importe quoi. L'état réactif, quant à lui, est créé avec `useStore()`.
 
-It's important to notice that state in Qwik is not component state, but rather app state that can be instantiated by any component.
+Il est important de noter que l'état dans Qwik n'est pas un état de composant, mais plutôt un état d'appli qui peut être instancié par n'importe quel composant.
 
 
 ## `useStore()`
 
-`const reactive = useStore(initialState)` is a hook that creates a reactive object. It takes an initial state as a parameter, and returns a reactive object.
+`const reactive = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial comme paramètre, et retourne un objet réactif.
 
-The reactive object returned by `useStore()` is just like any other object, but it's reactive. If you change a property of the object, any component that depends on it will be updated.
+L'objet réactif renvoyé par `useStore()` est comme n'importe quel autre objet, mais il est réactif. Si vous changez une propriété de l'objet, tout composant qui en dépend sera mis à jour.
 
-> **NOTE**
-> Make sure to keep a reference to the reactive object and not only to its properties, for reactivity to work. e.g. doing `let { count } = useStore({ count: 0 })` and then mutating `count` won't trigger updates of components that depends on it.
+> **REMARQUE**
+> Pour que la réactivité fonctionne, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faites `let { count } = useStore({ count : 0 })` et ensuite la mutation de `count` ne déclenchera pas la mise à jour des composants qui en dépendent.
 
-### Example
+### Exemple
 
-An example showing how `useStore` is used in the Counter example to keep track of the count.
+Un exemple montrant comment `useStore` est utilisé dans l'exemple Counter pour garder le suivi du compteur.
 
 ```tsx
 export const App = component$(() => {
@@ -37,22 +37,22 @@ export const App = component$(() => {
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
-      Count: {state.count}
+      Compteur: {state.count}
     </>
   );
 });
 
 ```
 
-The example above, the App component is using `useStore()` to create a reactive object. The object is then used to keep track of the count. The count is then displayed in the component.
+Dans l'exemple ci-dessus, le composant App utilise `useStore()` pour créer un objet réactif. Cet objet est ensuite utilisé pour garder le suivi du compteur. Le compteur est ensuite affiché dans le composant.
 
-Just accessing the `state.count` property will cause the component to be updated if the count changes, when the property is changed in the click handler.
+En accédant simplement à la propriété `state.count`, le composant sera mis à jour si le compteur change, lorsque la propriété est modifiée dans le gestionnaire du clic.
 
-### Recursive values
+### Valeurs récursives
 
-By default, `useStore()` only tracks the top level fields in your store, which means that for any updates to register, you have to update values at the top level field.
+Par défaut, `useStore()` ne traque que les champs de premier niveau de votre store, ce qui signifie que pour que toute mise à jour soit enregistrée, vous devez mettre à jour les valeurs du champ de premier niveau.
 
-For example, this will not work:
+Par exemple, ceci ne fonctionnera pas :
 
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
@@ -71,13 +71,13 @@ export const App = component$(() => {
 });
 ```
 
-In order to update this with default tracking we would have to update the top level `nested` field:
+Pour mettre à jour le suivi par défaut, nous devons mettre à jour le champ "nested" de niveau supérieur :
 
 ```ts
 store.nested = { fields: { are: { "tracked" } } }
 ```
 
-In order to make the first example work, we can pass a second argument to our useStore, and tell it to use recursion to track all the values in our store, no matter how deep.
+Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à notre useStore, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
 
 ```tsx
 export const App = component$(() => {
@@ -94,7 +94,7 @@ export const App = component$(() => {
 });
 ```
 
-Now the component will update as expected. This will also track individual values inside of arrays!
+Maintenant, le composant sera mis à jour comme prévu. Cela permettra également de suivre les valeurs individuelles dans les tableaux !
 
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
@@ -114,15 +114,15 @@ export const App = component$(() => {
 ```
 
 
-## Passing a store to other components
+## Transmission d'un store à d'autres composants
 
-One of the nice features of Qwik is that the state can be passed to other components, and both can read and write to it, allowing data to flow across the tree in all directions.
+Une des fonctionnalités intéressantes de Qwik est que l'état peut être passé à d'autres composants, et ils peuvent à la fois lire et écrire dessus, permettant aux données de circuler à travers l'arborescence dans toutes les directions.
 
-There are three ways to pass state to other components.
+Il y a trois façons de passer l'état à d'autres composants.
 
-### Using props
+### Utilisation des props
 
-The most naive way to pass state to other components is to pass it as props. This is the way you would do it in React, and it works in Qwik as well.
+La façon la plus naïve de passer l'état à d'autres composants est de le passer comme props. C'est la façon dont vous le feriez dans React, et cela fonctionne aussi dans Qwik.
 
 ```tsx
 export const Parent = component$(() => {
@@ -141,17 +141,17 @@ export const Child = component$(({ userData }) => {
   return (
     <>
       <button onClick$={() => userData.count++}>Increment</button>
-      Count: {userData.count}
+      Compteur : {userData.count}
     </>
   );
 });
 ```
 
-### Using context API
+### Utilisation de l'API de contexte
 
-The context API is a way to pass state to components without having to pass it through props. Automatically, all the descendant components in the tree get a reference to the state with read/write access to it.
+L'API de contexte est un moyen pour transmettre un état aux composants sans avoir à le transmettre à travers les props. Automatiquement, tous les composants descendants de l'arborescence peuvent obtenir une référence à l'état, et avoir l'accès en lecture/écriture.
 
-Check the [context API](../context/index.mdx) for more information.
+Consultez l'[API de contexte](../context/index.mdx) pour plus d'informations.
 
 ```tsx
 const CTX = createContext('stuff');
@@ -175,24 +175,24 @@ export const Child = component$(() => {
   return (
     <>
       <button onClick$={() => userData.count++}>Increment</button>
-      Count: {userData.count}
+      Compteur : {userData.count}
     </>
   );
 });
 ```
 
-## Computed values
+## Valeurs calculées
 
-Computed values are values that are derived from other values. They are useful when you have a value that is derived from other values, and you want to keep it in sync with the other values.
+Les valeurs calculées sont des valeurs qui sont dérivées d'autres valeurs. Elles sont utiles lorsque vous avez une valeur qui est dérivée d'autres valeurs, et que vous voulez la maintenir en synchronisation avec les autres valeurs.
 
-In Qwik there are two ways to create computed values, using `useWatch$()` or `useResource$()`.
+Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant `useWatch$()` ou `useResource$()`.
 
-The main difference between the two is that `useWatch$()` allows side effects and the execution is serialized, while `useResource$()` is asynchronous and multiple useResource calls can happen in parallel.
+La principale différence entre les deux est que `useWatch$()` permet les effets de bord et l'exécution est sérialisée, tandis que `useResource$()` est asynchrone et plusieurs appels useResource peuvent se produire en parallèle.
 
-`useWatch$()` is usually used to compute intermediate state, while `useResource$()` has better ergonomics to compute the final state, used for rendering. Let's see some examples:
+`useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que `useResource$()` a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
 
 
-### `useWatch$()` example
+### Exemple de `useWatch$()`
 
 ```tsx
 export const App = component$(() => {
@@ -202,21 +202,21 @@ export const App = component$(() => {
   });
 
   useWatch$(({ track }) => {
-    track(() => state.count);
+    track(() => store.count);
     state.doubleCount = state.count * 2;
   });
 
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
-      Count: {state.count}
-      Count * 2: {state.doubleCount}
+      Compteur : {userData.count}
+      Compteur * 2 : {state.doubleCount}
     </>
   );
 });
 ```
 
-### `useResource$()` example
+### Exemple de `useResource$()`
 
 ```tsx
 export const App = component$(() => {
@@ -225,22 +225,22 @@ export const App = component$(() => {
   });
 
   const doubleCount = useResource$(({ track }) => {
-    track(() => state.count);
+    track(() => store.count);
     return state.count * 2;
   });
 
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
-      Count: {state.count}
-      Count * 2: {doubleCount.promise}
+      Compteur : {userData.count}
+      Compteur * 2 : {doubleCount.promise}
     </>
   );
 });
 ```
 
-Both [useWatch](../lifecycle/index.mdx#usewatch) and [useResource](../resource/index.mdx) are explained in detail in their respective sections.
+Les notions de [useWatch](../lifecycle/index.mdx#usewatch) et de [useResource](../resource/index.mdx) sont expliquées en détail dans leurs sections respectives.
 
-## Reactivity
+## Réactivité
 
-Thanks to the fine grained reactivity of Qwik, only the components that depend on the state will be updated. This is a huge performance gain, as only the components that needs to be updated will be updated.
+Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l'état seront mis à jour. C'est un énorme gain de performance, car seuls les composants qui ont besoin d'être mis à jour le seront.

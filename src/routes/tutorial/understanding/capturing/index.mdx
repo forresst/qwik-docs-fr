@@ -1,24 +1,24 @@
 ---
-title: Understanding Qwik Difference - Capturing the lexical scope
+title: Comprendre la différence de Qwik - Capture de la portée lexicale
 contributors:
   - adamdbradley
   - manucorporat
 ---
 
-In this example, we will explore how Qwik serializes the component state. A naive approach would be for Qwik to simply save all of the state associated with the `useStore()`. Qwik is more intelligent about the approach and tries to tree shake the stores that are not needed by the client.
+Dans cet exemple, nous allons explorer comment Qwik sérialise l'état du composant. Une approche naïve serait pour Qwik de simplement sauvegarder tout l'état associé avec le `useStore()`. Qwik est plus intelligent dans son approche et essaye de tree shaker les stores qui ne sont pas nécessaires au client.
 
-The example consists of:
+L'exemple est composé de :
 
-- `<App/>`: which creates a store.
-- The Store contains the `largeData` property. Assume that this is a large data set that is only needed on the server. An example of this is the HackerNews demo. The server must retrieve the news articles from the JSON API and then use that data to render them. The articles are read-only for the user and so the HTML response will never re-render on the client. For this reason, it would be preferable not to send the data to the client.
-- A button that updates unrelated data.
+- `<App/>` : qui crée un store.
+- Le store contient la propriété `largeData`. Supposons qu'il s'agisse d'un grand ensemble de données qui n'est nécessaire que sur le serveur. La démo de HackerNews en est un exemple. Le serveur doit récupérer les articles de presse à partir de l'API JSON, puis utiliser ces données pour les rendre. Les articles sont en lecture seule pour l'utilisateur et la réponse HTML ne sera donc jamais re-rendue sur le client. Pour cette raison, il est préférable de ne pas envoyer les données au client.
+- Un bouton qui met à jour des données non liées.
 
-Look into the HTML tab and notice that `largeData` was serialized into `<script type="qwik/json">`. This is not ideal because we are sending data to the client which will never change and will never be used for re-rendering. Your goal in this exercise is to fix this.
+Regardez dans l'onglet HTML et remarquez que `largeData` a été sérialisé en `<script type="qwik/json">`. Ce n'est pas idéal car nous envoyons des données au client qui ne changeront jamais et ne seront jamais utilisées pour un re-rendu. Votre objectif dans cet exercice est de corriger cela.
 
-## Why is `largeData` serialized
+## Pourquoi `largeData` est sérialisé ?
 
-Qwik's serialization process starts by using all of the listeners as serialization roots. In our case, the `onClick$` on `<button>` is used as a serialization root. Notice that the `onClick$` closure closes over `store`. The fact that `onClick$` closes over `store` gives Qwik no choice but to serialize the `store` and, with it, all of the child properties.
+La serialisation de Qwik commence en utilisant tous les écouteurs comme racines de sérialisation. Dans notre cas, le `onClick$` sur `<button>` est utilisé comme une racine de sérialisation. Remarquez que la closure `onClick$` se ferme sur `store`. Le fait que `onClick$` se ferme sur `store` ne donne pas d'autre choix à Qwik que de sérialiser le `store` et, avec lui, toutes les propriétés enfants.
 
-To fix this, change the `onClick$` closure from `store.counter.count++` to `counter.count++`. (We have already created a local reference for you for `counter`.) This change modifies what the `onClick$` closure captures. Capturing more specific references allows Qwik to remove the need to serialize the `largeData` property.
+Pour résoudre ce problème, changez la closure `onClick$` de `store.counter.count++` en `counter.count++`. (Nous avons déjà créé une référence locale pour vous pour `counter`.) Ce changement modifie ce que la closure `onClick$` capture. La capture de références plus spécifiques permet à Qwik de supprimer le besoin de sérialiser la propriété `largeData`.
 
-Open the HTML tab and notice that Qwik no longer serializes `largeData` in this example.
+Ouvrez l'onglet HTML et remarquez que Qwik ne sérialise plus `largeData` dans cet exemple.

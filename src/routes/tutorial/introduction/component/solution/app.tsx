@@ -4,7 +4,7 @@ export const App = component$(() => {
   return (
     <div>
       <span>
-        GitHub organization:
+        Organisation GitHub :
         <input value="BuilderIO" />
       </span>
       <div>

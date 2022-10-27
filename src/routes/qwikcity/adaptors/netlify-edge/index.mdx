@@ -1,26 +1,26 @@
 ---
-title: Qwik City - Netlify Edge Middleware
+title: Qwik City - Middleware de Netlify Edge
 contributors:
   - adamdbradley
 ---
 
-# Netlify Edge Middleware
+# Middleware de Netlify Edge
 
-Qwik City Netlify Edge middleware allows you to connect Qwik City to [Netlify Edge](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/).
+Le middleware de Qwik City pour Netlify Edge vous permet de connecter Qwik City à [Netlify Edge](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/).
 
-## Add to Qwik project
+## Ajout au projet Qwik
 
-Run this command to integrate netlify-edge with your app:
+Exécutez cette commande pour intégrer netlify-edge à votre appli :
 
 ```bash
 npm run qwik add netlify-edge
 ```
 
-The previous command will create `src/entry.netlify-edge.tsx` using the built-in middleware within a user's app.
+La commande précédente créera `src/entry.netlify-edge.tsx` en utilisant le middleware intégré dans l'appli d'un utilisateur.
 
-## Manually Add Netlify Edge
+## Ajout manuel de Netlify Edge
 
-If want to add Netilify Edge manually, you can add or modify files like below:
+Si vous voulez ajouter Netilify Edge manuellement, vous pouvez ajouter ou modifier les fichiers comme ci-dessous :
 
 `src/entry.netlify-edge.tsx`
 
@@ -60,7 +60,7 @@ export default defineConfig(() => {
 });
 ```
 
-Configure `netlify.toml`
+Configurez `netlify.toml`
 
 ```toml
 [[edge_functions]]
@@ -68,18 +68,18 @@ path = "/*"
 function = "entry.netlify-edge"
 ```
 
-## Usage
+## Utilisation
 
-Use Netlify CLI to preview or deploy. [Read the full guide here](https://github.com/BuilderIO/qwik/blob/main/starters/servers/netlify-edge/README.md)
+Utilisez le CLI de Netlify pour prévisualiser ou déployer. [Lisez le guide complet ici](https://github.com/BuilderIO/qwik/blob/main/starters/servers/netlify-edge/README.md)
 
 ```bash
 vite build --ssr src/entry.netlify-edge.tsx
 netlify dev
 ```
 
-### Context
+### Contexte
 
-[Netlify context](https://docs.netlify.com/edge-functions/api/#netlify-specific-context-object) is available in endpoint method's `platform` param:
+Le [contexte Netlify](https://docs.netlify.com/edge-functions/api/#netlify-specific-context-object) est disponible dans le paramètre `platform` de la méthode du endpoint :
 
 ```javascript
 export const onRequest = async ({ platform }) => {
@@ -87,17 +87,17 @@ export const onRequest = async ({ platform }) => {
 };
 ```
 
-Additionally, you may import the `RequestHandlerNetlify` type to have have type completions in your editor.
+De plus, vous pouvez importer le type `RequestHandlerNetlify` pour avoir des compléments de type dans votre éditeur.
 
 ```typescript
 import {type RequestHandlerNetlify} from '@builder.io/qwik-city/middleware/netlify-edge';
-
 export const onGet: RequestHandlerNetlify = (({platform}) => {
  //...
 })
 ```
 
-### Environment variables
+
+### Variables d'environnement
 
 ```javascript
 export const onRequest = async ({ platform }) => {
@@ -107,5 +107,5 @@ export const onRequest = async ({ platform }) => {
 };
 ```
 
-- [Netlify Environment Variables](https://docs.netlify.com/environment-variables/overview/#environment-variable-options)
-- [Netlify Edge Middleware Source](https://github.com/BuilderIO/qwik/blob/main/packages/qwik-city/middleware/netlify-edge/index.ts)
+- [Variables d'environnement de Netlify](https://docs.netlify.com/environment-variables/overview/#environment-variable-options)
+- [Source du Middleware de Netlify Edge](https://github.com/BuilderIO/qwik/blob/main/packages/qwik-city/middleware/netlify-edge/index.ts)

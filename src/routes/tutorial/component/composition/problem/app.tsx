@@ -3,8 +3,8 @@ import { component$ } from '@builder.io/qwik';
 export const App = component$(() => {
   return (
     <div>
-      Insert Greeter component here. By composing components together large applications can be
-      written without putting all of the code into a single file/component.
+      Insérez le composant Greeter ici. En assemblant des composants, il est possible d'écrire de grandes applications
+      sans avoir à mettre tout le code dans un seul fichier/composant.
     </div>
   );
 });

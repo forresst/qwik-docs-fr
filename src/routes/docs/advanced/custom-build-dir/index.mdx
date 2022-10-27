@@ -1,19 +1,19 @@
 ---
-title: Custom Build Output Directory
+title: Répertoire personnalisé de sortie de construction
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-# Custom Build Output Directory
+# Répertoire personnalisé de sortie de construction
 
-By default, the build output directory for Qwik is the `dist` folder in the root folder of the project.
+Par défaut, le répertoire de sortie de construction pour Qwik est le dossier `dist` dans le dossier racine du projet.
 
-In certain cases, sometimes we need to make the build output directory different from the default package.
+Dans certains cas, nous devons parfois faire en sorte que le répertoire de sortie de construction soit différent du paquet par défaut.
 
-## Wrong Way
+## La mauvaise méthode
 
-Usually with Vite.js we do it like this:
+Habituellement, avec Vite.js, nous procédons comme suit :
 
 ```js
 // vite.config.js
@@ -29,7 +29,7 @@ export default defineConfig(() => {
   return {
     /* VITE_CONFIG */
     build: {
-      outDir: '../resources/', // This will be overrided to `dist` by qwikVite() setting
+      outDir: '../resources/', // Cette valeur sera remplacée par `dist` par le paramétrage de qwikVite()
     },
     plugins: [
       qwikCity({
@@ -45,11 +45,11 @@ export default defineConfig(() => {
 });
 ```
 
-However, it will be overridden by the settings of QwikVite() so nothing happens and the build output directory is still in the `dist` folder
+Cependant, il sera écrasé par les paramètres de QwikVite() donc rien ne se passe et le répertoire de sortie de la compilation est toujours dans le dossier `dist`.
 
-## The Right Way
+## La bonne méthode
 
-So instead of changing the settings in Vite.js directly, we just need to change the settings in QwikVite() like this:
+Donc, au lieu de changer les paramètres dans Vite.js directement, nous avons juste besoin de changer les paramètres dans QwikVite() comme ceci :
 
 ```ts
 import { defineConfig } from 'vite';
@@ -64,7 +64,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite({
         client: {
-          outDir: 'resources/', // This is the right setting
+          outDir: 'resources/', // C'est le bon paramétrage
         },
       }),
       tsconfigPaths(),
@@ -73,4 +73,4 @@ export default defineConfig(() => {
 });
 ```
 
-So that the output build directory becomes `resources`, please rename this folder name as needed.
+Pour que le répertoire de construction de sortie devienne `resources`, veuillez renommer ce nom de dossier si nécessaire.

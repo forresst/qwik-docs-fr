@@ -5,9 +5,9 @@ contributors:
   - zahash
   - manucorporat
 ---
-# Cheat sheet
+# Aide-mémoire
 
-### Hello world component
+### Composanr Hello world
 
 #### ⚡️ Qwik
 
@@ -25,7 +25,7 @@ export function HelloWorld() {
 };
 ```
 
-### Button with a click handler
+### Bouton avec un gestionnaire de clics
 
 #### ⚡️ Qwik
 
@@ -43,7 +43,7 @@ export function Button() {
 };
 ```
 
-### Declare local state
+### Déclarer un état local
 
 #### ⚡️ Qwik
 
@@ -65,7 +65,7 @@ export function UseStateExample() {
 };
 ```
 
-### Create a counter component
+### Créer un composant compteur
 
 #### ⚡️ Qwik
 
@@ -97,7 +97,7 @@ export function Counter() {
 };
 ```
 
-### Create a clock that increments every second
+### Créer une horloge qui s'incrémente toutes les secondes
 
 #### ⚡️ Qwik
 
@@ -132,7 +132,7 @@ export function Clock() {
 };
 ```
 
-### Perform a fetch request every time the state changes
+### Effectuer une requête fetch chaque fois que l'état change
 
 #### ⚡️ Qwik
 
@@ -179,7 +179,7 @@ export function Fetch() {
 };
 ```
 
-### Declare some context and consume it
+### Déclarer un contexte et le consommer
 
 #### ⚡️ Qwik
 
@@ -223,7 +223,7 @@ export const Child = () => {
 };
 ```
 
-### Create a debounced input
+## Créer une saisie avec un affichage retardé
 
 #### ⚡️ Qwik
 
@@ -235,7 +235,7 @@ export const DebouncedInput = component$(() => {
     debouncedValue: '',
   });
 
-  useWatch$(({ track }) => {
+  useWatch$(({track}) => {
     track(() => state.value);
     const debounced = setTimeout(() => {
       state.debouncedValue = state.value;
@@ -276,7 +276,7 @@ export const DebouncedInput = () => {
 };
 ```
 
-### Change background color randomly every button click
+### Changer la couleur de fond de manière aléatoire à chaque clic sur un bouton
 
 #### ⚡️ Qwik
 
@@ -328,7 +328,7 @@ export function DynamicBackground() {
 };
 ```
 
-### Create a component that renders a list of the presidents
+### Créer un composant qui fait le rendu de la liste des présidents
 
 #### ⚡️ Qwik
 

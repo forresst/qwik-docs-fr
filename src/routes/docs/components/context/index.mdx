@@ -1,5 +1,5 @@
 ---
-title: Context
+title: Contexte
 contributors:
   - manucorporat
   - RATIU5
@@ -7,21 +7,21 @@ contributors:
   - adamdbradley
 ---
 
-# Context
+# Contexte
 
-Qwik provides a context API, very similar to React's functional `useContext()`. In fact, Qwik's context API is the most efficient way to pass data down, reducing overhead, generating less code, and allowing Qwik to treeshake unused data more heavily.
+Qwik fournit une API de contexte, très similaire à la fonctionnalité `useContext()` de React. En fait, l'API de contexte de Qwik est le moyen le plus efficace de faire descendre les données, réduisant la surcharge, générant moins de code et permettant à Qwik de faire du tree shaking plus poussé sur les données inutilisées.
 
-Qwik's context API is made of 3 methods, importable from `@builder.io/qwik`:
+L'API du contexte de Qwik est composée de 3 méthodes, importables depuis `@builder.io/qwik` :
 
 - `createContext(contextName: string): Context`
 - `useContextProvider(ctx: Context, value: VALUE): Context`
 - `useContext(ctx: Context): VALUE`
 
-### Example
+### Exemple
 
-This example is made of two components, the `Parent` and the `Child`. The parent component creates some new state and assigns it to a context, allowing any descendent component to get a reference to the "state".
+Cet exemple est composé de deux éléments, le `Parent` et le `Child`. Le composant parent crée un nouvel état et l'affecte à un contexte, permettant à tout composant descendant d'obtenir une référence à cet « état ».
 
-At the same time, the parent component is rendering `<div>Count: {state.count}</div>`, creating a reactive subscription that will re-render when the Child changes the value in the click handler: `<button onClick$={() => state.count++}>`.
+Dans le même temps, le composant parent effectue le rendu de `<div>Count: {state.count}</div>`, créant ainsi un abonnement réactif, qui sera re-rendu lorsque l'enfant changera la valeur dans le gestionnaire de clic : `<button onClick$={() => state.count++}>`.
 
 ```tsx
 import {
@@ -32,57 +32,57 @@ import {
   createContext,
 } from '@builder.io/qwik';
 
-// Create a new context descriptor
+// Crée un nouveau descripteur de contexte
 export const MyContext = createContext('my-context');
 
 export const Parent = component$(() => {
-  // Create some reactive storage
+  // Crée un stockage réactif
   const state = useStore({
     count: 0,
   });
 
-  // Assign value (state) to the context (MyContext)
+  // Attribue une valeur (state) au contexte (MyContext)
   useContextProvider(MyContext, state);
   return (
     <>
       <Child />
-      <div>Count: {state.count}</div>
+      <div>Compteur : {state.count}</div>
     </>
   );
 });
 
 export const Child = component$(() => {
-  // Get reference to state using MyContext
+  // Obtient une référence de state en utilisant MyContext
   const state = useContext(MyContext);
   return (
     <>
-      <button onClick$={() => state.count++}>Increment</button>
+      <button onClick$={() => state.count++}>Incrémenter</button>
     </>
   );
 });
 ```
 
-Let's dig into every API involved:
+Examinons de plus près toutes les API concernées :
 
 ## API
 
 ### `createContext()`
 
-This method takes a string that gives the context unique name, if your application uses a lot of different context or you are writing a component library, we recommend to follow a name convention that avoids conflicts, such as:
+Cette méthode prend un string qui donne un nom unique au contexte, si votre application utilise beaucoup de contextes différents ou si vous écrivez une bibliothèque de composants, nous vous recommandons de suivre une convention de nom qui évite les conflits, comme par exemple :
 
 ```tsx
 export const QwikCityContext = createContext('io.builder.qwik.city');
 ```
 
-Notice that the value returned by `createContext()` does not hold any state, and it's immutable. It's only used to describe the name and type of the context, like an address or an identifier.
+Remarquez que la valeur retournée par `createContext()` ne contient aucun état, et elle est immuable. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
 
-Because it does not hold any state, it's ok to call it and make it a singleton, exported in some shared module.
+Parce qu'elle ne contient aucun état, il est possible de l'appeler et d'en faire un singleton, exporté dans un module partagé.
 
 ### `useContextProvider()`
 
-Like all use- methods, it can only be called at the root of `component$()` (not inside branches). This method is called by some higher level component and it's what assigns (provides) a value to the context. The provided value will not be globally available across the whole render tree, but only to descendant components in the tree.
+Comme toutes les méthodes use-, elle ne peut être appelée qu'à la racine de `component$()` (pas à l'intérieur des branches). Cette méthode est appelée par un composant de niveau supérieur et c'est ce qui assigne (fournit) une valeur au contexte. La valeur fournie ne sera pas globalement disponible dans toute l'arborescence du rendu, mais seulement pour les composants descendants dans l'arborescence.
 
-The value passed to `useContextProvider()` can be any primitive, object (including from useStore), or array that contains serializable values.
+La valeur passée à `useContextProvider()` peut être n'importe quelle primitive, objet (inclus dans useStore), ou tableau qui contient des valeurs sérialisables.
 
 ```tsx
 export const Parent = component$(() => {
@@ -105,11 +105,11 @@ export const Parent = component$(() => {
 });
 ```
 
-Let's see how `Children` can consume the values:
+Voyons comment `Children` peut consommer les valeurs :
 
 ### `useContext()`
 
-Again, like all use- methods, they are only usable at the root of a `component$()`. This methods allows us to get the **provided** value to a named context.
+Encore une fois, comme toutes les méthodes use-, elles sont utilisables uniquement à la racine d'un `component$()`. Cette méthode nous permet de récupérer la valeur **fournie** dans un contexte nommé.
 
 ```tsx
 export const Children = component$(() => {
@@ -119,15 +119,15 @@ export const Children = component$(() => {
 
   return (
     <>
-      <div>Child components can use any of the provided values, such as {appName}</div>
+      <div>Les composants enfants peuvent utiliser n'importe laquelle des valeurs fournies, telles que {appName}</div>
     </>
   );
 });
 ```
 
-## Typed contexts
+## Contextes typés
 
-When a context is created using `createContext()`, a type can be provided. In fact, it's highly recommended to do so, in order to reduce errors and typos.
+Lorsqu'un contexte est créé en utilisant `createContext()`, un type peut être fourni. En fait, il est fortement recommandé de le faire, afin de réduire les erreurs et les fautes de frappe :
 
 ```tsx
 export interface SharedState {
@@ -136,9 +136,9 @@ export interface SharedState {
 export const MyContext = createContext<SharedState>('my-context');
 ```
 
-This way, when using `MyContext` in `useContextProvider()` and `useContext()`, the provided value will have the `SharedState` type.
+De cette façon, lorsque vous utilisez `MyContext` dans `useContextProvider()` et `useContext()`, la valeur fournie aura le type `SharedState`.
 
-Let's see a working example:
+Voyons un exemple concret :
 
 ```tsx
 import {
@@ -159,20 +159,20 @@ export const Parent = component$(() => {
     count: 0,
   });
 
-  useContextProvider(MyContext, state); // type checker will ensure the second param is SharedState
+  useContextProvider(MyContext, state); // le vérificateur de type s'assurera que le deuxième paramètre est de type SharedState
   return (
     <>
       <Child />
-      <div>Count: {state.count}</div>
+      <div>Compteur : {state.count}</div>
     </>
   );
 });
 
 export const Child = component$(() => {
-  const state = useContext(MyContext); // type of "state" will be `SharedState`
+  const state = useContext(MyContext); // le type de "state" sera "SharedState".
   return (
     <>
-      <button onClick$={() => state.count++}>Increment</button>
+      <button onClick$={() => state.count++}>Incrémenter</button>
     </>
   );
 });

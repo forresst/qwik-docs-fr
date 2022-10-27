@@ -1,26 +1,26 @@
 ---
-title: Welcome to Qwik Tutorials
+title: Bienvenue sur les tutoriels de Qwik
 ---
 
-### Welcome to Qwik!
+### Bienvenue sur Qwik !
 
-Qwik is a front-end framework for building [**resumable**](../../../docs/concepts/resumable/index.mdx) applications that start-up **instantly** on the client. Qwik achieves this by focusing on its philosophy of **downloading and executing only the code that is strictly necessary** to perform the user-triggered action. Qwik is a fine-grained lazy-loading framework representing a fundamentally new approach to building web applications.
+Qwik est un framework frontal pour construire des applications [**résumables**](../../../docs/concepts/resumable/index.mdx) qui démarrent **instantanément** sur le client. Qwik réalise ceci en se concentrant sur sa philosophie de **charger et exécuter seulement le code qui est strictement nécessaire** pour effectuer l'action déclenchée par l'utilisateur. Qwik est un framework de chargement différé à grain fin représentant une approche fondamentalement nouvelle de la construction d'applications web.
 
-### Qwik Tutorials
+### Tutoriels de Qwik
 
-What follows is a set of tutorials that will help you get started with Qwik. Each tutorial focuses on a single topic and contains a hands-on example that requires your participation to make it work.
+Ce qui suit est un ensemble de tutoriels qui vous aideront à démarrer avec Qwik. Chaque tutoriel se concentre sur un seul sujet et contient un exemple pratique qui nécessite votre participation pour le faire fonctionner.
 
-The tutorials are broken up into these sections:
+Les tutoriels sont divisés en plusieurs sections :
 
-- [Qwik Introduction](../../../tutorial/introduction/component/index.mdx): A fast-paced introduction to Qwik where we focus more on building a simple application with server-side pre-rendering and client-side interactivity. This tutorial is designed to give you a feel over how Qwik applications are built rather than focusing on details of individual APIs.
-- [Components](../../component/basic/index.mdx): All about declaring, binding, and composition of components.
-- [Events](../../events/basic/index.mdx): Declaring, binding, and triggering events.
-- [Stores](../../store/basic/index.mdx): Declaring stores, data-binding, reactivity, and serialization.
-- [Props](../../props/basic/index.mdx): A deep dive into declaring and working with props and components and serialization constraints.
-- [Reactivity](../../reactivity/template/index.mdx): A deep dive into how reactivity works and how it can be used to build a more complex application.
-- [Context](../../context/basic/index.mdx): Making data globaly available to your application through context.
-- [Hooks](../../hooks/use-mount/index.mdx): Component life-cycle hooks.
-- [Projection](../../projection/basic/index.mdx): A deep dive into how projection works and how to use it in more complex scenarios.
-- [Styling](../../style/styles/index.mdx): Styling your application with CSS.
-- [Optimizer](../../qrl/optimizer/index.mdx): Understanding the Optimizer constraints.
-- [Composing new APIs](../../composing/dollar/index.mdx): Composing new `use___()` and `$` APIs for your application.
+- [Introduction à Qwik](../../../tutorial/introduction/component/index.mdx) : Une introduction rapide à Qwik où nous nous concentrons davantage sur la construction d'une application simple avec un pré-rendu côté serveur et une interactivité côté client. Ce tutoriel est conçu pour vous donner une idée de la façon dont les applications Qwik sont construites plutôt que de se concentrer sur les détails des API individuelles.
+- [Composants](../../component/basic/index.mdx) : Tout sur la déclaration, la liaison et la composition des composants.
+- [Événements](../../events/basic/index.mdx) : Déclarer, lier et déclencher des événements.
+- [Stores](../../store/basic/index.mdx) : Déclaration des stores, liaison des données, réactivité et sérialisation.
+- [Props](../../props/basic/index.mdx) : Une immersion en profondeur dans la déclaration et le travail avec les props et les composants et les contraintes de sérialisation.
+- [Réactivité](../../reactivity/template/index.mdx) : Une immersion en profondeur dans le fonctionnement de la réactivité et la façon dont elle peut être utilisée pour construire une application plus complexe.
+- [Contexte](../../context/basic/index.mdx) : Rendre les données globalement disponibles pour votre application grâce au contexte.
+- [Hooks](../../hooks/use-mount/index.mdx) : Hooks du cycle de vie des composants.
+- [Projection](../../projection/basic/index.mdx) : Une immersion en profondeur dans le fonctionnement de la projection et comment l'utiliser dans des scénarios plus complexes.
+- [Style](../../style/styles/index.mdx) : Styliser votre application avec du CSS.
+- [Optimiseur](../../qrl/optimizer/index.mdx) : Comprendre les contraintes de l'Optimiseur.
+- [Composition de nouvelles API](../../composing/dollar/index.mdx) : Composer de nouvelles API `use___()` et `$` pour votre application.

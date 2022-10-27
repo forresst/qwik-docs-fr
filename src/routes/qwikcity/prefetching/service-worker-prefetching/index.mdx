@@ -1,5 +1,5 @@
 ---
-title: Qwik City Prefetching and Caching with a Service Worker
+title: Qwik City Prélecture et mise en cache avec un service worker
 contributors:
   - stijlmassi
   - adamdbradley
@@ -7,38 +7,38 @@ contributors:
   - mhevery
 ---
 
-# Prefetching and Caching with a Service Worker
+# Prélecture et mise en cache avec un service worker
 
-Traditionally, a service worker is used to prefetch most, or all, of the bundles an application uses. [Service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers) are commonly seen only as a way to make an application work offline.
+Traditionnellement, un worker de service est utilisé pour précharger la plupart, voire la totalité, des bundles qu'une application utilise. Les [Service Workers] (https://developer.mozilla.org/fr/docs/Web/API/Service_Worker_API/Using_Service_Workers) sont généralement vus comme un moyen de faire fonctionner une application hors ligne.
 
-Qwik City, however, uses service workers quite differently to provide a powerful prefetching and caching strategy. Instead, the goal is not to download the entire application, but rather to use the service worker to dynamically prefetch what's _possible_ to execute. By _not_ prefetching the entire application, this free's up resources to only request the small parts of the app a user _could_ use for what the user has on their screen at that time.
+Qwik City, cependant, utilise les service workers très différemment pour fournir une stratégie puissante de préchargement et de mise en cache. Au contraire, le but n'est pas de télécharger l'application entière, mais plutôt d'utiliser le service worker pour précharger dynamiquement ce qui est _possible_ d'exécuter. En _ne préchargeant pas_ toute l'application, cela libère des ressources pour ne demander que les petites parties de l'appli qu'un utilisateur _pourrait_ utiliser en fonction de ce qu'il a sur son écran à ce moment-là.
 
-## Background Task
+## Tâche en arrière-plan
 
-An advantage of using a service worker is that it's also an extension of a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), which runs in a background thread.
+Un avantage de l'utilisation d'un service worker est qu'il s'agit également d'une extension d'un [worker] (https://developer.mozilla.org/fr/docs/Web/API/Web_Workers_API), qui s'exécute dans un thread d'arrière-plan.
 
-> Web Workers makes it possible to run a script operation in a background thread separate from the main execution thread of a web application. The advantage of this is that laborious processing can be performed in a separate thread, allowing the main (usually the UI) thread to run without being blocked/slowed down.
+> Les Web Workers permettent d'exécuter une opération de script dans un thread d'arrière-plan distinct du thread d'exécution principal d'une application Web. L'avantage est que les traitements coûteux peuvent être exécutés dans un thread séparé, ce qui permet au thread principal (généralement l'interface utilisateur) de fonctionner sans être bloqué ou ralenti.
 
-By moving the prefetching and caching logic to a service worker (which is a worker), we're able to essentially run the code in a background task, in order to not interfere with the main UI thread. By not interfering with the main UI we're able to help improve the performance of the Qwik application for users.
+En déplaçant la logique de préchargement et de mise en cache vers un service worker (qui est un worker), nous sommes en mesure d'exécuter le code en tâche de fond, afin de ne pas interférer avec le thread principal de l'interface utilisateur. En n'interférant pas avec l'interface principale, nous sommes en mesure d'améliorer les performances de l'application Qwik pour les utilisateurs.
 
-## Interactive Prefetching And Caching
+## Prélecture et mise en cache interactives
 
-Qwik itself should be configured to use the [prefetchEvent](../../../docs/advanced/prefetching/index.mdx) implementation (which is also Qwik's default). When Qwik emits the [qprefetch](../overview/index.mdx#prefetch-event) event, the service worker registration actively forwards the prefetch event data to the installed and active service worker.
+Qwik lui-même doit être configuré pour utiliser l'implémentation [prefetchEvent](../../../docs/advanced/prefetching/index.mdx) (qui est aussi la valeur par défaut de Qwik). Quand Qwik émet l'évènement [qprefetch](../overview/index.mdx#prefetch-event), l'enregistrement du service worker transmet activement les données de l'évènement prefetch au service worker installé et actif.
 
-The service worker then prefetches and caches the requested bundles on demand. The main thread simply has to emit data of what bundles it may need, while the service worker is only focused on ensuring it has the bundles cached. To do this the service worker pre-populates the browser's [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache).
+Le service worker précharge et met en cache les bundles souhaités en fonction de la demande. Le thread principal doit simplement émettre des données sur les bundles dont il peut avoir besoin, tandis que le service worker s'assure uniquement que les bundles sont mis en cache. Pour ce faire, le service worker pré-remplit le [Cache](https://developer.mozilla.org/fr/docs/Web/API/Cache) du navigateur.
 
-1. If the browser already has it cached? Great, do nothing!
-2. If the browser hasn't already cached this bundle, then let's kick off the fetch request.
+1. Si le navigateur l'a déjà mis en cache ? Super, ne faites rien !
+2. Si le navigateur n'a pas déjà mis en cache ce bundle, lançons la requête de récupération.
 
-Read more about [Caching Request and Response Pairs](../request-response-cache/index.mdx).
+Pour en savoir plus sur la [Mise en cache des paires de requêtes et de réponses](../request-response-cache/index.mdx).
 
-Additionally, the service worker ensures that multiple requests for the same bundle do not happen at the same time. More about this in the [Parallelizing Network Requests](../parallelizing-network-requests/index.mdx) documentation.
+De plus, le service worker s'assure que plusieurs requêtes pour le même bundle ne se produisent pas en même temps. Pour en savoir plus, consultez la documentation [Parallélisation des requêtes réseau](../parallelizing-network-requests/index.mdx).
 
-## User Service Worker Code
+## Code utilisateur du service worker
 
-The service worker that is installed is still controlled entirely by the developer. For example, the source file `src/routes/service-worker.ts` becomes `/service-worker.js`, which is the script requested by the browser. Notice how it's place within `src/routes` still follows the same directory based routing pattern.
+Le service worker qui est installé est toujours entièrement contrôlé par le développeur. Par exemple, le fichier source `src/routes/service-worker.ts` devient `/service-worker.js`, qui est le script requêté par le navigateur. Remarquez comment sa place dans `src/routes` suit toujours le même modèle de routage basé sur les répertoires.
 
-Below is an example of a default `src/routes/service-worker.ts` source file:
+Voici un exemple de fichier source `src/routes/service-worker.ts` par défaut :
 
 ```ts
 import { setupServiceWorker } from '@builder.io/qwik-city/service-worker';
@@ -50,12 +50,12 @@ addEventListener('install', () => self.skipWaiting());
 addEventListener('activate', () => self.clients.claim());
 ```
 
-The source code for `src/routes/service-worker.ts` can be modified by the developer however they'd like. This includes opting-in, or opting-out, of setting up Qwik City's service worker.  
+Le code source de `src/routes/service-worker.ts` peut être modifié par le développeur comme il le souhaite. Cela inclut le fait d'accepter ou de refuser de mettre en place le service worker de Qwik City.
 
-Notice that the `setupServiceWorker()` function is imported from `@builder.io/qwik-city/service-worker` and executed at the top of the source file. If, and where, this function is called can be modified by the developer. For example, the developer may want to handle the fetch requests first, in which case they'd add their own fetch listener above `setupServiceWorker()`. Or if they didn't want to use Qwik City's service worker at all, they would just have to remove `setupServiceWorker()` from the file.
+Remarquez que la fonction `setupServiceWorker()` est importée de `@builder.io/qwik-city/service-worker` et exécutée en haut du fichier source. Le développeur peut modifier l'appel de cette fonction à un autre moment ou de manière conditionnelle. Par exemple, le développeur peut vouloir gérer les requêtes de récupération en premier, auquel cas il ajoutera son propre écouteur de récupération au-dessus de `setupServiceWorker()`. Ou s'il ne veut pas du tout utiliser le service worker de Qwik City, il doit juste supprimer `setupServiceWorker()` du fichier.
 
-Additionally, the default `src/routes/service-worker.ts` file comes with an [install](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/install_event) and [activate](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/activate_event) event listeners, each added at the bottom of the file. The callbacks provided are the recommended callbacks. However, the developer can modify these callbacks depending on their own app's requirements.
+De plus, le fichier `src/routes/service-worker.ts` par défaut est fourni avec des écouteurs d'événements [install](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/install_event) et [activate](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/activate_event), chacun étant ajouté en bas du fichier. Les callbacks fournis sont les callbacks recommandés. Cependant, le développeur peut les modifier en fonction des besoins de ses propres applis.
 
-Another important note is that Qwik City's request intercepting is _only_ for Qwik bundles, it does not attempt to handle any requests which are not a part of its build.
+Une autre remarque importante est que l'interception des requêtes de Qwik City est _seulement_ pour les bundles Qwik, il ne tente pas de gérer les requêtes qui ne font pas partie de sa construction.
 
-So while Qwik City does provide a way to help prefetch and cache bundles, it does not take full control of the app's service worker. This still allows developers to add their service worker logic without conflicting with Qwik.
+Donc, bien que Qwik City fournisse un moyen pour aider à précharger et mettre en cache les bundles, il ne prend pas le contrôle total du service worker de l'appli. Cela permet toujours aux développeurs d'ajouter leur logique de service worker sans entrer en conflit avec Qwik.

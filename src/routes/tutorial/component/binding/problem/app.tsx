@@ -9,18 +9,19 @@ export const App = component$(() => {
 
   return (
     <>
-      <input value="data.name should go here" />
+      <input value="data.name devrait aller ici" />
       <br />
       <textarea rows={10} cols={60}>
-        data.description should go here
+        data.description devrait aller ici
       </textarea>
     </>
   );
 });
 
 export const DESCRIPTION = `
-Qwik is designed for the fastest possible page load time, 
-by delivering pure HTML with near 0 JavaScript for your 
-pages to become interactive, regardless of how complex 
-your site or app is. It achieves this via resumability 
-of code.`;
+Qwik est conçu pour obtenir le temps de chargement des pages 
+le plus rapide possible, en délivrant du HTML pur avec
+quasiment aucun JavaScript pour que vos pages deviennent
+interactives, quelle que soit la complexité de votre site ou de
+votre appli. Il atteint cet objectif via la résumabilité 
+du code`;

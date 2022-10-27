@@ -11,14 +11,14 @@ contributors:
 
 # Menu
 
-Menus allow you to describe the site navigation structure in a simple declarative way. Menus come in two steps:
+Les menus vous permettent de décrire la structure de navigation du site d'une manière simple et déclarative. Les menus se composent de deux étapes :
 
-1. Defining a `menu.md` file that contains the menu structure for the directory it's in.
-2. Using the `useContent()` function to retrieve the menu structure in a template for rendering. [Read more here](../../../qwikcity/api/use-content/index.mdx)
+1. Définition d'un fichier `menu.md` qui contient la structure du menu pour le répertoire dans lequel il se trouve.
+2. Utilisation de la fonction `useContent()` pour récupérer la structure du menu dans un modèle pour le rendu. [Lire la suite ici](../../../qwikcity/api/use-content/index.mdx)
 
-## File Structure
+## Structure des fichiers
 
-First layout files as follows:
+Les premiers fichiers de mise en page sont les suivants :
 
 ```
 src/
@@ -30,45 +30,45 @@ src/
             └── index.tsx  # https://example.com/some/path
 ```
 
-Navigating to `https://example.com/some/path` activates:
+La navigation vers `https://example.com/some/path` active :
 
-- `src/routes/some/path/index.tsx`: This component will be used for rendering the page content.
-- `src/routes/some/layout.tsx`: This layout will be used to provide content around the `src/routes/some/path/index.tsx`. Internally the layout can use `src/routes/some/menu.md` to render the menus.
-- `src/routes/some/menu.md`: This file will be used to declare the menu structure which will be rendered by `src/routes/some/layout.tsx`.
+- `src/routes/some/path/index.tsx` : Ce composant sera utilisé pour le rendu du contenu de la page.
+- `src/routes/some/layout.tsx` : Cette mise en page sera utilisée pour fournir du contenu autour du fichier `src/routes/some/path/index.tsx`. En interne, la mise en page peut utiliser le fichier `src/routes/some/menu.md` pour rendre les menus.
+- `src/routes/some/menu.md` : Ce fichier sera utilisé pour déclarer la structure du menu qui sera rendu par `src/routes/some/layout.tsx`.
 
-## Declaring Menu Structure
+## Déclaration de la structure du menu
 
-Use `menu.md` to declare the menu structure.
+Utilisez `menu.md` pour déclarer la structure du menu.
 
-- Use the headings (`#`, `##`, etc..) to define menu depth
-- Use the bulleted list (`-`) to define menu items.
+- Utilisez les entêtes (`#`, `##`, etc..) pour définir la profondeur du menu.
+- Utilisez la liste à puces (`-`) pour définir les éléments du menu.
 
 ```markdown
 <!-- File: src/routes/some/menu.md -->
 
 # Docs
 
-## Getting Started
+## Démarrage
 
 - [Introduction](introduction/index.md)
 
-## Components
+## Composants
 
-- [Basics](/docs/components/basics/index.mdx)
+- [Bases](/docs/components/basics/index.mdx)
 ```
 
-## Retrieving Menu Structure
+## Récupération de la structure du menu
 
-At runtime, any component can retrieve the menu with `useContent()` hook. The type returned is `ContentMenu`.
+Au moment de l'exécution, tout composant peut récupérer le menu avec le hook `useContent()`. Le type retourné est `ContentMenu`.
 
-The example above will return:
+L'exemple ci-dessus renverra :
 
 ```javascript
 {
   text: "Docs",
   items: [
     {
-      text: "Getting Started",
+      text: "Démarrage",
       items: [
         {
           text: "Introduction",
@@ -77,10 +77,10 @@ The example above will return:
       ],
     },
     {
-      text: "Components",
+      text: "Composants",
       items: [
         {
-          text: "Basics",
+          text: "Bases",
           href: "/docs/components/basics"
         }
       ],
@@ -89,9 +89,9 @@ The example above will return:
 }
 ```
 
-## Using `ContentMenu` in a layout
+## Utilisation de `ContentMenu` dans une mise en page
 
-While `useContent()` can be invoked from any component that is part of the current route. It is typically used in a layout component (or a component used by layout) to render the menu. An example usage is shown here:
+Bien que `useContent()` peut être invoqué à partir de n'importe quel composant faisant partie de la route actuelle. Il est généralement utilisé dans un composant de mise en page (ou un composant utilisé par la mise en page) pour rendre le menu. Un exemple d'utilisation est présenté ici :
 
 ```typescript
 export default component$(() => {

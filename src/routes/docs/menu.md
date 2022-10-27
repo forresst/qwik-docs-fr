@@ -2,45 +2,45 @@
 
 ## Guides
 
-- [Overview](overview/index.mdx)
-- [Getting Started](getting-started/index.mdx)
-- [Think Qwik](think-qwik/index.mdx)
+- [Vue d'ensemble](overview/index.mdx)
+- [Démarrage](getting-started/index.mdx)
+- [Pensez Qwik](think-qwik/index.mdx)
 - [FAQ](faq/index.mdx)
-- [Routing (QwikCity)](../qwikcity/overview/index.mdx)
+- [Routage (QwikCity)](../qwikcity/overview/index.mdx)
 
-## Component API
+## API de composant
 
-- [Overview](components/overview/index.mdx)
-- [State](components/state/index.mdx)
-- [Events](components/events/index.mdx)
-- [Lifecycle](components/lifecycle/index.mdx)
-- [Context](components/context/index.mdx)
-- [Resource](components/resource/index.mdx)
-- [Lite components](components/lite-components/index.mdx)
-- [Content projection](components/projection/index.mdx)
-- [Rendering](components/rendering/index.mdx)
+- [Vue d'ensemble](components/overview/index.mdx)
+- [État](components/state/index.mdx)
+- [Événements](components/events/index.mdx)
+- [Cycle de vie](components/lifecycle/index.mdx)
+- [Contexte](components/context/index.mdx)
+- [Ressource](components/resource/index.mdx)
+- [Composants légers](components/lite-components/index.mdx)
+- [Projection de contenu](components/projection/index.mdx)
+- [Rendu](components/rendering/index.mdx)
 
-## Cheat Sheet
+## Aide-mémoire
 
 - [Qwik vs React](cheat/qwik-react/index.mdx)
-- [Serialization](cheat/serialization/index.mdx)
+- [Sérialisation](cheat/serialization/index.mdx)
 
 ## Concepts
 
-- [Resumable](concepts/resumable/index.mdx)
-- [Progressive](concepts/progressive/index.mdx)
-- [Reactive](concepts/reactivity/index.mdx)
+- [Résumable](concepts/resumable/index.mdx)
+- [Progressif](concepts/progressive/index.mdx)
+- [Réactif](concepts/reactivity/index.mdx)
 
-## Advanced
+## Avancé
 
-- [Prefetching](advanced/prefetching/index.mdx)
-- [Containers](advanced/containers/index.mdx)
-- [Optimizer](advanced/optimizer/index.mdx)
+- [Prélecture](advanced/prefetching/index.mdx)
+- [Conteneurs](advanced/containers/index.mdx)
+- [Optimiseur](advanced/optimizer/index.mdx)
 - [QRL](advanced/qrl/index.mdx)
 - [Qwikloader](advanced/qwikloader/index.mdx)
-- [Custom Build Directory](advanced/custom-build-dir/index.mdx)
+- [Répertoire personnalisé de construction](advanced/custom-build-dir/index.mdx)
 
-## Community
+## Communauté
 
 - [Github](https://github.com/BuilderIO/qwik)
 - [@QwikDev](https://twitter.com/QwikDev)

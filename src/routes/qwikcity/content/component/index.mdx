@@ -1,5 +1,5 @@
 ---
-title: Qwik City - Components
+title: Qwik City - Composants
 contributors:
   - manucorporat
   - adamdbradley
@@ -9,11 +9,11 @@ contributors:
   - nnelgxorz
 ---
 
-# Components
+# Composants
 
-Page content can be created using Qwik components. The component representing the content should be exported as a `default` export.
+Le contenu d'une page peut être créé en utilisant des composants Qwik. Le composant représentant le contenu doit être exporté comme un export `default`.
 
-Let's assume you have your routes set up like this:
+Supposons que vos routes soient configurées comme suit :
 
 ```
 src/
@@ -24,18 +24,18 @@ src/
 ```
 
 ```typescript
-// File: src/routes/some/path/index.tsx
+// Fichier : src/routes/some/path/index.tsx
 import { component$ } from '@builder.io/qwik';
 
-// Notice the default export
+// Remarquez l' export par défaut
 export default component$(() => {
   return <h1>Hello World!</h1>;
 });
 ```
 
-## Importing other components
+## Importation d'autres composants
 
-You can build complex views by composing multiple components within each other. To do that import other components into your `index.tsx` file.
+Vous pouvez construire des vues complexes en assemblant plusieurs composants les uns dans les autres. Pour ce faire, importez d'autres composants dans votre fichier `index.tsx`.
 
 ```
 src/
@@ -48,14 +48,14 @@ src/
             └── sub_component.tsx
 ```
 
-Inside `index.tsx` you can create a component that is exported as `default` export. Content is created by writing a template with [JSX](https://reactjs.org/docs/introducing-jsx.html)-Syntax. Every component-function returns the template that should be rendered on the screen. If you want to learn more about the component anatomy, please see [components documentation](../../../docs/components/overview/index.mdx).
-The following component will be rendered at `https://example.com/some/path` according to the directory-structure, we have set up above.
+A l'intérieur de `index.tsx` vous pouvez créer un composant qui est exporté comme `default`. Le contenu est créé en écrivant un template avec la syntaxe [JSX](https://reactjs.org/docs/introducing-jsx.html). Chaque fonction de composant renvoie le template qui doit être rendu à l'écran. Pour en savoir plus sur l'anatomie des composants, consultez la [documentation des composants](../../../docs/components/overview/index.mdx).
+Le composant suivant sera rendu sur `https://example.com/some/path` selon la structure du répertoire que nous avons mis en place ci-dessus.
 
 ```typescript
-// File: src/routes/some/path/index.tsx
+// Fichier : src/routes/some/path/index.tsx
 import { component$ } from '@builder.io/qwik';
 import Heading from '../../../components/heading';
-import SubComponent from './sub_component';
+import SubComponent from './_sub_component';
 
 export default component$(() => {
   return (
@@ -63,13 +63,13 @@ export default component$(() => {
       <Heading />
       <h2>Hello World!</h2>
       <SubComponent />
-    </>
+    </>;
   );
 });
 ```
 
 ```typescript
-// File: src/components/heading.tsx
+// Fichier : src/components/heading.tsx
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -78,7 +78,7 @@ export default component$(() => {
 ```
 
 ```typescript
-// File: src/routes/some/path/sub_component.tsx
+// Fichier : src/routes/some/path/_sub_component.tsx
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {

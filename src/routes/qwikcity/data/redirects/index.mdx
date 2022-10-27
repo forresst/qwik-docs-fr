@@ -1,17 +1,17 @@
 ---
-title: Qwik City - Redirects
+title: Qwik City - Redirections
 contributors:
   - adamdbradley
 ---
 
-# Redirects
+# Redirections
 
-Sometimes you want to redirect a user from the current page to another page.
+Parfois, vous souhaitez rediriger un utilisateur de la page actuelle vers une autre page.
 
-Let's say a user tries to go to a dashboard page but has not logged in yet. We want them to be redirected to a login page so they can be authenticated.
+Disons qu'un utilisateur essaie d'accéder à une page de tableau de bord mais qu'il ne s'est pas encore connecté. Nous voulons qu'il soit redirigé vers une page de connexion afin qu'il puisse s'authentifier.
 
 ```typescript
-// File: src/routes/dashboard.js
+// Fichier : src/routes/dashboard.js
 import { component$ } from '@builder.io/qwik';
 import { checkAuthorization } from '../auth'; // Your authorization code
 import type { DashboardData } from '../types'; // Your types
@@ -20,9 +20,9 @@ export const onGet: RequestHandler<DashboardData> = async ({ request, response }
   const isAuthorized = checkAuthorization(request.headers.get('cookie'));
 
   if (!isAuthorized) {
-    // User is not authorized!
-    // throw the redirect response to
-    // relocate the user to the log-in page
+    // L'utilisateur n'est pas autorisé !
+    // lève la réponse de redirection pour
+    // rediriger l'utilisateur vers la page de connexion
     throw response.redirect('/login');
   } else {
     // ...
@@ -30,18 +30,18 @@ export const onGet: RequestHandler<DashboardData> = async ({ request, response }
 };
 ```
 
-The `response.redirect()` function takes a URL and optionally a status code as the second argument.
+La fonction `response.redirect()` prend une URL et éventuellement un code d'état comme deuxième argument.
 
 ```tsx
 throw response.redirect('/login', 301); // Moved Permanently
 ```
 
-[Common redirect status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#redirection_messages):
+[Codes de statut de redirection communs](https://developer.mozilla.org/fr/docs/Web/HTTP/Status#messages_de_redirection) :
 
-- `302`: Found. This response code means that the URI of requested resource has been changed temporarily. Further changes in the URI might be made in the future. Therefore, this same URI should be used by the client in future requests.
-- `307`: Temporary Redirect. The server sends this response to direct the client to get the requested resource at another URI with the same method that was used in the prior request. This has the same semantics as the 302 Found HTTP response code, with the exception that the user agent must not change the HTTP method used: if a POST was used in the first request, a POST must be used in the second request.
-- `308`: Permanent Redirect. This means that the resource is now permanently located at another URI, specified by the `Location` HTTP Response header. This has the same semantics as the 301 Moved Permanently HTTP response code, with the exception that the user agent must not change the HTTP method used: if a POST was used in the first request, a POST must be used in the second request.
+- `302` : Found. Ce code de réponse indique que l'URI de la ressource demandée a été modifiée temporairement. De nouveaux changements dans l'URI pourront être effectués ultérieurement. Par conséquent, cette même URI devrait être utilisée par le client pour les requêtes futures.
+- `307` : Temporary Redirect. Le serveur a envoyé cette réponse pour rediriger le client afin d'obtenir la ressource demandée via un autre URI, en utilisant la même méthode que précédemment. Ce code a la même sémantique que le code 302 Found, à l'exception près que l'agent utilisateur ne doit pas changer la méthode HTTP utilisée : si POST était utilisé dans la première requête, alors POST doit être utilisé dans la seconde.
+- `308` : Permanent Redirect. Cela signifie que la ressource a été déplacée de manière permanente vers une autre URI, spécifiée dans l'entête de réponse HTTP `Location`. Ce code a la même sémantique que le code 301 Moved Permanently, à l'exception près que l'agent utilisateur ne doit pas changer la méthode HTTP utilisée : si POST était utilisé dans la première requête, alors POST doit être utilisé dans la seconde.
 
-If you do not provide a status code, Qwik City will default to a `302` Found status.
+Si vous ne fournissez pas de code de statut, Qwik City prendra par défaut un statut `302` Found.
 
-Read more about redirect status codes [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#redirection_messages).
+Pour en savoir plus sur les codes de statut de redirection, rendez-vous [ici](https://developer.mozilla.org/fr/docs/Web/HTTP/Status#messages_de_redirection).

@@ -7,29 +7,29 @@ contributors:
   - felixsanz
 ---
 
-Use `useClientEffect$()` to execute code after the component is resumed. This is useful for setting up timers or streams on the client when the application is resumed.
+Utilisez `useClientEffect$()` pour exécuter du code après que le composant soit résumé. Ceci est utile pour mettre en place des temporisateurs ou des flux sur le client lorsque l'application est résumée.
 
-## `track()` and `useClientEffect$()`
+## `track()` et `useClientEffect$()`
 
-`useClientEffect$()` receives a `track()` function just like `useWatch$()`. Use the `track()` function to trigger the effect when the store is updated. See [reactivity](../../../tutorial/reactivity/explicit/index.mdx) for more information.
+`useClientEffect$()` reçoit une fonction `track()` tout comme `useWatch$()`. Utilisez la fonction `track()` pour déclencher l'effet lorsque le store est mis à jour. Consultez la section [réactivité](../../../tutorial/reactivity/explicit/index.mdx) pour plus d'informations.
 
-## Component Life Cycle and SSR
+## Cycle de vie des composants et SSR
 
-Qwik is resumable. Resumability means that the application starts on the server and then is transferred to the client. On the client, the application continues execution from where it left off. A common use case is creating a component on the server, pausing, and then resuming on the client. To make the component fully functional, it may be necessary to execute code eagerly on the client to set up timers or streams.
+Qwik est résumable. La résumabilité signifie que l'application démarre sur le serveur et est ensuite transférée sur le client. Sur le client, l'application continue l'exécution là où elle s'est arrêtée. Un cas d'utilisation commun est de créer un composant sur le serveur, de le mettre en pause, puis de le reprendre sur le client. Pour que le composant soit pleinement fonctionnel, il peut être nécessaire d'exécuter du code par avance sur le client pour configurer des temporisateurs ou des flux.
 
-`useClientEffect$()` is a client only method. (There is no equivalent on the server.)
+`useClientEffect$()` est une méthode réservée au client. (Il n'y a pas d'équivalent sur le serveur).
 
-> **NOTE** See `useWatch$()` for behavior that needs to be executed on both client and server.
+> **REMARQUE** Consultez `useWatch$()` pour les comportements qui doivent être exécutés à la fois sur le client et le serveur.
 
-## When is `useClientEffect$()` executed?
+## Quand est-ce que `useClientEffect$()` est exécuté ?
 
-Client effect code is executed after the component is resumed. The `useClientEffect$()` method takes an additional argument (`{eagerness:'visible|load|idle'}`) that controls when the effect is executed. There are three options:
-- `visible` (default): Execute the effect when the component becomes visible. This is a preferred option because it delays the execution of the effect until the component is visible rather than eagerly on application startup (We are trying to minimize the amount of code the application runs on startup).
-- `load`: Execute the code as soon as possible. This is usually right after `DOMContentLoaded` event.
-- `idle`: Execute the code when the next idle callback is fired.
+Le code de l'effet client est exécuté après que le composant a été résumé. La méthode `useClientEffect$()` prend un argument supplémentaire (`{eagerness:'visible|load|idle'}`) qui contrôle quand l'effet est exécuté. Il existe trois options :
+- `visible` (par défaut) : Exécute l'effet lorsque le composant devient visible. Cette option est préférable car elle retarde l'exécution de l'effet jusqu'à ce que le composant soit visible plutôt que de l'exécuter par avance au démarrage de l'application (nous essayons de minimiser la quantité de code que l'application exécute au démarrage).
+- `load` : Exécute le code dès que possible. C'est généralement juste après l'événement `DOMContentLoaded`.
+- `idle` : Exécuter le code lorsque le prochain callback de l'idle est déclenché.
 
-### Example
+### Exemple
 
-The example shows a clock component that is rendered below the fold. Use the `useClientEffect$()` to make the clock update the current time every second to make it work on the client. We have provided the utility function `updateClock` to aid your implementation.
+L'exemple montre un composant horloge qui est rendu en dessous du cadre. Utilisez la fonction `useClientEffect$()` pour que l'horloge mette à jour l'heure actuelle toutes les secondes afin qu'elle fonctionne sur le client. Nous avons fourni la fonction utilitaire `updateClock` pour faciliter votre implémentation.
 
-Keep in mind that `useClientEffect$()` should return a cleanup function that releases the `setInterval` timer so that the timer can be properly cleaned up when the component is unmounted/destroyed.
+Gardez à l'esprit que `useClientEffect$()` doit retourner une fonction de nettoyage qui libère le temporisateur `setInterval` afin que le temporisateur puisse être correctement nettoyé lorsque le composant est démonté/détruit.

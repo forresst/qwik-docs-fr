@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
 
 export const App = component$(() => {
-  return <span>__put_something_here__</span>;
+  return <span>__mettre_quelque_chose_ici__</span>;
 });

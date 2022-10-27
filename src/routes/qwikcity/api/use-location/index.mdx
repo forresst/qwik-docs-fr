@@ -9,7 +9,7 @@ contributors:
 
 # `useLocation()`
 
-Use the `useLocation()` function to retrieve a `RouteLocation` object for the current location.
+Utilisez la fonction `useLocation()` pour récupérer un objet `RouteLocation` pour l'emplacement actuel.
 
 ```tsx
 export interface RouteLocation {
@@ -20,17 +20,17 @@ export interface RouteLocation {
 }
 ```
 
-The return value of `useLocation()` is similar to `document.location`, but it is safe to use on the server where there is no global `location` object.
+La valeur de retour de `useLocation()` est similaire à celle de `document.location`, mais elle est sécurisée pour être utilisée sur le serveur où il n'y a pas d'objet global `location`.
 
-## Path Route Parameters
+## Paramètres de route
 
-`useLocation()` encodes the [Route Parameters](../../../qwikcity/routing/route-parameters/index.mdx) as params.
+`useLocation()` encode les [Paramètres de route](../../../qwikcity/routing/route-parameters/index.mdx) comme paramètres.
 
-Assume you have:
+Supposez que vous ayez fait :
 
-- Route: `https://example.com/sku/[skuId]`
-- User navigates to: `https://example.com/sku/1234`
-- Then the `skuId` can be retrieved through `useLocation().params.skuId`.
+- Route : `https://example.com/sku/[skuId]`
+- L'utilisateur navigue vers : `https://example.com/sku/1234`
+- Ensuite, le `skuId` peut être récupéré via `useLocation().params.skuId`.
 
 ```typescript
 export default component$(() => {
@@ -46,7 +46,7 @@ export default component$(() => {
 });
 ```
 
-The above code would generate:
+Le code ci-dessus génère :
 
 ```html
 <h1>SKU</h1>

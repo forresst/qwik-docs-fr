@@ -1,61 +1,61 @@
 ---
-title: Containers
+title: Conteneurs
 contributors:
   - the-r3aper7
   - RATIU5
   - adamdbradley
 ---
 
-# Containers
+# Conteneurs
 
-Containers are a way to break up an application into smaller parts. We call these parts containers. Containers brings several benefits. Each container on the page can independently be:
+Les conteneurs sont un moyen de décomposer une application en parties plus petites. Nous appelons ces parties des conteneurs. Les conteneurs présentent plusieurs avantages. Chaque conteneur sur la page peut être indépendamment :
 
-- **resumed**: Each container can be resumed independently from all other components on the page. Independent resumability further reduces the amount of state which resume deserializes.
-- **updated**: Each container can be updated/replaced at any point using `innerHTML`. This allows a portion of the page to update without forcing a full re-fetch of a complete HTML document without downloading or executing JavaScript.
-- **compiled**: Each container can be compiled and deployed separately from other containers. Separate compilation is especially useful for large-scale applications and large-scale teams working on the applications.
-- **versioned**: Each container can run a different version of the Qwik framework. Allowing for the composability of the website from many small containers.
+- **résumé** : Chaque conteneur peut être résumé indépendamment de tous les autres composants de la page. La possibilité de résumabilité indépendante réduit encore la quantité d'état qui se désérialise lors de la reprise.
+- **mis à jour** : Chaque conteneur peut être mis à jour/remplacé à tout moment en utilisant `innerHTML`. Cela permet de mettre à jour une partie de la page sans forcer la récupération d'un document HTML complet, sans télécharger ou exécuter le JavaScript.
+- **compilé** : Chaque conteneur peut être compilé et déployé séparément des autres conteneurs. La compilation séparée est particulièrement utile pour les applications à grande échelle et les équipes nombreuses travaillant sur ces applications.
+- **versionné** : Chaque conteneur peut exécuter une version différente du framework Qwik. Permettant la composabilité du site web à partir de nombreux petits conteneurs.
 
-Containers can be nested in a tree and can communicate and share data. The inter-component communication requires that the components have well-defined boundaries, which we call container protocols.
+Les conteneurs peuvent être imbriqués dans une arborescence et peuvent communiquer et partager des données. La communication inter-composants nécessite que les composants aient des zones bien définies, que nous appelons protocoles de conteneurs.
 
-## Containers vs. Components
+## Conteneurs vs. composants
 
-Containers sound very similar to components; what are the differences? You can think of a container as a more restricted component. However, components can do a few things which containers can't.
+Les conteneurs ressemblent beaucoup aux composants; quelles sont les différences ? Vous pouvez considérer un conteneur comme un composant plus restreint. Cependant, les composants peuvent faire certaines choses que les conteneurs ne peuvent pas faire.
 
-- Containers can only have read-only properties passed into them. This restriction is because container inputs may need to be serialized for SSR requests.
-- Containers don't understand [projection](../../../docs/components/projection/index.mdx).
-- Containers can't modify the state which has been passed into them.
+- Les conteneurs ne peuvent recevoir que des propriétés en lecture seule. Cette restriction est due au fait que les entrées des conteneurs peuvent avoir besoin d'être sérialisées pour les requêtes SSR.
+- Les conteneurs ne connaissent pas la [projection](../../../docs/components/projection/index.mdx).
+- Les conteneurs ne peuvent pas modifier l'état qui leur a été transmis.
 
-Components have restrictions:
+Les composants ont des restrictions :
 
-- Components must be compiled together and, as a result, share the same bundle artifacts and same Qwik version.
-- On pause, all of the components in the container are serialized together (and then they are resumed together).
+- Les composants doivent être compilés ensemble et, par conséquent, partager les mêmes artefacts de bundle et la même version de Qwik.
+- En pause, tous les composants dans le conteneur sont sérialisés ensemble (et ensuite ils sont résumés ensemble).
 
-## What do containers solve?
+## Que résolvent les conteneurs ?
 
-Containers allow multiple independent Qwik applications to run on the page and behave as a single application to the user. There are two most common use cases:
+Les conteneurs permettent à plusieurs applications Qwik indépendantes de fonctionner sur la page et de se comporter comme une seule application pour l'utilisateur. Il y a deux cas d'utilisation les plus fréquents :
 
-1. Routing
-2. Micro-frontend architecture
+1. Routage
+2. Architecture micro-frontend
 
-### Routing
+### Routage
 
-A typical site is composed of two logical parts:
+Un site typique est composé de deux parties logiques :
 
-1. The navigation that tends to stay constant across many pages.
-2. The outlet, which is the part of the page that changes based on which route the user navigated to.
+1. La navigation qui tend à rester constante sur de nombreuses pages.
+2. « _L'outlet_ », qui est la partie de la page qui change en fonction de la route vers laquelle l'utilisateur a navigué.
 
-We can model the two parts as two navigation and outlet containers. When the user first navigates to a route, the server responds with HTML, that contains containers for both the navigation and the outlet. Once the user navigates to the second route, there are three ways to solve the navigation:
+Nous pouvons modéliser les deux parties comme deux conteneurs, l'un pour la navigation et l'autre pour « _l'outlet_ ». Lorsque l'utilisateur navigue pour la première fois vers une route, le serveur répond avec du HTML, qui contient des conteneurs pour la navigation et « _l'outlet_ ». Lorsque l'utilisateur navigue vers la deuxième route, il y a trois façons de résoudre la navigation :
 
-1. The simplistic approach is to make a full round trip and download an entirely new page. The main downside is that the application loses all of its states on the client.
-2. The classical approach is to treat any further navigation in JavaScript. We replace the current outlet component with the new outlet component and let the new component render. The disadvantage is that we need to download and execute the JavaScript.
-3. The Qwik approach treats the navigation and the outlet as two different containers. The first navigation downloads HTML representing the full page (with both containers). The subsequent navigation fetches the HTML only for the outlet container. This approach is the best of both worlds. The navigation is fast (no JavaScript download or execution), and the application keeps its state in the parent container.
+1. L'approche simpliste consiste à faire un aller-retour complet et charger une page entièrement nouvelle. Le principal inconvénient est que l'application perd tous ses états sur le client.
+2. L'approche classique consiste à traiter toute navigation future en JavaScript. Nous remplaçons le composant de « _l'outlet_ » actuel par le nouveau composant de « _l'outlet_ » et laissons le nouveau composant effectuer le rendu. L'inconvénient est que nous devons télécharger et exécuter le JavaScript.
+3. L'approche de Qwik traite la navigation et « _l'outlet_ » comme deux conteneurs différents. La première navigation télécharge le HTML représentant la page complète (avec les deux conteneurs). La navigation suivante récupère le HTML uniquement pour le conteneur de « _l'outlet_ ». Cette approche offre un double avantage. La navigation est rapide (pas de téléchargement ni d'exécution de JavaScript), et l'application conserve son état dans le conteneur parent.
 
 ### Micro-frontend
 
-When an application gets very large, it becomes impractical to think of it as a single application. A better mental model is that many applications work together to give the user the impression of a single application.
+Lorsqu'une application devient très vaste, il n'est pas réaliste de la considérer comme une application simple. Un meilleur modèle mental est que de nombreuses applications travaillent ensemble pour donner à l'utilisateur l'impression d'une seule application.
 
-For large apps, the teams also become large. Large teams usually have different goals and, as a result, different release schedules.
+Pour les applications de grande taille, les équipes deviennent également importantes. Ces équipes ont généralement des objectifs différents et, par conséquent, des calendriers de publication différents.
 
-Containers allow a large team to break up the application into many smaller parts and treat each part as a unit with a separate deployment, testing, and version upgrade schedule.
+Les conteneurs permettent à une grosse équipe de diviser l'application en de nombreuses parties plus petites et de traiter chaque partie comme une unité avec un calendrier de déploiement, de test et de mise à niveau de version distinct.
 
-Teams break up the application into containers and clearly define protocols between the containers. As long as the protocols are satisfied, each team can deploy the two containers independently.
+Les équipes divisent l'application en conteneurs et définissent clairement les protocoles entre les conteneurs. Tant que les protocoles sont respectés, chaque équipe peut déployer les deux conteneurs indépendamment.s

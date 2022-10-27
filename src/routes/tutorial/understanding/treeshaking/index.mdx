@@ -1,29 +1,29 @@
 ---
-title: Understanding Qwik Difference - Tree-shaking
+title: Comprendre la différence de Qwik - Tree-shaking
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-A key concept of Qwik is that Qwik only loads code for components in the client that need to be re-rendered. If a component is static (does not need to be re-rendered), Qwik will not load the component. This is a form of dynamic tree-shaking. Here word dynamic is used to differentiate it from the classical static tree-shaking.
+Un concept clé de Qwik est que Qwik charge seulement le code pour les composants dans le client qui ont besoin d'être re-rendu. Si un composant est statique (n'a pas besoin d'être re-rendu), Qwik ne chargera pas le composant. C'est une forme de tree-shaking dynamique. Ici le mot dynamique est utilisé pour le différencier du tree-shaking statique classique.
 
-## Static vs. Dynamic Tree-shaking
+## Tree-shaking statique vs Dynamique
 
-Static tree-shaking is how the bundler removes unreachable code. In the case of an application, all components are reachable. This is because the component is reachable on the initial render in SSR. Otherwise, the component would not be visible to the client. So static tree-shaker can't remove any components from our initial application render tree.
+Le tree-shaking statique est la façon dont le bundler supprime le code inaccessible. Dans le cas d'une application, tous les composants sont accessibles. Cela est dû au fait que le composant est accessible lors du rendu initial dans le SSR. Sinon, le composant ne serait pas visible pour le client. Le tree-shaker statique ne peut donc pas supprimer les composants de l'arborescence du rendu initial de notre application.
 
-Dynamic tree-shaking refers to the fact that after the initial render, the component is no longer reachable from operations the user can perform. The component is only reachable under initial SSR rendering but not from subsequent user interactions. This is why we use the term dynamic tree-shaking to differentiate it from the static tree-shaking that bundler will do.
+Le tree-shaking dynamique fait référence au fait qu'après le rendu initial, le composant n'est plus atteignable à partir des opérations que l'utilisateur peut effectuer. Le composant n'est atteignable que dans le cadre du rendu initial du SSR, mais pas à partir des interactions ultérieures de l'utilisateur. C'est la raison pour laquelle nous utilisons le terme « tree-shaking dynamique » pour le différencier du tree-shaking statique effectué par le bundler.
 
-Static tree-shaking has the disadvantage that it does not take the runtime context into account when deciding if a particular component is reachable. It must assume a worst-case scenario and therefore retain the component as it is reachable on the server during SSR.
+Le tree-shaking statique présente l'inconvénient de ne pas prendre en compte le contexte d'exécution pour décider si un composant particulier est accessible. Il doit supposer le pire des scénarios et donc retenir le composant tel qu'il est atteignable sur le serveur pendant le SSR.
 
-### Example
+### Exemple
 
-Interact with the example by clicking on the `+1` button. Few things to notice:
+Interagissez avec l'exemple en cliquant sur le bouton `+1`. Quelques points à noter :
 
-- Server must execute all components. So from the server point of view, all of the components are needed.
-- On the client hitting `+1` does not require loading the `<App>` because it does not need to re-render. Therefore `<App>` is never loaded on the client.
+- Le serveur doit exécuter tous les composants. Donc, du point de vue du serveur, tous les composants sont nécessaires.
+- Sur le client, cliquer sur `+1` ne nécessite pas le chargement de `<App>` car il n'a pas besoin d'être re-rendu. Par conséquent, `<App>` n'est jamais chargé sur le client.
 
-Now edit `Child` and delete the binding to `{props.store.count}`. Notice that now the child is no longer rendered on the client, and its associated render code is never loaded.
+Modifiez maintenant `Child` et supprimez la liaison avec `{props.store.count}`. Remarquez que maintenant l'enfant n'est plus rendu sur le client, et que son code de rendu associé n'est jamais chargé.
 
-Qwik determines which components are need-based in the runtime context of the application. Databinding determines whether the component is considered static or dynamic and, therefore, whether the component will be tree-shaken.
+Qwik détermine quels composants sont basés sur les besoins dans le contexte d'exécution de l'application. La liaison de données détermine si le composant est considéré comme statique ou dynamique et, par conséquent, si le composant sera tree-shaké.
 
-In practice, many components are static in the application, and they never need to be loaded into the client.
+En pratique, beaucoup de composants sont statiques dans l'application, et ils n'ont jamais besoin d'être chargés dans le client.

@@ -1,5 +1,5 @@
 ---
-title: Qwik City - Top Layout
+title: Qwik City - Mise en page Top
 contributors:
   - manucorporat
   - Oyemade
@@ -8,25 +8,25 @@ contributors:
   - adamdbradley
 ---
 
-# Top Layout
+# Mise en page Top
 
-The default is that a page will create its layout stack by climbing up each directory until it gets to the `src/routes` directory. If at any point it should not continue climbing up the directories you can use the "top" layout feature.
+Par défaut, une page créera sa pile de mise en page en remontant dans chaque répertoire jusqu'à atteindre le répertoire `src/routes`. Si à un moment donné, elle ne doit pas continuer à monter dans les répertoires, vous pouvez utiliser la fonction de mise en page « Top ».
 
-A top layout means that the layout is always at the very top of the nested layout stack, and doesn't keep collecting parent layouts, even when there are parent directory layouts.
+Une mise en page Top signifie que la mise en page est toujours au sommet de la pile de mises en page imbriquées, et ne continue pas à collecter les mises en page parentes, même s'il y a des mises en page de répertoires parentes.
 
-A top layout is specified by ending the layout filename with `!`, such as `layout!.tsx`.
+Un mise en page Top est spécifié en terminant le nom de fichier du layout par `!`, comme `layout!.tsx`.
 
 ```
 src/
 └── routes/
-    ├── layout.tsx              # Root layout
+    ├── layout.tsx              # Mise en page racine
     └── docs/
-        ├── layout!.tsx         # Docs layout
+        ├── layout!.tsx         # Mise en page de Docs
         ├── index.tsx           # https://example.com/docs
         └── api/
             └── index.tsx       # https://example.com/docs/api
 ```
 
-In the above example, there are two layouts in the parent directories of `src/routes/docs/api/index.tsx`. By default, the `/docs/api` page would be nested inside both layouts (the Root and Docs layout).
+Dans l'exemple ci-dessus, il y a deux mises en page dans les répertoires parents pour `src/routes/docs/api/index.tsx`. Par défaut, la page `/docs/api` serait imbriquée dans les deux mises en page (la mise en page Root et Docs).
 
-However, since the `src/routes/docs/layout!.tsx` filename ends with `!`, then this layout becomes the very top layout and the Root `src/routes/layout.tsx` layout is not a part of the stack.
+Cependant, étant donné que le nom de fichier `src/routes/docs/layout!.tsx` se termine par `!`, cette mise en page devient la toute première mise en page et la mise en page Racine `src/routes/layout.tsx` ne fait pas partie de la pile.

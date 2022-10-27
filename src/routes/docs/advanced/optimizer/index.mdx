@@ -1,18 +1,18 @@
 ---
-title: Optimizer Rules
+title: Règles de l'Optimiseur
 contributors:
   - the-r3aper7
   - manucorporat
   - adamdbradley
 ---
 
-# Optimizer
+# Optimiseur
 
-Qwik's philosophy is to delay loading code for as long as possible. To do that, Qwik relies on Optimizer to re-arrange the code for lazy loading. The Optimizer is code level transformation that runs as part of the rollup. (Optimizer is written in Rust (and available as WASM) for instant performance)
+La philosophie de Qwik est de retarder le chargement du code aussi longtemps que possible. Pour ce faire, Qwik s'appuie sur un Optimiseur pour réorganiser le code pour un chargement différé. L'Optimiseur est une transformation au niveau du code qui s'exécute pour synthétiser. (L'Optimiseur est écrit en Rust (et il est disponible comme WASM) pour une performance instantanée).
 
-The Optimizer looks for `$` and applies a transformation that extracts the expression following the `$` and turns it into a lazy-loadable and importable symbol.
+L'Optimizer recherche les `$` et applique une transformation qui extrait l'expression suivant le `$` et la transforme en un symbole importable et chargeable de manière différée.
 
-Let's start by looking at a simple `Counter` example:
+Commençons par examiner un exemple simple de `Counter` :
 
 ```tsx
 export const Counter = component$(() => {
@@ -22,7 +22,7 @@ export const Counter = component$(() => {
 });
 ```
 
-The above code represents what a developer would write to describe the component. Below are the transformations that the Optimizer applies to the code to make the code lazy-loadable.
+Le code ci-dessus représente ce qu'un développeur écrirait pour décrire le composant. Vous trouverez ci-dessous les transformations que l'Optimiseur applique au code pour le rendre chargeable de manière différée.
 
 ```tsx
 const Counter = component(qrl('./chunk-a.js', 'Counter_onMount'));
@@ -46,17 +46,17 @@ const Counter_onClick = () => {
 };
 ```
 
-Notice that every occurrence of `$` results in a new lazy loadable symbol.
+Remarquez que chaque occurrence de `$` entraîne la création d'un nouveau symbole chargeable de manière différée.
 
-# `$` and Optimizer Rules
+# `$` et les règles de l'Optimiseur
 
-Optimizer runs as part of the bundling step of building the application. The purpose of the Optimizer is to break up the application into many small lazy-loadable chunks. The Optimizer moves expressions (usually functions) into new files and leaves behind a reference pointing to where the expression was moved.
+L'Optimiseur s'exécute dans la phase d'empaquetage de la construction de l'application. L'objectif de l'Optimiseur est de décomposer l'application en de nombreux petits morceaux pouvant être chargés de manière différée. L'Optimiseur déplace les expressions (généralement des fonctions) dans de nouveaux fichiers et laisse derrière lui une référence indiquant l'endroit où l'expression a été déplacée.
 
-## The meaning of `$`
+## La signification de `$`
 
-The Optimizer needs to know which expression should be extracted into a new file. Extracting a symbol is complicated because the reference to the symbol changes from direct to asynchronous loading. This means that Optimizer needs to cooperate with the runtime to know which symbols can be extracted and how the runtime can then load them.
+L'Optimiseur doit savoir quelle expression doit être extraite dans un nouveau fichier. L'extraction d'un symbole est compliquée car la référence au symbole change entre le chargement direct et le chargement asynchrone. Cela signifie que l'Optimizer doit coopérer avec le runtime pour savoir quels symboles peuvent être extraits et comment le runtime peut ensuite les charger.
 
-Let's look at the hypothetical problem of acting on scroll. You may be tempted to write the code like so:
+Examinons le problème hypothétique de l'action sur le scroll. Vous serez peut-être tenté d'écrire le code comme suit :
 
 ```tsx
 function onScroll(fn: () => void) {
@@ -66,9 +66,9 @@ function onScroll(fn: () => void) {
 onScroll(() => alert('scroll'));
 ```
 
-The problem with this approach is that the event handler is eagerly loaded, even if the scroll event never triggers. What is needed is a way to refer to code in a lazy loadable way.
+Le problème avec cette approche est que le gestionnaire d'événement est chargé par avance, même si l'événement de scroll ne se déclenche jamais. Ce qu'il faut, c'est un moyen de référencer le code afin que cela permette un chargement différé.
 
-The developer could write:
+Le développeur pourrait écrire :
 
 ```tsx
 export scrollHandler = () => alert('scroll');
@@ -76,7 +76,7 @@ export scrollHandler = () => alert('scroll');
 onScroll(() => (await import('./some-chunk')).scrollHandler());
 ```
 
-This works but is a lot of work. The developer is responsible for putting the code in a different file and hard coding the chunk name. Instead, we use Optimizer to perform the work for us automatically. But we need a way to tell Optimizer that we want to perform such a refactoring. We use `$()` as a marker function for this purpose.
+Cela fonctionne mais représente beaucoup de travail. Le développeur doit placer le code dans un fichier différent et coder en dur le nom du morceau. À la place, nous utilisons l'Optimiseur pour effectuer ce travail automatiquement. Mais nous avons besoin d'un moyen pour indiquer à l'Optimiseur que nous voulons effectuer un tel réaménagement. pour cela, nous utilisons `$()` comme fonction de marquage.
 
 ```tsx
 function onScroll(fnQrl: QRL<() => void>) {
@@ -89,7 +89,7 @@ function onScroll(fnQrl: QRL<() => void>) {
 onScroll($(() => alert('clicked')));
 ```
 
-The Optimizer will generate:
+L'Optimiseur générera :
 
 ```tsx
 onScroll(qrl('./chunk-a.js', 'onScroll_1'));
@@ -101,12 +101,12 @@ onScroll(qrl('./chunk-a.js', 'onScroll_1'));
 export const onScroll_1 = () => alert('scroll');
 ```
 
-Notice:
+Remarques :
 
-1. All that the developer had to do was to wrap the function in the `$()` to signal to the Optimizer that the function should be moved to a new file and therefore lazy-loaded.
-2. The `onScroll` had to be implemented slightly differently as it needs to take into account the fact that the `QRL` of the function needs to be loaded before it can be used. In practice using `qImport` is rare in Qwik application as the Qwik framework provides higher-level APIs that rarely expect the developer to work with `qImport` directly.
+1. Tout ce que le développeur a dû faire, c'est envelopper la fonction dans le `$()` pour signaler à l'Optimiseur que la fonction doit être déplacée dans un nouveau fichier et donc chargée de manière différée.
+2. Le `onScroll` a dû être implémenté légèrement différemment car il doit prendre en compte le fait que la `QRL` de la fonction doit être chargée avant de pouvoir être utilisée. En pratique, l'utilisation de `qImport` est rare dans les applications Qwik car le framework Qwik fournit des API de plus haut niveau qui ne demandent que rarement au développeur de travailler directement avec `qImport`.
 
-However, wrapping code in `$()` is a bit inconvenient. For this reason, Optimizer implicitly wraps the first argument of any function call, which ends with `$`. (Additionally, one can use `implicit$FirstArg()` to automatically perform the wrapping and type matching of the function taking the `QRL`.)
+Cependant, envelopper le code dans `$()` est un peu incommode. Pour cette raison, l'Optimiseur encapsule implicitement le premier argument de tout appel de fonction, qui se termine par `$`. (En outre, on peut utiliser `implicit$FirstArg()` pour effectuer automatiquement l'enveloppement et la correspondance de type de la fonction prenant le `QRL`).
 
 ```tsx
 const onScroll$ = implicit$FirstArg(onScroll);
@@ -114,21 +114,21 @@ const onScroll$ = implicit$FirstArg(onScroll);
 onScroll$(() => alert('scroll'));
 ```
 
-Now the developer has a very easy syntax for expressing that a particular function should be lazy-loaded.
+Le développeur dispose désormais d'une syntaxe très simple pour exprimer qu'une fonction particulière doit être chargée de manière différée.
 
-## Symbol extraction
+## Extraction de symbole
 
-Assume that you have this code:
+Supposons que vous ayez ce code :
 
 ```tsx
 export const MyComp = component$(() => {
-  /* my component definition */
+  /* la définition de mon composant */
 });
 ```
 
-The Optimizer breaks the code up into two files:
+L'Optimiseur décompose le code en deux fichiers :
 
-The original file:
+Le fichier d'origine :
 
 ```tsx
 const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
@@ -138,22 +138,22 @@ const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
 
 ```tsx
 export const MyComp_onMount = () => {
-  /* my component definition */
+  /* la définition de mon composant */
 };
 ```
 
-The result of Optimizer is that the `MyComp`'s `onMount` method was extracted into a new file. There are a few benefits to doing this:
+Le résultat de l'Optimiseur est que la méthode `onMount` de `MyComp` a été extraite dans un nouveau fichier. Il y a quelques avantages à faire cela :
 
-- A Parent component can refer to `MyComp` without pulling in `MyComp` implementation details.
-- The application now has more entry points, giving the bundler more ways to chunk up the codebase.
+- Un composant Parent peut se référer à `MyComp` sans avoir besoin des détails d'implémentation de `MyComp`.
+- L'application a maintenant plus de points d'entrée, ce qui donne au bundler plus de possibilités pour découper la base de code.
 
-See also: Capturing Lexical Scope.
+Consultez également : Capture de la portée lexicale.
 
-# Capturing the lexical scope
+# Capture de la portée lexicale
 
-The Optimizer extracts expressions (usually functions) into new files and leaves behind a `QRL` pointing to the lazy-loaded location.
+L'Optimiseur extrait les expressions (généralement des fonctions) dans de nouveaux fichiers et laisse derrière lui un `QRL` pointant vers l'emplacement du chargement différé.
 
-Let's look at a simple case:
+Examinons un cas simple :
 
 ```tsx
 export const Greeter = component$(() => {
@@ -161,7 +161,7 @@ export const Greeter = component$(() => {
 });
 ```
 
-this will result in:
+cela se traduira par :
 
 ```tsx
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
@@ -181,7 +181,7 @@ const Greeter_onMount = () => {
 const Greeter_onRender = () => <span>Hello World!</span>;
 ```
 
-The above is for simple cases where the extracted function closure does not capture any variables. Let's look at a more complicated case where the extracted function closure lexically captures variables.
+Ce qui précède concerne les cas simples où la closure de la fonction extraite ne capture aucune variable. Examinons un cas plus compliqué où la closure de la fonction extraite capture lexicalement des variables.
 
 ```tsx
 export const Greeter = component$((props: { name: string }) => {
@@ -195,7 +195,7 @@ export const Greeter = component$((props: { name: string }) => {
 });
 ```
 
-The naive way to extract functions will not work.
+La méthode naïve d'extraction des fonctions ne fonctionnera pas.
 
 ```tsx
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
@@ -220,7 +220,7 @@ const Greeter_onRender = () => (
 );
 ```
 
-The issue can be seen in `chunk-b.js`. The extracted function refers to `salutation` and `props`, which are no longer in the lexical scope of the function. For this reason, the generated code must be slightly different.
+Le problème est visible dans le fichier `chunk-b.js`. La fonction extraite fait référence à `salutation` et `props`, qui ne sont plus dans la portée lexicale de la fonction. Pour cette raison, le code généré doit être légèrement différent.
 
 `chunk-a.js`:
 
@@ -245,33 +245,33 @@ const Greeter_onRender = () => {
 };
 ```
 
-Notice two changes:
+Remarquez deux changements :
 
-1. The `QRL` in `Greeter_onMount` now stores the `salutation` and `props`. This performs the role of capturing the constants inside closures.
-2. The generated closure `Greeter_onRender` now has a preamble which restores the `salutation` and `props` (`const [salutation, props] = useLexicalScope()`.)
+1. La `QRL` de `Greeter_onMount` stocke maintenant `salutation` et `props`. Cela permet de capturer les constantes à l'intérieur des closures.
+2. La closure générée `Greeter_onRender` a maintenant un préambule qui restaure `salutation` et `props` (`const [salutation, props] = useLexicalScope()`).
 
-The ability for the Optimizer (and Qwik runtime) to capture lexically scoped constants significantly improves which functions can be extracted into lazy-loaded resources. It is a powerful tool for breaking up complex applications into smaller lazy-loadable chunks.
+La capacité de l'Optimiseur (et du runtime Qwik) à capturer les constantes lexicalement scopées améliore significativement les fonctions qui peuvent être extraites dans les ressources chargées de manière différée. C'est un outil puissant pour décomposer des applications complexes en petits morceaux chargeables de manière différée.
 
-# Optimizer Rules
+# Règles de l'Optimiseur
 
-The Optimizer's job is to break up large applications into many small lazy-loadable chunks.
+Le travail de l'Optimiseur consiste à décomposer les grandes applications en de nombreux petits morceaux pouvant être chargés de manière différée.
 
-The Optimizer can lazy-load a function closure, which lexically captures variables. However, there are limits to what can be achieved, and therefore the Optimizer comes with a set of rules.
+L'Optimiseur peut charger de manière différée une closure de fonction, qui capture lexicalement les variables. Cependant, il y a des limites à ce qui peut être réalisé, et c'est pourquoi l'Optimiseur est livré avec un ensemble de règles.
 
-Since not all valid JavaScript is valid Optimizer code, keep in mind the following rules:
+Comme tout JavaScript valide n'est pas forcément du code de l'Optimiseur valide, gardez à l'esprit les règles suivantes :
 
-- All captured variables must be declared as a `const`.
-- All captured variables must be either:
-  - serializable
-  - importable (either `import` or `export` in this file)
+- Toutes les variables capturées doivent être déclarées comme `const`.
+- Toutes les variables capturées doivent être soit :
+  - sérialisable
+  - importable (soit `import` ou `export` dans ce fichier)
 
-The `$` is not only a marker for the Optimizer but also a marker for the developer to follow these rules.
+Le `$` n'est pas seulement un marqueur pour l'Optimiseur mais aussi un marqueur pour le développeur pour suivre ces règles.
 
-> **NOTE**: There are plans for a linter that will be able to enforce these rules eagerly.
+> **REMARQUE** : Il y a une planification pour un « linter » qui sera capable d'appliquer ces règles avec anticipation.
 
 ## Imports
 
-**RULE**: If a function that is being extracted by Optimizer refers to a top-level symbol, that symbol must either be imported or exported.
+**RÈGLE** : Si une fonction extraite par l'Optimiseur fait référence à un symbole de niveau supérieur, ce symbole doit être importé ou exporté.
 
 ```tsx
 import { importedFn } from '...';
@@ -282,11 +282,11 @@ const salutation = "Hello";
 someApi$(() => {
   importedFn(); // OK
   exportedFn(); // OK
-  salutation; // Error: salutation not imported/exported
+  salutation; // Erreur : salutation non importée/exportée
 })
 ```
 
-The reason for the above rule becomes obvious when the output is examined.
+La raison de la règle ci-dessus devient évidente lorsque l'on examine le résultat.
 
 ```tsx
 import { importedFn } from '...';
@@ -306,13 +306,13 @@ import { exportedFn } from './originalFile';
 export const someApi_1 = () => {
   importedFn(); // OK
   exportedFn(); // OK
-  salutation; // Error: no way to get reference to this.
+  salutation; // Erreur : salutation non importée/exportée
 };
 ```
 
 ## Closures
 
-**RULE**: If a function lexically captures a variable (or parameter), that variable must be (1) a `const` and (2) the value must be serializable.
+**RÈGLE** : Si une fonction capture lexicalement une variable (ou un paramètre), cette variable doit être (1) un `const` et (2) la valeur doit être sérialisable.
 
 ```tsx
 function somefn() {
@@ -321,15 +321,15 @@ function somefn() {
     count++;
     const currentCount = count;
     someApi$(() => {
-      item; // OK (assuming serializable)
-      count; // ERROR: count not const
-      currentCount; // OK (assuming serializable)
+      item; // OK (en supposant qu'il soit sérialisable)
+      count; // ERREUR : count n'est pas un const
+      currentCount; // OK (en supposant qu'il soit sérialisable)
     });
   });
 }
 ```
 
-Again looking at the generated code reveals why these rules must be so:
+Une fois de plus, l'examen du code généré révèle pourquoi ces règles doivent être ainsi :
 
 ```tsx
 function somefn() {
@@ -348,10 +348,10 @@ function somefn() {
 export _1 = () => {
   const [item, count, currentCount] = useLexicalScope();
 
-  item; // OK (assuming serializable)
-  count; // ERROR: count not const
-  currentCount; // OK (assuming serializable)
+  item; // OK (en supposant qu'il soit sérialisable)
+  count; // ERREUR : count n'est pas un const
+  currentCount; // OK (en supposant qu'il soit sérialisable)
 };
 ```
 
-See [serialization](../../../docs/concepts/resumable/index.mdx#serialization) for discussion of what is serializable.
+Consultez la [sérialisation](../../../docs/concepts/resumable/index.mdx#serialization) pour une explication de ce qui est sérialisable.

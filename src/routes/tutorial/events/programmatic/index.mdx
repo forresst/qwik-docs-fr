@@ -1,25 +1,25 @@
 ---
-title: Programmatic Listeners
+title: Écouteurs programmés
 contributors:
   - adamdbradley
   - the-r3aper7
   - manucorporat
 ---
 
-There are times when your app needs to add a conditional listener. Sometimes a listener name is unknown, or you need to use an imperative approach to set up a listener.
+Il arrive que votre appli ait besoin d'ajouter un écouteur conditionnel. Parfois le nom d'un écouteur est inconnu, ou vous devez utiliser une approche impérative pour configurer un écouteur.
 
-Qwik provides the following functions to attach a listener:
+Qwik fournit les fonctions suivantes pour attacher un écouteur :
 
-| Function          | Description                                             |
-| ----------------- | ------------------------------------------------------- |
-| `useOn()`         | Add an event on specific event on current host element. |
-| `useOnDocument()` | Add an event on specific event on document.             |
-| `useOnWindow()`   | Add an event on specific event on window.               |
+| Fonction          | Description                                                                |
+| ----------------- | -------------------------------------------------------------------------- |
+| `useOn()`         | Ajoute un événement sur un événement spécifique sur l'élément hôte actuel. |
+| `useOnDocument()` | Ajoute un événement sur un événement spécifique sur document.              |
+| `useOnWindow()`   | Ajoute un événement sur un événement spécifique sur window.                |
 
-> **Your task**: Set up a click listener on the component to call `alert('Hello world!')`.
+> **Votre tâche** : Configurez un écouteur de clic sur le composant pour appeler `alert('Hello world!')`.
 
-## Understanding the `$`
+## Comprendre le `$`
 
-The `$` function signals Qwik to lazy load a reference. When setting up a listener with `useOn`, the second argument is a [Qwik URL](../../../docs/advanced/qrl/index.mdx).
+La fonction `$` signale à Qwik de charger de manière différée une référence. Lors de la mise en place d'un écouteur avec `useOn`, le second argument est une [URL Qwik](../../../docs/advanced/qrl/index.mdx).
 
-Qwik URLs (QRL) are lazy-loadable references to your code. If `useOn` took a function directly rather than QRL, it would have to eagerly execute to allocate the listener closure. By using a QRL via the `$` function, Qwik can lazy load the closure only as `click` listener is triggered.
+Les URLs Qwik (QRL) sont des références chargées de manière différée sur votre code. Si `useOn` prenait une fonction directement plutôt qu'une QRL, il devrait s'exécuter par avance pour allouer la closure de l'écouteur. En utilisant une QRL via la fonction `$`, Qwik peut charger de manière différée la closure seulement quand l'écouteur `click` est déclenché.

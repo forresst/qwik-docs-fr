@@ -5,14 +5,14 @@ contributors:
   - adamdbradley
 ---
 
-Use `useWatch$()` to execute a function before the initial render and whenever the tracking values change. The function executes before rendering, but it can't delay rendering, so if `useWatch$()` is asynchronous, the rendering will happen before the `useWatch$()` is fully executed.
+Utilisez `useWatch$()` pour exécuter une fonction avant le rendu initial et à chaque fois que les valeurs traquées changent. La fonction s'exécute avant le rendu, mais elle ne peut pas retarder le rendu, donc si `useWatch$()` est asynchrone, le rendu aura lieu avant que `useWatch$()` soit complètement exécuté.
 
-## Tracking store changes
+## Suivi des modifications apportées aux stores
 
-The `useWatch$()` hook receives a `track()` function used for setting up subscriptions that will automatically rerun the `useWatch$()` hook. The set of `track()` properties resets on each `useWatch$()` execution, therefore it is important to always use `track()` to set up subscriptions anew. Because of this it is possible for the `useWatch$()` to subscribe to different properties over time.
+Le hook `useWatch$()` reçoit une fonction `track()` utilisée pour configurer les abonnements qui relanceront automatiquement le hook `useWatch$()`. L'ensemble des propriétés de `track()` se réinitialise à chaque exécution de `useWatch$()`, il est donc important de toujours utiliser `track()` pour re-configurer les abonnements. Pour cette raison, il est possible que le `useWatch$()` s'abonne à différentes propriétés au fil du temps.
 
-## Cleanup
+## Nettoyage
 
-The `useWatch$()` hook can return a cleanup callback. This is useful for cleaning up any resources before new execution.
+Le hook `useWatch$()` peut retourner un callback cleanup (NdT « nettoyage »). Ceci est utile pour nettoyer les ressources avant une nouvelle exécution.
 
-### Example
+### Exemple

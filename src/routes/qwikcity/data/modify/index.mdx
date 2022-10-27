@@ -1,15 +1,15 @@
 ---
-title: Qwik City - Modify Data
+title: Qwik City - Modifier les données
 contributors:
   - adamdbradley
 ---
 
-# Modify Data
+# Modifier les données
 
-Endpoints can define a way to fetch data and they can also define HTTP verbs to modify data. These are `GET`, `POST`, `PUT`, `PATCH`, `DELETE`. We have already discussed the `GET` verb in the previous section. Each of these verbs has a corresponding `on___` method such as `onGet`, `onPost`, `onPut`, `onPatch`, and `onDelete`.
+Les endpoints peuvent définir un moyen de récupérer des données et ils peuvent également définir des verbes HTTP pour modifier les données. Il s'agit de `GET`, `POST`, `PUT`, `PATCH`, `DELETE`. Nous avons déjà parlé du verbe `GET` dans la section précédente. A chacun de ces verbes correspond une méthode `on___` telle que `onGet`, `onPost`, `onPut`, `onPatch`, et `onDelete`.
 
 ```typescript
-// File: src/routes/product/[skuId]/index.tsx
+// Fichier : src/routes/product/[skuId]/index.tsx
 import type { RequestHandler } from '@builder.io/qwik-city';
 
 type EndpointData = ProductData | null;
@@ -20,21 +20,21 @@ interface ProductData {
   description: string;
 }
 export const onPut: RequestHandler<EndpointData> = async ({ url, params, request, response }) => {
-  // put your DB access here (hard coding a response for the simplicity)
+  // mettez votre accès à la base de données ici (codage en dur d'une réponse pour la simplicité)
 
-  // read data from request and perform DB update.
+  // lire les données de la requête et effectuer la mise à jour de la base de données.
   // console.log(params.skuId);
   // console.log(request.method);
   // console.log(url.pathname);
 
-  // set response headers
+  // définir les entêtes de réponse
   response.headers.append('Cache-Control', ' public, max-age=86400');
 
-  // return data to be access from `useEndpoint()`
+  // renvoie les données auxquelles on peut accéder depuis `useEndpoint()`.
   return {
     skuId: params.skuId,
     price: 123.45,
-    description: `Description for ${params.skuId}`,
+    description: `Description pour ${params.skuId}`,
   };
 };
 ```

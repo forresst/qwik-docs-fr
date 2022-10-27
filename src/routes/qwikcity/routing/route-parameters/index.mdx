@@ -1,5 +1,5 @@
 ---
-title: Qwik City - Route Parameters
+title: Qwik City - Paramètres de route
 contributors:
   - manucorporat
   - Oyemade
@@ -7,17 +7,17 @@ contributors:
   - adamdbradley
 ---
 
-# Route Parameters
+# Paramètres de route
 
-Route Parameters are parts of the URLs that are extracted into parameters.
+Les paramètres de route sont des parties des URL qui sont extraites dans les paramètres.
 
-Imagine that you have a page with the following URLs where `[skuId]` can be any of the thousands of products that you have in your database. It would be impractical to create a route for each product. Instead, we need to define a Route Parameter (a part of the URL) that will be used to extract the `[skuId]`.
+Imaginez que vous ayez une page avec les URL suivantes, où `[skuId]` peut être n'importe lequel des milliers de produits que vous avez dans votre base de données. Il serait peu pratique de créer une route pour chaque produit. Nous devons plutôt définir un paramètre de route (une partie de l'URL) qui sera utilisé pour extraire le `[skuId]`.
 
 - `https://example.com/sku/[skuId]`
-  - Will match: `https://example.com/sku/1234`
-  - Will match: `https://example.com/sku/xyz-567`
+  - Correspondra : `https://example.com/sku/1234`
+  - Correspondra : `https://example.com/sku/xyz-567`
 - `https://example.com/sku/[skuId]/details`
-  - Will match: `https://example.com/sku/1234/details`
+  - Correspondra : `https://example.com/sku/1234/details`
 
 ```
 src/
@@ -29,9 +29,9 @@ src/
                 └── index.tsx     # https://example.com/sku/1234/details
 ```
 
-## Retrieving the Route Parameter from the URL
+## Récupération du paramètre de route à partir de l'URL
 
-Once we have `[skuId]` in the URL, we need a way to retrieve it. This can be done by using `useLocation()` API.
+Une fois que nous avons `[skuId]` dans l'URL, nous devons trouver un moyen de le récupérer. Cela peut être fait en utilisant l'API `useLocation()`.
 
 ```typescript
 import { useLocation } from '@builder.io/qwik-city';
@@ -42,15 +42,15 @@ export default component$(() => {
   return (
     <div>
       <h1>SKU</h1>
-      <p>Pathname: {location.pathname}</p>
-      <p>Sku Id: {location.params.skuId}</p>
+      <p>Chemin : {location.pathname}</p>
+      <p>Sku Id : {location.params.skuId}</p>
     </div>
   );
 });
 ```
 
-## Catch All Routes
-It is also possible to create a catch-all routes by adding a directory like `[...slug]`. This works like the above described example but will also consider subsegments of the URI. It can also be applied on the `routes` root level.
+## Catch toutes les Routes
+Il est également possible de créer une route fourre-tout en ajoutant un répertoire comme `[...slug]`. Cela fonctionne comme l'exemple décrit ci-dessus mais prendra également en compte les sous-segments de l'URI. Il peut également être appliqué au niveau de la racine `routes`.
 
 ```
 src/
@@ -60,13 +60,13 @@ src/
             └── index.tsx
 ```
 
-The above structure will match:
+La structure ci-dessus correspond à :
 - `https://example.com/sku/1234`
 - `https://example.com/sku/1234/detail`
 - `https://example.com/sku/1234/detail/edit`
 - etc
 
-It is possible to limit catch-all routes by adding a subdirectory say `end-of-route` in `[...slug]` directory.
+Il est possible de limiter les routes fourre-tout en ajoutant un sous-répertoire appelé `end-of-route` dans le répertoire `[...slug]`.
 
 ```
 src/
@@ -78,5 +78,5 @@ src/
                 └──index.tsx
 ```
 
-The above structure will match:
+La structure ci-dessus correspond à :
 - `https://example.com/sku/1234/5678/end-of-route`

@@ -1,12 +1,12 @@
 ---
-title: Synchronous Event Processing
+title: Traitement synchrone des événements
 contributors:
   - adamdbradley
   - manucorporat
 ---
 
-While not a common use case, you may occasionally need to process events synchronously.
+Bien que ce ne soit pas un cas d'utilisation courant, vous pouvez occasionnellement avoir besoin de traiter des événements de manière synchrone.
 
-Since Qwik processes asynchronously by default, your code must be explicitly configured for synchronous calls. This example shows how to eagerly load an event handler that processes a synchronous event.
+Comme Qwik traite de manière asynchrone par défaut, votre code doit être explicitement configuré pour les appels synchrones. Cet exemple montre comment par avance charger un gestionnaire d'événement qui traite un événement synchrone.
 
-> **Your task:** Convert the `onClick$` from asynchronous event to synchronous event by using `useClientEffect` and normal event registration.
+**Votre tâche :** Convertissez le `onClick$` d'un évènement asynchrone à un évènement synchrone en utilisant `useClientEffect` et l'enregistrement normal de l'évènement.

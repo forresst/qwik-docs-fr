@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Vue d'ensemble
 contributors:
   - wmertens
   - bado22
@@ -8,32 +8,32 @@ contributors:
   - adamdbradley
 ---
 
-# Reactivity
+# Réactivité
 
-Reactivity is a key component of Qwik. Reactivity allows Qwik to track which components are subscribed to which state. This information enables Qwik to invalidate only the relevant component on state change, which minimizes the number of components that need to be re-rendered. Without reactivity, a state change would require re-rendering from the root component, which would force the whole component tree to be eagerly downloaded.
+La réactivité est un composant clé de Qwik. La réactivité permet à Qwik de suivre quels composants sont abonnés à quel état. Cette information permet à Qwik d'invalider seulement le composant approprié lors d'un changement d'état, ce qui minimise le nombre de composants qui doivent être re-rendus. Sans réactivité, un changement d'état nécessiterait un re-rendu à partir du composant racine, ce qui obligerait l'ensemble de l'arborescence des composants à être par avance chargée.
 
 # Proxy
 
-Reactivity requires that the framework keeps track of the relationship between the state of the applications and the components. The framework must render the whole application at least once to build the reactivity graph. The build of reactive graph initially happens on the server and is serialized to HTML so that the browser can use the information without being forced to do a single pass through all components to rebuild the graph. (Qwik does not need to do hydration to register events or build up the reactivity graph.)
+La réactivité exige que le framework garde la trace de la relation entre l'état des applications et des composants. Le framework doit rendre l'ensemble de l'application au moins une fois pour construire le graphe de réactivité. La construction du graphe de réactivité se passe initialement sur le serveur et est sérialisée dans le HTML afin que le navigateur puisse utiliser l'information sans être obligé de faire un seul passage par tous les composants pour reconstruire le graphe. (Qwik n'a pas besoin de faire l'hydratation pour enregistrer les événements ou construire le graphe de réactivité).
 
-Reactivity can be done in a few ways:
+La réactivité peut être réalisée de plusieurs façons :
 
-1. using explicit registration of listeners using `.subscribe()` (for example, RxJS)
-2. using implicit registration using a compiler (for example, Svelte)
-3. using implicit registration using proxies.
+1. En utilisant l'enregistrement explicite des écouteurs avec `.subscribe()` (par exemple, RxJS)
+2. En utilisant l'enregistrement implicite au moyen d'un compilateur (par exemple, Svelte)
+3. En utilisant l'enregistrement implicite par le biais de proxies.
 
-Qwik uses proxies for a few reasons:
+Qwik utilise les proxies pour quelques raisons :
 
-1. using explicit registration such as `.subscribe()` would require the system to serialize all of the subscribed listeners to avoid hydration. Serializing subscribed closures would not be possible as all the subscribe functions would have to be lazy-loaded and asynchronous (too expensive).
-2. using the compiler to create graphs implicitly would work, but only for components. Intra component communications would still require `.subscribe()` methods and hence suffer the issues described above.
+1. L'utilisation d'un enregistrement explicite tel que `.subscribe()` nécessiterait que le système sérialise tous les écouteurs abonnés pour éviter l'hydratation. La sérialisation des closures abonnés ne serait pas possible car toutes les fonctions d'abonnement devraient être chargées de manière différée et asynchrone (trop coûteux).
+2. L'utilisation du compilateur pour créer des graphes implicitement fonctionnerait, mais seulement pour les composants. Les communications intra-composants nécessiteraient toujours des méthodes `.subscribe()` et souffriraient donc des problèmes décrits ci-dessus.
 
-Because of the above constraints, Qwik uses proxies to keep track of the reactivity graph.
+A cause des contraintes ci-dessus, Qwik utilise des proxies pour garder la trace du graphe de réactivité.
 
-- use `useStore()` to create a store proxy.
-- the proxy notices the reads and creates subscriptions that are serializable.
-- the proxy notices the writes and uses the subscription information to invalidate the relevant components.
+- Utilisez `useStore()` pour créer un proxy de store.
+- Le proxy détecte les lectures et crée des abonnements qui sont sérialisables.
+- Le proxy détecte les écritures et utilise les informations d'abonnement pour invalider les composants concernés.
 
-## Counter Example
+## Exemple du compteur
 
 ```tsx
 export const Counter = component$(() => {
@@ -43,15 +43,15 @@ export const Counter = component$(() => {
 });
 ```
 
-1. The server performs an initial render of the component. The server rendering includes creating the proxy represented by `store`.
-2. The initial render invokes the OnRender method, which has a reference to the `store` proxy. The rendering puts the proxy to "learn" mode. During the build-up of JSX, the proxy observes a read to `count` property. Because the proxy is in "learn" mode, it records that the `Counter` has a subscription on the `store.count`.
-3. The server serializes the state of the application into HTML. This includes the `store` as well as subscription information which says that `Counter` is subscribed to `store.count`.
-4. In the browser, the user clicks the button. Because the click event handler closed over `store`, Qwik restores the store proxy. The proxy contains the application state (the count) and the subscription, which associates the `Counter` with `state.count`.
-5. The event handler increments the `store.count`. Because the `store` is a proxy, it notices the write and uses the subscription information to invalidate the `Counter`.
-6. After `requestAnimationFrame`, the `Counter` downloads the rendering function and re-runs the OnRender method.
-7. During the OnRender, the subscription list is cleared, and a new subscription list is built up by observing what reads the JSX building performs.
+1. Le serveur effectue un rendu initial du composant. Le rendu du serveur comprend la création du proxy représenté par `store`.
+2. Le rendu initial invoque la méthode OnRender, qui a une référence au proxy `store`. Le rendu met le proxy en mode « apprentissage ». Pendant la construction du JSX, le proxy observe une lecture de la propriété `count`. Comme le proxy est en mode « apprentissage », il enregistre l'information comme quoi le `Counter` a un abonnement sur le `store.count`.
+3. Le serveur sérialise l'état de l'application dans le HTML. Cela inclut le `store` ainsi que les informations d'abonnement qui disent que `Counter` est abonné à `store.count`.
+4. Dans le navigateur, l'utilisateur clique sur le bouton. Comme le gestionnaire d'événement du clic est fermé sur `store`, Qwik restaure le proxy du store. Le proxy contient l'état de l'application (le compteur) et l'abonnement, qui associe le `Counter` avec `state.count`.
+5. Le gestionnaire d'événement incrémente le `store.count`. Comme le `store` est un proxy, il remarque l'écriture et utilise les informations de l'abonnement pour invalider le `Counter`.
+6. Après `requestAnimationFrame`, le `Counter` télécharge la fonction de rendu et re-exécute la méthode OnRender.
+7. Pendant le OnRender, la liste d'abonnement est vidée, et une nouvelle liste d'abonnement est construite en observant les lectures effectuées par la construction JSX.
 
-## Unsubscribe example
+## Exemple de désabonnement
 
 ```tsx
 export const ComplexCounter = component$(() => {
@@ -59,30 +59,30 @@ export const ComplexCounter = component$(() => {
 
   return (
     <>
-      <button onClick$={() => (store.visible = !store.visible)}>{store.visible ? 'hide' : 'show'}</button>
-      <button onClick$={() => store.count++}>increment</button>
+      <button onClick$={() => (store.visible = !store.visible)}>{store.visible ? 'masquer' : 'afficher'}</button>
+      <button onClick$={() => store.count++}>incrementer</button>
       {store.visible ? <span>{store.count}</span> : null}
     </>
   );
 });
 ```
 
-This example is a more complicated counter.
+Cet exemple est un compteur plus compliqué.
 
-- It contains the `increment` button, which always increments `store.count`.
-- It contains a `show`/`hide` button which determines if the count is shown.
+- Il contient le bouton `incrementer`, qui incrémente toujours `store.count`.
+- Il contient un bouton `afficher`/`masquer` qui détermine si le compteur est affiché.
 
-1. On the initial render, the count is visible. Therefore the server creates a subscription that records that `ComplexCounter` needs to get re-rendered if either `store.count` or `store.visible` changes.
-2. If the user clicks on `hide`, the `ComplexCounter` rerenders. The re-rendering clears all of the subscriptions and records new ones. This time the JSX does not read `store.count`. Therefore, only `store.visible` gets added to the list of subscriptions.
-3. User clicking on `increment` will update `store.count`, but doing so will not cause the component to re-render. This is correct because the counter is not visible, so re-rendering would be a no-op.
-4. If the user clicks `show`, the component will re-render and this time the JSX will read both `store.visible` as well as `store.count`. The subscription list is once again updated.
-5. Now, clicking on `increment` updates the `store.count`. Because the count is visible, the `ComplexCounter` is subscribed to `store.count`.
+1. Lors du rendu initial, le compteur est visible. Le serveur crée donc un abonnement qui indique que `ComplexCounter` doit être re-rendu si `store.count` ou `store.visible` change.
+2. Si l'utilisateur clique sur `masquer`, le `ComplexCounter` est re-rendu. Le re-rendu vide tous les abonnements et en enregistre de nouveaux. Cette fois, le JSX ne lit pas `store.count`. Par conséquent, seul `store.visible` est ajouté à la liste des abonnements.
+3. Un clic de l'utilisateur sur `incrementer` mettra à jour `store.count`, mais cela n'entraînera pas un re-rendu du composant. C'est correct, car le compteur n'est pas visible, et le rendu serait donc inutile.
+4. Si l'utilisateur clique sur `afficher`, le composant sera re-rendu et cette fois le JSX lira à la fois `store.visible` et `store.count`. La liste d'abonnement est à nouveau mise à jour.
+5. Maintenant, en cliquant sur `incrémenter`, vous mettez à jour `store.count`. Comme le compteur est visible, le `ComplexCounter` est abonné à `store.count`.
 
-Notice how the set of subscriptions automatically updates as the component renders different branches of its JSX. The advantage of the proxy is that the subscriptions update automatically as the applications execute, and the system can always compute the smallest set of invalidated components.
+Remarquez comment l'ensemble des abonnements se met automatiquement à jour lorsque le composant rend les différentes branches de son JSX. L'avantage du proxy est que les abonnements se mettent à jour automatiquement au fur et à mesure que les applications s'exécutent, et que le système peut toujours calculer le plus petit ensemble de composants invalidés.
 
-## Deep objects
+## Objets profonds
 
-So far, the examples show the store (`useStore()`) was a simple object with primitive values. However, the same behavior can work on all properties of the store recursively by providing the `recursive` option.
+Jusqu'à présent, les exemples montrent le store (`useStore()`) comme un objet simple avec des valeurs primitives. Cependant, le même comportement fonctionne sur toutes les propriétés du store de manière récursive en fournissant l'option `recursive`.
 
 ```tsx
 export const MyComp = component$(() => {
@@ -102,32 +102,32 @@ export const MyComp = component$(() => {
 })
 ```
 
-In the above examples, Qwik will automatically wrap child objects `person` and `location` into a proxy and correctly create subscriptions on all deep properties.
+Dans les exemples ci-dessus, Qwik va automatiquement envelopper les objets enfants `person` et `location` dans un proxy et créer correctement des abonnements sur toutes les propriétés profondes.
 
-The wrapping behavior described above has one surprising side-effect. Writing and reading from a proxy auto wraps the object, which means that the identity of the object changes. This should normally not be an issue, but it is something that the developer should keep in mind.
+Le comportement d'enveloppement décrit ci-dessus a un effet secondaire surprenant. L'écriture et la lecture d'un proxy enveloppent automatiquement l'objet, ce qui signifie que l'identité de l'objet change. Cela ne devrait normalement pas être un problème, mais c'est quelque chose que le développeur doit garder à l'esprit.
 
 ```tsx
 export const MyComp = component$(() => {
   const store = useStore({ person: null });
   const person = { first: 'John', last: 'Smith' };
-  store.person = person; // store.person auto wraps object into proxy
+  store.person = person; // store.person enveloppe automatiquement l'objet dans le proxy
 
   if (store.person !== person) {
-    // The consequence of auto wrapping is that the object identity changes.
-    console.log('store auto-wrapped person into a proxy');
+    // La conséquence de l'auto-enveloppement est que l'identité de l'objet change.
+    console.log('stocke person auto-enveloppé dans un proxy');
   }
 });
 ```
 
-## Out-of-order rendering
+## Rendu désordonné
 
-Qwik components can render out of order. A component can render without forcing a parent component to render first or a child components to render as a consequence of the component render. This is an important property of Qwik because it allows Qwik applications to only re-render components which have been invalidated due to a state change rather than re-rendering the whole component tree on a state change.
+Les composants Qwik peuvent être rendus de manière désordonnée. Un composant peut être rendu sans forcer un composant parent à être rendu en premier ou un composant enfant à être rendus comme une conséquence du composant rendu. C'est une caractéristique importante de Qwik car cela permet aux applications Qwik de ne re-rendre que les composants qui ont été invalidés en raison d'un changement d'état plutôt que de re-rendre l'ensemble de l'arborescence des composants lors d'un changement d'état.
 
-When components render, they need to have access to their props. Parent components create props. The props must be serializable for the component to render independently from the parent. (See [serialization](../resumable/index.mdx#serialization) for an in-depth discussion on what is serializable)
+Lorsque les composants sont rendus, ils doivent avoir accès à leurs props. Les composants parents créent des props. Les props doivent être sérialisables pour que le composant puisse être rendu indépendamment du parent. (Voir [sérialisation](../resumable/index.mdx#serialization) pour une présentation approfondie de ce qui est sérialisable).
 
-## Invalidating child components
+## Invalidation des composants enfants
 
-When re-rendering a component, the child component's props either stay the same or are updated. A child component only invalidates if it's props change.
+Lors du re-rendu d'un composant, les propriétés du composant enfant restent les mêmes ou sont mises à jour. Un composant enfant ne s'invalide que si ses attributs changent.
 
 ```tsx
 export const Child = component$((props: { count: number }) => {
@@ -151,11 +151,11 @@ export const MyApp = component$(() => {
 });
 ```
 
-In the above example, there are two `<Child/>` components.
+Dans l'exemple ci-dessus, il y a deux composants `<Child/>`.
 
-- Every time a button is clicked, one of the three counters is incremented. A change of counter state will cause the `MyApp` component to re-render on each click.
-- If `store.c` has been incremented, none of the child components get re-rendered. (And therefore, their code does not get lazy-loaded)
-- If `store.a` has been incremented, then only `<Child count={store.a}/>` will re-render.
-- If `store.b` has been incremented, then only `<Child count={store.b}/>` will re-render.
+- Chaque fois qu'un bouton est cliqué, l'un des trois compteurs est incrémenté. Un changement de l'état du compteur entraînera un nouveau rendu du composant `MyApp` à chaque clic.
+- Si `store.c` a été incrémenté, aucun des composants enfants ne sera rendu. (Et donc, leur code n'est pas chargé de manière différée).
+- Si `store.a` a été incrémenté, seul `<Child count={store.a}/>` sera rendu à nouveau.
+- Si `store.b` a été incrémenté, seul `<Child count={store.b}/>` sera rendu à nouveau.
 
-Notice that the child components only re-render when their props change. This is an important property of Qwik applications as it significantly limits the amount of re-rendering the application must do on some state change. While less re-rendering has performance benefits, the real benefit is that large portions of the applications do not get downloaded if they don't need to be re-rendered.
+Remarquez que les composants enfants ne sont rendus que lorsque leurs props changent. C'est une propriété importante des applications Qwik car elle limite significativement la quantité de rendu que l'application doit faire lors d'un changement d'état. Alors que la réduction du rendu a des avantages de performance, le vrai avantage est que de grandes parties des applications ne sont pas téléchargées si elles n'ont pas besoin d'être rendues.

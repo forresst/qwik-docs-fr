@@ -1,5 +1,5 @@
 ---
-title: Passing Closures
+title: En passant des closures
 contributors:
   - adamdbradley
   - Nico385412
@@ -8,25 +8,25 @@ contributors:
   - manucorporat
 ---
 
-Props must be serializable so that Qwik can resume and render each component independently from other components on the page. This poses a problem if we wish to pass a callback to a child component. Callbacks are functions and functions are not directly serializable, but they are serializable through the `$()` by converting them to QRLs first.
+Les props doivent être sérialisables afin que Qwik puisse reprendre et rendre chaque composant indépendamment des autres composants de la page. Ceci pose un problème si nous souhaitons passer un callback à un composant enfant. Les callbacks sont des fonctions et les fonctions ne sont pas directement sérialisables, mais elles sont sérialisables à travers le `$()` en les convertissant d'abord en QRL.
 
-## QRLs
+## QRL
 
-Functions passing across serializable boundaries must be done through QRLs. QRLs are serialized forms of a function. (See [QRL](../../../docs/advanced/qrl/index.mdx) in advanced section.)
+Le passage de fonctions à travers des zones sérialisables doit se faire par le biais de QRL. Les QRL sont des formes sérialisées d'une fonction. (Voir [QRL](../../../docs/advanced/qrl/index.mdx) dans la section avancée).
 
-Qwik has convenience APIs which end in `$` that are equivalent to calling `$()` directly. These two lines are equivalent:
+Qwik a des API de commodité qui se terminent par `$` qui sont équivalentes à appeler directement `$()`. Ces deux lignes sont équivalentes :
 
-- inline: `useWatch$(() => {...}/>`
-- explicit: `const callbackQrl = $(() => {...}); useWatchQrl(callbackQrl)`
+- en ligne : `useWatch$(() => {...}/>`
+- explicite : `const callbackQrl = $(() => {...}); useWatchQrl(callbackQrl)`
 
-Most of the time we use the first form as it allows us to inline our callbacks directly into the API. But at times it is necessary to use the second form so that we can separate where the function is declared and where it is used.
+La plupart du temps, nous utilisons la première forme car elle nous permet d'intégrer nos callbacks directement dans l'API. Mais il est parfois nécessaire d'utiliser la deuxième forme afin de pouvoir séparer l'endroit où la fonction est déclarée et celui où elle est utilisée.
 
-## Declaring callback props
+## Déclaration des props de callback
 
-A component can declare a callback in its props by:
+Un composant peut déclarer un callback dans ses props par :
 
-- Property that ends in `$` (as in `goodbye$`)
-- The type of the property is `PropFunction<T>` where `T` is the lazy reference type that the QRL points to (function signature).
+- Une propriété qui se termine par `$` (comme dans `goodbye$`).
+- Le type de la propriété est `PropFunction<T>` où `T` est le type de référence différée sur lequel la QRL pointe (signature de fonction)
 
 ```typescript
 interface MyComponentProps {
@@ -37,23 +37,23 @@ interface MyComponentProps {
 export const MyComponent = component$((props: MyComponentProps) => { ... });
 ```
 
-This allows the user of `<MyComponent>` to use `goodbye$` form as shown here:
+Cela permet à l'utilisateur de `<MyComponent>` d'utiliser le formulaire `goodbye$` comme indiqué ici :
 
 ```jsx
 <MyComponent goodbye$={goodbyeQrl} hello$={() => {...}} />
 ```
 
-## Using callback props
+## Utilisation de props de callback
 
-Notice that the `<MyComponent>` component receives a callback function.
+Remarquez que le composant `<MyComponent>` reçoit une fonction de callback.
 
-Passing the `props.goodbye$` as a reference to the `<button>`
+En passant le `props.goodbye$` comme référence au `<button>`.
 
 ```jsx
 <button onClick$={props.goodbye$}>good bye</button>
 ```
 
-Creating a new callback for `<button>` and internally invoking the callback QRL.
+La création d'un nouveau callback pour `<button>` et l'appel interne du callback QRL.
 
 ```jsx
 <button
@@ -65,4 +65,4 @@ Creating a new callback for `<button>` and internally invoking the callback QRL.
 </button>
 ```
 
-This form allows the `<button>` to invoke the callback with custom parameters. Notice that the invocation requires `async` and `await` as the QRLs are lazy-loaded.
+Cette forme permet au `<button>` d'invoquer le callback avec des paramètres personnalisés. Notez que l'appel nécessite `async` et `await` car les QRL sont chargées de manière différée.

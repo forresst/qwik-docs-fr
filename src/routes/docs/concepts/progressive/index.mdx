@@ -1,78 +1,78 @@
 ---
-title: Progressively
+title: Progressivement
 contributors:
   - adamdbradley
   - RATIU5
   - manucorporat
 ---
 
-# Progressively
+# Progressivement
 
-Progressively is about downloading code as the application needs, without having to download the entire codebase eagerly.
+Progressivement, il s'agit de télécharger le code au fur et à mesure des besoins de l'application, sans avoir à télécharger l'ensemble de la base de code par avance.
 
-This connect with Qwik's [core tenet](../../think-qwik/index.mdx) which focus on delaying **the loading** and execution of JavaScript for as long as possible. Qwik needs to break up the application into many lazy loadable chunks to achieve that.
+Ceci est lié au [principe de base](../../think-qwik/index.mdx) de Qwik qui se concentre sur le retardement du **chargement** et de l'exécution du JavaScript aussi longtemps que possible. Qwik a besoin de décomposer l'application en plusieurs morceaux chargeable de manière différée pour atteindre cet objectif.
 
-## Current state-of-the-art
+## État de l'art actuel
 
-[Existing frameworks suffer from two problems](https://www.builder.io/blog/dont-blame-the-developer-for-what-the-frameworks-did):
+[Les frameworks existants souffrent de deux problèmes](https://www.builder.io/blog/dont-blame-the-developer-for-what-the-frameworks-did):
 
-- Lazy loading boundaries are 100% delegated to the developer
-- Frameworks can only lazy load components that are not in the current render tree.
+- Les zones du chargement différé sont déléguées à 100 % au développeur.
+- Les frameworks ne peuvent charger de manière différée que les composants qui ne sont pas dans l'arborescence du rendu en cours.
 
-The issue is that the frameworks need to reconcile their internal state with the DOM. And that means that at least once on application hydration, they need to be able to do a full render to rebuild the framework's internal state. After the first render, the frameworks can be more surgical about their updates, but the damage has been done, the code has been downloaded. So we have two issues:
+Le problème est que les frameworks doivent récupérer leur état interne avec le DOM. Et cela signifie qu'au moins une fois lors de l'hydratation de l'application, ils doivent être en mesure d'effectuer un rendu complet pour reconstruire l'état interne du framework. Après le premier rendu, les frameworks peuvent être plus chirurgicaux quant à leurs mises à jour, mais le mal a été fait, le code a été téléchargé. Nous avons donc deux problèmes :
 
-- Frameworks need to download and execute components to rebuild the render tree on startup. (See [hydration is pure overhead](https://www.builder.io/blog/hydration-is-pure-overhead)) This forces eager download and execution of all components in the render tree.
-- The event handlers come with the components even though they are not needed at the time of rendering. The inclusion of event handlers forces the download of unnecessary code.
+- Les frameworks doivent télécharger et exécuter les composants pour reconstruire l'arborescence du rendu au démarrage. (Voir [l'hydratation est une pure perte de temps](https://www.builder.io/blog/hydration-is-pure-overhead)) Cela force le téléchargement et l'exécution par avance de tous les composants de l'arborescence du rendu.
+- Les gestionnaires d'événements sont fournis avec les composants, même s'ils ne sont pas nécessaires au moment du rendu. L'inclusion des gestionnaires d'événements force le téléchargement de code inutile.
 
 ## Solution
 
-Qwik architecture takes full advantage of modern tooling to automate the problem of entry point generation. Developers can write components normally, while the Qwik optimizer will split the components into chunks and download them as needed.
+L'architecture Qwik profite pleinement des outils modernes pour automatiser le problème de la génération des points d'entrée. Les développeurs peuvent écrire des composants normalement, tandis que l'optimiseur Qwik va diviser les composants en morceaux et les télécharger selon les besoins.
 
-In addition, the framework runtime does not need to download code that is not required for interactivity, even if the component is part of the render tree.
+De plus, le moteur d'exécution du framework n'a pas besoin de télécharger le code qui n'est pas nécessaire à l'interactivité, même si le composant fait partie de l'arborescence du rendu.
 
-### Optimizer
+### L'Optimiseur
 
-Optimizer (described in-depth [here](../../advanced/optimizer/index.mdx)) is a code transformation that extracts functions into top-level importable symbols, which allows the Qwik runtime to lazy-load the JavaScript on an as-needed basis.
+L'Optimiseur (décrit en détail [ici](../../advanced/optimizer/index.mdx)) est une transformation de code qui extrait les fonctions dans des symboles importables de haut niveau, ce qui permet au moteur d'exécution de Qwik de charger de manière différée le JavaScript en fonction des besoins.
 
-The Optimizer and Qwik runtime work together to achieve the desired result of fine-grained lazy loading.
+L'Optimiseur et le moteur d'exécution de Qwik travaillent ensemble pour atteindre le résultat désiré du chargement différé avec précision.
 
-Without the Optimizer, either:
+Sans l'Optimiseur :
 
-- The code would have to be broken up by the developer into importable parts. This would be unnatural to write an application, making for a bad DX.
-- The application would have to load a lot of unnecessary code as there would be no lazy-loaded boundaries.
+- Le code devrait être découpé par le développeur en parties importables. Cela ne serait pas naturel pour écrire une application, ce qui rendrait l'expérience du développeur mauvaise.
+- L'application devrait charger beaucoup de code inutile, car il n'y aurait pas de zones pour le chargement différé.
 
-Qwik runtime must understand the Optimizer output. The biggest difference to comprehend is that by breaking up the component into lazy-loadable chunks, the lazy-loading requirement introduces asynchronous code into the framework. The framework has to be written differently to take asynchronicity into account. Existing frameworks assume that all code is available synchronously. This assumption prevents an easy insertion of lazy-loading into existing frameworks. (For example, when a new component is created, the framework assumes that its initialization code can be invoked in a synchronous fashion. If this is the first time component is referenced, then its code needs to be lazy-loaded, and therefore the framework must take that into account.)
+Le moteur d'exécution de Qwik doit comprendre le résultat de l'Optimiseur. La plus grande différence à comprendre est qu'en décomposant le composant en morceaux à chargement différé, l'exigence du chargement différé introduit du code asynchrone dans le framework. Le framework doit être écrit différemment pour prendre en compte l'asynchronisme. Les frameworks existants supposent que tout le code est disponible de manière synchrone. Cette hypothèse empêche une insertion facile du chargement différé dans les frameworks existants. (Par exemple, lorsqu'un nouveau composant est créé, le framework suppose que son code d'initialisation peut être invoqué de manière synchrone. Si c'est la première fois que le composant est référencé, son code doit être chargé de manière différée, et le framework doit donc en tenir compte).
 
-### Lazy-loading
+### Chargement différé
 
-Lazy-loading is asynchronous. Qwik is an asynchronous framework. Qwik understands that at any time, it may not have a reference to a callback, and therefore, it may need to lazy-load it. (In contrast, most existing frameworks assume that all of the code is available synchronously, making lazy-loading non-trivial.)
+Le chargement différé est asynchrone. Qwik est un framework asynchrone. Qwik comprend qu'à tout moment, il peut ne pas avoir de référence à un callback, et donc, il peut avoir besoin de le charger de manière différée. (En revanche, la plupart des frameworks existants supposent que tout le code est disponible de manière synchrone, rendant le chargement différé très difficile).
 
-In Qwik everything is lazy-loadable:
+Dans Qwik tout est chargeable de manière différée :
 
-- Component on-render (initialization block and render block)
-- Component on-watch (side-effects, only downloaded if inputs change)
-- Listeners (only downloaded on interaction)
-- Styles (Only downloaded if the server did not already provide them)
+- Composant pour le rendu (bloc d'initialisation et bloc de rendu)
+- Composant pour la surveillance (effets secondaires, seulement téléchargé si les entrées changent)
+- Écouteurs (seulement téléchargé sur l'interaction)
+- Styles (uniquement téléchargés si le serveur ne les a pas déjà fournis)
 
-Lazy-loading is a core property of the framework and not an afterthought.
+Le chargement différé est une propriété essentielle du framework et non un ajout après coup.
 
-### Optimizer and `$`
+### L'Optimiseur et `$`
 
-Let's look at our example again:
+Reprenons notre exemple :
 
 ```tsx
-// the `$` suffix for `component` indicates that the component should be
-// lazy-loaded.
+// le suffixe `$` pour `component` indique que le composant doit être
+// chargé de manière différée.
 export const Counter = component$(() => {
   const store = useStore({ count: 0 });
 
-  // the `$` suffix for `onClick` indicates that the implementation for
-  // the handler should be lazy-loaded.
+  // Le suffixe `$` pour `onClick` indique que l'implémentation
+  // du gestionnaire doit être chargée de manière différée.
   return <button onClick$={() => store.count++}>{store.count}</button>;
 });
 ```
 
-Notice the presence of `$` in the code. `$` is a marker that tells the Optimizer that the function
-following it should be lazy-loaded. (For a detailed discussion see [$ and Optimizer Rules](../../advanced/optimizer/index.mdx).)
-The `$` is a single character that hints to the Optimizer and the developer to let them know
-that asynchronous lazy-loading occurs here.
+Remarquez la présence de `$` dans le code. `$` est un marqueur qui indique à l'optimiseur que la fonction qui le
+suit doit être chargée de manière différée. (Pour une explication détaillée, voir [$ et les règles de l'Optimiseur](../../advanced/optimizer/index.mdx).
+Le `$` est un caractère unique qui indique à l'Optimiseur et au développeur
+que le chargement différé asynchrone est nécessaire ici.

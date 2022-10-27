@@ -4,9 +4,9 @@ export const App = component$(() => {
   return (
     <>
       <h1>Hello World!</h1>
-      I am a static component, there is no reason to ever download me to the client.
+      Je suis un composant statique, il n'y a aucune raison de me charger sur le client.
       <br />
-      <button onClick$={() => alert('Hello')}>greet!</button>
+      <button onClick$={() => alert('Hello')}>Saluer !</button>
       <hr />
       <Counter />
     </>
@@ -17,10 +17,10 @@ export const Counter = component$(() => {
   const store = useStore({ count: 0 });
   return (
     <>
-      I am a dynamic component. Qwik will download me only when it is time to re-render me after the
-      user clicks on the <tt>+1</tt> button.
+      Je suis un composant dynamique. Qwik me chargera uniquement quand il sera temps de me re-rendre après que
+      l'utilisateur ait cliqué sur le bouton <tt>+1</tt>.
       <br />
-      Current count: {store.count}
+      Compteur actuel : {store.count}
       <br />
       <button onClick$={() => store.count++}>+1</button>
     </>

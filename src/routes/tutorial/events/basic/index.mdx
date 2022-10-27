@@ -1,30 +1,30 @@
 ---
-title: Event Listeners
+title: Écouteurs d'événements
 contributors:
   - manucorporat
   - adamdbradley
   - the-r3aper7
 ---
 
-A key feature of any framework is making it easy to listen to user events.
+L'une des principales fonctionnalités de tout framework est de faciliter l'écoute des événements utilisateur.
 
-Qwik can listen on a variety of events by placing an `on<Eventname>$` attribute on an element that subscribes to the corresponding browser event.
+Qwik peut écouter une multitude d'événements en plaçant un attribut `on<Eventname>$` sur un élément qui souscrit à l'événement correspondant du navigateur.
 
-Your task is to add a `click` event on the `<button>` element. Start by adding the `onClick$` property and bind it to a function that calls `alert('Hello World!')`.
+Votre tâche consiste à ajouter un événement `click` sur l'élément `<button>`. Commencez par ajouter la propriété `onClick$` et liez-la à une fonction qui appelle `alert('Hello World!')`.
 
-## Understanding the Runtime
+## Comprendre l'exécution
 
-So far this may look like a normal framework behavior, however Qwik does things very differently from other frameworks.
+Jusqu'ici cela peut sembler être un comportement habituel des frameworks, cependant Qwik fait les choses très différemment des autres frameworks.
 
-Every time you see a `$` you should be thinking, "lazy-loading happens here".
+Chaque fois que vous voyez un `$` vous devez penser, « le chargement différé se passe ici ».
 
-As you open the browser's developer tools, notice that no JavaScript is loaded until you click the button.
+Lorsque vous ouvrez les outils de développement du navigateur, remarquez qu'aucun JavaScript n'est chargé avant que vous ne cliquiez sur le bouton.
 
-If JavaScript is required to subscribe to browser events, how does Qwik achieve this interaction without loading JavaScript?
+Si le JavaScript est nécessaire pour s'abonner aux événements du navigateur, comment Qwik réalise cette interaction sans charger le JavaScript ?
 
-Consider the following simplified HTML of the application below.
+Considérez le HTML simplifié suivant de l'application ci-dessous.
 
-> **Tip:** Click on the **HTML** tab to see actual HTML produced by the server.
+> **Astuce :** Cliquez sur l'onglet **HTML** pour voir le HTML réellement produit par le serveur.
 
 ```HTML
 <html>
@@ -37,23 +37,23 @@ Consider the following simplified HTML of the application below.
 </html>
 ```
 
-1. APIs contain the `$` so the Qwik optimizer can transform your code for lazy-loading.
+1. Les API contiennent le `$` pour que l'Optimiseur Qwik puisse transformer votre code pour le chargement différé.
 
-- The `$` is a signal to the optimizer to extract the code for lazy-loading.
-- The `$` is a signal to you that lazy-loading "magic" happens at this point.
-- TypeScript rules ensure you don't skip any places where the `$` should appear.
+- Le `$` est un indicateur pour l'Optimiseur afin qu'il extrait le code pour le chargement différé.
+- Le `$` vous indique que la « magie » du chargement différé se déroule à cet endroit.
+- Les règles TypeScript vous empêchent de manquer les endroits où le `$` devrait apparaître.
 
-2. The optimizer looks for the `$` and extracts the function wrapped by `$` into a separate [lazy-loadable chunk](../../../docs/advanced/optimizer/index.mdx).
-3. As the server renders the page, the JSX is executed and notices that there is a click listener. The click listener is serialized into the `<button>` element as `on:click` attribute. Qwik then knows how to hook this event back up on the client.
-4. Qwikloader scripts get inlined into HTML. The Qwikloader script sets up a global listener for all events in the browser. Qwikloader is about 1kb and executes in about 1ms.
-5. When a user clicks on the button, the Qwikloader intercepts the event and looks for an element with `on:click` attribute.
-6. The `on:click` attribute contains:
-   - The URL to download the associated code.
-     - To avoid delays between click and execution, Qwik prefetches the code related to the given component.
-   - A symbol that is exported by the downloaded chunk that contains the function needs to execute.
-7. Once the code is downloaded the function is executed.
+2. L'Optimiseur recherche le `$` et extrait la fonction enveloppée par le `$` dans un morceau séparé [chargeable de manière différée] (../../../docs/advanced/optimizer/index.mdx).
+3. Lorsque le serveur rend la page, le JSX est exécuté et remarque qu'il y a un écouteur sur le clic. L'écouteur du clic est sérialisé dans l'élément `<button>` comme attribut `on:click`. Qwik sait alors comment connecter cet évènement sur le client.
+4. Le script Qwikloader est intégré dans le HTML. Le script Qwikloader met en place un écouteur global pour tous les événements dans le navigateur. Qwikloader fait environ 1kb et s'exécute en 1ms environ.
+5. Lorsqu'un utilisateur clique sur le bouton, le Qwikloader intercepte l'événement et recherche un élément avec l'attribut `on:click`.
+6. L'attribut `on:click` contient :
+   - L'URL pour charger le code associé.
+     - Pour éviter les délais entre le clic et l'exécution, Qwik précharge le code lié au composant donné.
+   - Un symbole exporté par le morceau chargé contenant la fonction qui doit être exécutée.
+7. Une fois le code chargé, la fonction est exécutée.
 
-The above behavior is what gives Qwik applications their instant-on property (resumability) without eagerly downloading and executing code and performing hydration which is expensive.
+Le comportement ci-dessus est ce qui donne aux applications Qwik leur propriété d'instantanéité (résumabilité) sans par avance charger et exécuter le code et effectuer l'hydratation qui est coûteuse.
 
-> **NOTE**
-> To avoid delays between user action and response, Qwik prefetches code in the background.
+> **REMARQUE**
+> Pour éviter les délais entre l'action de l'utilisateur et la réponse, Qwik précharge le code en arrière-plan.

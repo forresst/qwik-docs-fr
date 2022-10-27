@@ -1,18 +1,18 @@
 ---
-title: Context
+title: Contexte
 contributors:
   - adamdbradley
   - manucorporat
 ---
 
-Use context to pass data to child components without explicitly passing it through components (known as prop drilling). Context is useful to share data that is needed throughout the application components. For example styling information, application state, or currently logged-in user.
+Utilisez le contexte pour transmettre des données aux composants enfants sans les transmettre explicitement à travers les composants (connu sous le nom de prop-drilling). Le contexte est utile pour partager des données qui sont nécessaires dans tous les composants de l'application. Par exemple, les informations de style, l'état de l'application ou l'utilisateur actuellement connecté.
 
-To use context you need three parts:
+Pour utiliser le contexte, vous avez besoin de trois éléments :
 
-- `createContext()`: this creates a serializable ID for the context. Make sure that this id is unique within your application.
-- `useContextProvider()`: At a parent component call this method to publish the context value. All children (and grandchildren) that are descendants of this component will be able to retrieve the context.
-- `useContext()` to retrieve the context and use it in any component.
+- `createContext()` : ceci crée un ID sérialisable pour le contexte. Assurez-vous que cet identifiant est unique dans votre application.
+- `useContextProvider()` : Au niveau d'un composant parent, appelez cette méthode pour publier la valeur du contexte. Tous les enfants (et petits-enfants) qui sont des descendants de ce composant seront en mesure de récupérer le contexte.
+- `useContext()` pour récupérer le contexte et l'utiliser dans n'importe quel composant.
 
-In this example, we would like to pass the `TodosStore` to the `<Items>` component. Update the code to use `useContext()` to retrieve the value.
+Dans cet exemple, nous souhaitons passer le `TodosStore` au composant `<Items>`. Mettez à jour le code pour utiliser `useContext()` pour récupérer la valeur.
 
-Contexts typically are stores, and as such, they must be serializable.
+Les contextes sont généralement des stores, et en tant que tels, ils doivent être sérialisables.

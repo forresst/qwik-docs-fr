@@ -7,16 +7,16 @@ contributors:
   - mhevery
 ---
 
-# Head Title
+# Titre du Head
 
-HTML places the `<head>` tag as the first element within `<html>` (at the very top of the HTML content). The `<head>` section is not something that your route component renders directly, yet you still need to control its content. This can be achieved by exporting a `head` property (or function) from your page component.
+Le langage HTML place la balise `<head>` comme premier élément dans `<html>` (tout en haut du contenu HTML). La section `<head>` n'est pas quelque chose que votre composant de route rend directement, mais vous devez quand même contrôler son contenu. Vous pouvez y parvenir en exportant une propriété (ou une fonction) `head` de votre composant de page.
 
-## Static Document Head
+## Head de document statique
 
-If all we need to do is set the title of the page, we can do it in the `head` (and optional `meta`, `links` and `styles`) export of the component like so:
+Si tout ce que nous devons faire est de définir le titre de la page, nous pouvons le faire dans l'exportation `head` (et les options `meta`, `links` et `styles`) du composant comme suit :
 
 ```typescript
-// File: src/routes/product/[skuId]/index.tsx
+// Fichier : src/routes/product/[skuId]/index.tsx
 import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 
@@ -30,12 +30,12 @@ export const head: DocumentHead = {
 };
 ```
 
-## Dynamic Document Head
+## Head de document dynamique
 
-The above case works for simple situations where we just want to set the document's title of the page with a static value. In a case where we need to set the title dynamically, for example, to include the product title, we can use a function:
+Le cas ci-dessus fonctionne pour les situations simples où nous voulons simplement définir le titre du document de la page avec une valeur statique. Dans le cas où nous devons définir le titre de manière dynamique, par exemple, pour inclure le titre du produit, nous pouvons utiliser une fonction :
 
 ```typescript
-// File: src/routes/product/[skuId]/index.tsx
+// Fichier : src/routes/product/[skuId]/index.tsx
 import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 
@@ -58,11 +58,11 @@ export const head: DocumentHead<EndpointData> = ({ data }) => {
 };
 ```
 
-The second case is a bit more complicated but it showcases how we can set the title of the page with the value that is retrieved from the `onGet` endpoint. (See [data documentation](../../data/overview/index.mdx) for retrieving data.) The Qwik City invokes `onGet` to retrieve the data for the route and then passes the data to the `head` function allowing it to create a custom title.
+Le deuxième cas est un peu plus compliqué mais il montre comment nous pouvons définir le titre de la page avec la valeur qui est récupérée à partir du endpoint `onGet`. (Voir [documentation des données](../../data/overview/index.mdx) pour récupérer les données). Qwik City invoque `onGet` pour récupérer les données pour la route et ensuite passe les données à la fonction `head` lui permettant de créer un titre personnalisé.
 
 ## Resolved Document Head
 
-An advanced case is that a [layout](../../layout/overview/index.mdx) may want to modify the document title of an already resolved document head. In the example below, the page component returns the title of `Foo`. Next, the containing layout component can read the value of the page's document head and modify it. In this example, the layout component is adding `Bar` to the title, so that when rendered, the title will be `Foo Bar`. Every layout in the stack has the opportunity to return a new value.
+Un cas avancé est celui où une [mise en page](../../layout/overview/index.mdx) peut vouloir modifier le titre d'un document déjà résolu. Dans l'exemple ci-dessous, le composant page renvoie le titre `Foo`. Ensuite, le composant de mise en page qui le contient peut lire la valeur de l'en-tête de document de la page et la modifier. Dans cet exemple, le composant de mise en page ajoute `Bar` au titre, de sorte qu'au moment du rendu, le titre sera `Foo Bar`. Chaque composant de la pile a la possibilité de renvoyer une nouvelle valeur.
 
 ```
 ──src/
@@ -72,14 +72,14 @@ An advanced case is that a [layout](../../layout/overview/index.mdx) may want to
 ```
 
 ```typescript
-// File: src/routes/index.tsx
+// Fichier : src/routes/index.tsx
 export const head: DocumentHead = {
   title: `Foo`,
 };
 ```
 
 ```typescript
-// File: src/routes/layout.tsx
+// Fichier : src/routes/layout.tsx
 export const head: DocumentHead<EndpointData> = ({ head }) => {
   return {
     title: `${head.title} Bar`,

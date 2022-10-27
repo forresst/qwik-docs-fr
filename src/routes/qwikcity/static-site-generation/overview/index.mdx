@@ -1,25 +1,25 @@
 ---
-title: Static Site Generation (SSG) Overview
+title: Génération de sites statiques (SSG) Vue d'ensemble
 contributors:
   - adamdbradley
 ---
 
-# Static Site Generation (SSG) Overview
+# Génération de sites statiques (SSG) Vue d'ensemble
 
-Static Site Generation, or commonly referred to as "SSG", is the process of pre-rendering site webpages into static HTML files. The benefit is that when a visitor requests the webpage, the response is a pre-generated HTML file (a static file), and doesn't require the webpage's HTML to "rebuild" on the visitors browser, or dynamically created by your server (more on this later).
+La génération de sites statiques, ou plus communément appelée « SSG », est le processus de pré-rendu des pages web d'un site en fichiers HTML statiques. L'avantage est que lorsqu'un visiteur demande la page Web, la réponse est un fichier HTML pré-généré (un fichier statique), et ne nécessite pas que le HTML de la page Web soit « reconstruit » sur le navigateur du visiteur, ou créé dynamiquement par votre serveur (nous y reviendrons plus tard).
 
-Additionally, due to Qwik's underlying architecture, page performance also benefits by not requiring a Javascript "hydration" step, which can significantly lower performance and slow down user interactivity. By pre-rendering static `index.html` files with SSG, and combined with Qwik's [resumability](../../../docs/concepts/resumable/index.mdx), static site generation offers many performance benefits over legacy solutions.
+De plus, en raison de l'architecture sous-jacente de Qwik, les performances des pages sont également améliorées car elles ne nécessitent pas d'étape d'« hydratation » Javascript, qui peut réduire considérablement les performances et ralentir l'interactivité de l'utilisateur. En effectuant un pré-rendu des fichiers statiques `index.html` avec SSG, et combiné avec la [resumabilité](../../../docs/concepts/resumable/index.mdx) de Qwik, la génération de sites statiques offre de nombreux avantages en termes de performance par rapport aux solutions existantes.
 
-## SSG vs. Server-Side Rendered (SSR)
+## SSG vs Rendu côté serveur (SSR)
 
-Qwik City is capable of taking a Qwik application, no matter if it's a "webapp" or "website", and generate static HTML. Once it's generated as HTML, Qwik is fundamentally able to skip rebuilding the app by using [resumability](../../../docs/concepts/resumable/index.mdx), since the app was already generated as HTML. Both Static Site Generation (SSG) and Server-Side Rendering (SSR) use the same process to generate the HTML. The main difference between the SSG and SSR however, is "when" the HTML is generated.
+Qwik City est capable de prendre une application Qwik, peu importe si c'est une « webapp » ou un « site web », et de générer du HTML statique. Une fois qu'elle est générée en HTML, Qwik est fondamentalement capable de ne pas reconstruire l'appli en utilisant la [resumabilité](../../../docs/concepts/resumable/index.mdx), puisque l'appli a déjà été générée en HTML. La génération de sites statiques (SSG) et le Rendu côté serveur (SSR) utilisent le même processus pour générer le HTML. La principale différence entre la SSG et le SSR réside toutefois dans le « moment » où le HTML est généré.
 
-In a traditional setup, SSG pre-renders each webpage at build-time, while SSR render's each webpage on-demand for each HTTP request. SSG only needs to generate the HTML one time per build, which is great for webpages where each visitor should see the same content. In contrast, SSR is great when the webpage may be different for each visitor, and would need to render custom HTML for each individual HTTP request.
+Dans une configuration traditionnelle, la SSG effectue le rendu de chaque page Web au moment de la construction, tandis que le SSR effectue le rendu de chaque page Web à la demande pour chaque requête HTTP. La SSG n'a besoin de générer le HTML qu'une seule fois lors de la construction, ce qui est idéal pour les pages Web où chaque visiteur doit voir le même contenu. En revanche, le SSR est idéal lorsque la page Web peut être différente pour chaque visiteur et qu'il est nécessaire d'effectuer un rendu HTML personnalisé pour chaque requête HTTP.
 
-For example, SSG is ideal for a blog or docs site, where all the content should be the same for each visitor. While SSR may work fine for a blog, it may be an unnecessary strain for your HTTP servers to render the blog content for every visitor, even though they'd all end up seeing the same HTML.
+Par exemple, la SSG est idéale pour un blog ou un site de documentation, où tout le contenu doit être le même pour chaque visiteur. Si le SSR convient parfaitement à un blog, le fait de rendre le contenu du blog pour chaque visiteur peut représenter une charge inutile pour vos serveurs HTTP, même s'ils voient tous le même HTML.
 
-However, an account dashboard would commonly have different content for each signed-in user. In this setup, each user should get their own rendered HTML with their account information, rather than everyone seeing the exact same content. This is where SSR would be preferred.
+Cependant, le tableau de bord d'un compte a généralement un contenu différent pour chaque utilisateur connecté. Dans cette configuration, chaque utilisateur devrait obtenir son propre rendu HTML avec ses informations de compte, plutôt que de voir le même contenu pour tous. C'est dans ce cas que SSR est préférable.
 
-Ideally, the more you can do with static site generation the better, since that'll have less costs to your servers and faster response times.
+Idéalement, plus vous pouvez en faire avec la génération de sites statiques, mieux c'est, car vous aurez moins de coûts pour vos serveurs et des temps de réponse plus rapides.
 
-With Qwik City however, the decision to use SSG or SSR, does not have to be one or the other decision. Instead, your own implementation can choose to have some route paths use SSG, while some other pages use SSR. It's entirely up to you and your requirements.
+Avec Qwik City cependant, la décision d'utiliser la SSG ou le SSR, ne doit pas nécessairement être l'une ou l'autre. Au contraire, votre propre implémentation peut choisir d'avoir certains chemins d'accès utilisant la SSG, tandis que d'autres pages utilisent le SSR. Cela dépend entièrement de vous et de vos besoins.

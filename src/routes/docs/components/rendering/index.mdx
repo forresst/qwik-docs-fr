@@ -1,5 +1,5 @@
 ---
-title: Rendering
+title: Le rendu
 contributors:
   - the-r3aper7
   - RATIU5
@@ -8,18 +8,18 @@ contributors:
   - adamdbradley
 ---
 
-# Rendering
+# Le rendu
 
-Rendering is the process of updating the DOM based on
-  1. Changes in the state of the application
-  2. Component templates
+Le rendu est le processus de mise à jour du DOM basé sur
+  1. les changements dans l'état de l'application
+  2. les templates des composants.
 
-Qwik is unique because it knows how to render templates out-of-order and asynchronously.
+Qwik est unique car il sait comment rendre les templates de manière non ordonnée et asynchrone.
 
-- **Out-of-order**: this means that Qwik does not require that the parent component or child component must also be rendered when rendering a component.
-- **Asynchronously**: this means that Qwik's `render` function understands that it may need to download child components, and therefore the rendering operation is asynchronous.
+- **De manière non ordonné** : cela signifie que Qwik n'a pas l'obligation que le composant parent ou le composant enfant soit lui aussi rendu pour faire le rendu d'un composant.
+- **Asynchrone** : cela signifie que la fonction `render` de Qwik est consciente qu'elle peut avoir besoin de télécharger des composants enfants, et donc l'opération de rendu est asynchrone.
 
-Simple counter-example:
+Un simple exemplede compteur :
 
 ```tsx
 export const Counter = component$(() => {
@@ -29,7 +29,7 @@ export const Counter = component$(() => {
 });
 ```
 
-Once rendered, the HTML fragment may look something like this:
+Une fois rendu, le fragment HTML peut ressembler à quelque chose comme ceci :
 
 ```html
 <div>
@@ -37,17 +37,17 @@ Once rendered, the HTML fragment may look something like this:
 </div>
 ```
 
-- For an explanation of `$`, see [`$` and optimizer rules](../../advanced/optimizer/index.mdx).
-- For an explanation of `q:obj`, see [serialization](../../concepts/resumable/index.mdx).
-- For an explanation of `on:click`, see [qwikloader](../../advanced/qwikloader/index.mdx).
+- Pour une explication de `$`, voir [`$` et les règles de l'Optimiseur](../../advanced/optimizer/index.mdx).
+- Pour une explication de `q:obj`, voir la [sérialisation](../../concepts/resumable/index.mdx).
+- Pour une explication de `on:click`, voir [qwikloader](../../advanced/qwikloader/index.mdx).
 
 ## JSX
 
-Qwik uses JSX to express the component's template. JSX discussion is outside of the scope of this document, but Qwik JSX should feel very familiar if you have used JSX with other frameworks. For this reason, let's focus on how Qwik JSX is different.
+Qwik utilise JSX pour exprimer le template du composant. La description de JSX est en dehors de la portée de ce document, mais Qwik JSX devrait vous sembler très familier si vous avez déjà utilisé JSX avec d'autres frameworks. Pour cette raison, nous allons nous concentrer sur les différences de Qwik JSX.
 
-## Rendering child components
+## Le rendu des composants enfants
 
-Qwik lazy loads components on an as-needed basis. To minimize the number of components to download, Qwik only descends into child components if the component's props have changed.
+Qwik charge les composants de manière différée, selon les besoins. Pour minimiser le nombre de composants à télécharger, Qwik ne descend dans les composants enfants que si les props du composant ont changé.
 
 ```tsx
 export const Parent = component$(() => {
@@ -67,17 +67,17 @@ export const Greeter = component$((props: { name: string }) => {
 });
 ```
 
-In the above example, there are two buttons:
+Dans l'exemple ci-dessus, il y a deux boutons :
 
-1. Clicking the first button changes the direction of the counter (`store.step` flips between `+1` and `-1`). Changing the `store` requires that the component's `OnRender` function executes. The resulting JSX updates the DOM to show `+1` and `-1`. However, changing the direction will not change the props on `<Greeter name={'World_' + store.count}/>`. For this reason, Qwik will not descend into the `<Greeter>` component, and therefore the `Greeter`'s template does not need to be downloaded or executed. Such aggressive pruning allows Qwik to minimize the amount of code that needs to be present to render a component.
-2. Clicking the second button increments (or decrements) `store.count`. This in turn causes the props on `<Greeter name={'World_' + store.count}/>` to change. A change in props means that Qwik will also descend and render `<Greeter>`. However, it is possible that Qwik does not have a reference to the child component. In that case, Qwik will lazy-load the component and continue the rendering once the component's render function is available.
+1. Cliquer sur le premier bouton change la direction du compteur (`store.step` bascule entre `+1` et `-1`.). Le changement du `store` nécessite l'exécution de la fonction `OnRender` du composant. Le JSX résultant met à jour le DOM pour afficher `+1` ou `-1`. Cependant, changer la direction ne changera pas les props sur `<Greeter name={'World_' + store.count}/>`. Pour cette raison, Qwik ne descendra pas dans le composant `<Greeter>`, et donc le template de `Greeter` n'a pas besoin d'être téléchargé ou exécuté. Un tel élagage agressif permet à Qwik de minimiser la quantité de code qui doit être présent pour rendre un composant.
+2. Cliquer sur le second bouton incrémente (ou décrémente) `store.count`. Cela provoque à son tour le changement des props sur `<Greeter name={'World_' + store.count}/>`. Un changement dans les props signifie que Qwik va aussi descendre et rendre `<Greeter>`. Cependant, il est possible que Qwik n'ait pas de référence au composant enfant. Dans ce cas, Qwik va charger de manière différée le composant et continuer le rendu une fois que la fonction de rendu du composant sera disponible.
 
-## `render()` is async
+## `render()` est asynchrone
 
-The above example demonstrates why the rendering process must be asynchronous. It is important that the rendering pipeline can lazy load child components. Lazy loading is an asynchronous operation; therefore, rendering needs to be asynchronous. In practice, this means that the `render()` function returns a promise.
+L'exemple ci-dessus montre pourquoi le processus de rendu doit être asynchrone. Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.
 
-Most current-generation frameworks have a synchronous `render()` process. Synchronous rendering can't easily deal with asynchronous code loading, so synchronous rendering necessitates that all dependant components are eagerly present before rendering can commence.
+La plupart des frameworks de la génération actuelle ont un processus `render()` synchrone. Le rendu synchrone ne peut pas facilement gérer le chargement asynchrone du code, donc le rendu synchrone nécessite que tous les composants dépendants soient par avance présents avant que le rendu puisse commencer.
 
-## DOM update buffering
+## Mise en mémoire des mises à jour du DOM
 
-The asynchronous nature of `render()` means that users may see an intermediate rendering of the UI as components download. Seeing an intermediate state is undesirable; therefore, Qwik will buffer all DOM updates and only flush the DOM operations once all of the components have been downloaded and their JSX functions executed. The result is that the UI will update as an atomic operation, and the user will not see the intermediate steps.
+La nature asynchrone de `render()` signifie que les utilisateurs peuvent voir un rendu intermédiaire de l'interface utilisateur pendant le téléchargement des composants. Voir un état intermédiaire n'est pas souhaitable, par conséquent, Qwik mettra en mémoire toutes les mises à jour du DOM et ne purgera les opérations du DOM que lorsque tous les composants auront été téléchargés et leurs fonctions JSX exécutées. Ainsi, l'interface utilisateur sera mise à jour comme une opération atomique, et l'utilisateur ne verra pas les étapes intermédiaires.

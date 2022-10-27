@@ -1,68 +1,68 @@
-# Qwik City Guide
+# Guide de Qwik City
 
 ## Qwik City
 
-- [Overview](overview/index.mdx)
-- [Directory Layout](directory-layout/index.mdx)
-- [Static Assets](static-assets/index.mdx)
+- [Vue d'ensemble](overview/index.mdx)
+- [Disposition des fichiers](directory-layout/index.mdx)
+- [Ressources statiques](static-assets/index.mdx)
 
-## Routing
+## Routage
 
-- [Overview](routing/overview/index.mdx)
-- [Route Parameters](routing/route-parameters/index.mdx)
-- [Error Responses](routing/error-responses/index.mdx)
+- [Vue d'ensemble](routing/overview/index.mdx)
+- [Paramètres de route](routing/route-parameters/index.mdx)
+- [Réponses d'erreurs](routing/error-responses/index.mdx)
 
-## Layout
+## Mise en page
 
-- [Overview](layout/overview/index.mdx)
-- [Nested](layout/nested/index.mdx)
-- [Grouped](layout/grouped/index.mdx)
-- [Named](layout/named/index.mdx)
+- [Vue d'ensemble](layout/overview/index.mdx)
+- [Imbriquée](layout/nested/index.mdx)
+- [Groupée](layout/grouped/index.mdx)
+- [Nommée](layout/named/index.mdx)
 - [Top](layout/top/index.mdx)
 
-## Data
+## Données
 
-- [Overview](data/overview/index.mdx)
-- [Retrieving Data](data/retrieve/index.mdx)
-- [Modifying Data](data/modify/index.mdx)
+- [Vue d'ensemble](data/overview/index.mdx)
+- [Récupération des données](data/retrieve/index.mdx)
+- [Modification des données](data/modify/index.mdx)
 - [Endpoints](data/endpoints/index.mdx)
-- [Redirects](data/redirects/index.mdx)
+- [Redirections](data/redirects/index.mdx)
 
-## Authoring Content
+## Création de contenu
 
-- [Components](content/component/index.mdx)
+- [Composants](content/component/index.mdx)
 - [MDX](content/mdx/index.mdx)
 - [Menu](content/menu/index.mdx)
 
-## Integrations
+## Intégrations
 
 - [React](integrations/react/index.mdx)
 - [Partytown](integrations/partytown/index.mdx)
 - [Tailwind](integrations/tailwind/index.mdx)
 
-## Server adaptors
+## Adaptateurs de serveur
 
-- [Overview](adaptors/overview/index.mdx)
+- [Vue d'ensemble](adaptors/overview/index.mdx)
 - [Cloudflare Pages](adaptors/cloudflare-pages/index.mdx)
 - [Netlify Edge](adaptors/netlify-edge/index.mdx)
 - [Node](adaptors/node/index.mdx)
 
-## Prefetching
+## Prélecture
 
-- [Overview](prefetching/overview/index.mdx)
+- [Vue d'ensemble](prefetching/overview/index.mdx)
 - [Service Worker](prefetching/service-worker-prefetching/index.mdx)
-- [Response Caching](prefetching/request-response-cache/index.mdx)
-- [Parallelizing Requests](prefetching/parallelizing-network-requests/index.mdx)
+- [Mise en cache de la réponse](prefetching/request-response-cache/index.mdx)
+- [Parallélisation des requêtes](prefetching/parallelizing-network-requests/index.mdx)
 
-## Static Site Generation
+## Génération de sites statiques
 
-- [Overview](static-site-generation/overview/index.mdx)
-- [Static Site Config](static-site-generation/static-site-config/index.mdx)
-- [Dynamic Routes](static-site-generation/dynamic-routes/index.mdx)
+- [Vue d'ensemble](static-site-generation/overview/index.mdx)
+- [Configuration du site statique](static-site-generation/static-site-config/index.mdx)
+- [Routes dynamiques](static-site-generation/dynamic-routes/index.mdx)
 
 ## Head
 
-- [Title](head/title/index.mdx)
+- [Titre](head/title/index.mdx)
 
 ## APIs
 

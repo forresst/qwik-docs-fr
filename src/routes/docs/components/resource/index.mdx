@@ -1,5 +1,5 @@
 ---
-title: Resources
+title: Ressources
 contributors:
   - nnelgxorz
   - irfanullahjan
@@ -9,61 +9,61 @@ contributors:
 
 # useResource$()
 
-This method allows you to generate computed values asynchronously. The asynchronous function passed as its first argument will be called when the component is mounted and when the tracked values change.
+Cette méthode vous permet de générer les valeurs calculées de manière asynchrone. La fonction asynchrone passée comme son premier argument sera appelée lorsque le composant sera monté et lorsque les valeurs traquées changeront.
 
-Just like all the `use-` methods, it must be called within the context of `component$()`, and all the [hook rules apply](../../../docs/components/lifecycle/index.mdx#rules).
+Comme toutes les méthodes `use-`, elle doit être appelée dans le contexte de `component$()`, et toutes les [règles de hook s'appliquent](../../../docs/components/lifecycle/index.mdx#rules).
 
 ```tsx
 const store = useStore({
   bar: 'foo'
 })
 const resource = useResource$(async (ctx) => {
-  ctx.track(() => store.bar); // the resource will rerun when store.bar changes.
-  ctx.track(() => props.url); // track() can be called multiple times, to track multiple values
+  ctx.track(() => store.bar); // la ressource sera réexécutée lorsque store.bar sera modifié.
+  ctx.track(() => props.url); // track() peut être appelé plusieurs fois, pour traquer plusieurs valeurs
   ctx.cleanup(() => {
-    // In case the resource need to be cleaned up, this function will be called.
-    // Allowing to clean resources like timers, subscriptions, fetch requests, etc.
+    // Si la ressource doit être nettoyée, cette fonction sera appelée.
+    // Permettant de nettoyer les ressources comme les timers, les abonnements, les requêtes de récupération, etc.
   });
 
-  // cleanup() can also be called multiple times.
+  // cleanup() peut aussi être appelé plusieurs fois.
   ctx.cleanup(() => console.log('cleanup'));
 
-  // Resources can contain async computations
+  // Les ressources peuvent contenir des calculs asynchrones
   const value = await expensiveCompute(store.bar, props.url);
   return value;
 });
 ```
 
-As we see in the example above, `useResouce$()` returns a `ResourceReturn<T>` object that works like a glorified, fully reactive promise, containing the data and the resource state.
+Comme nous le voyons dans l'exemple ci-dessus, `useResouce$()` renvoie un objet `ResourceReturn<T>` qui fonctionne comme une promesse entièrement réactive améliorée, contenant les données et l'état de la ressource.
 
-The state `resource.state` can be one of the following strings:
+L'état `resource.state` peut être l'une des chaînes suivantes :
 
-- `'pending'` - the data is not yet available.
-- `'resolved'` - the data is available.
-- `'rejected'` - the data is not available due to an error or timeout.
+- `'pending'` - les données ne sont pas encore disponibles.
+- `'resolved'` - les données sont disponibles.
+- `'rejected'` - les données ne sont pas disponibles en raison d'une erreur ou d'un dépassement de délai.
 
-The callback passed to `useResource$()` runs right after the `useMount$()` and `useWatch$()` callbacks complete. Please refer to the [Lifecycle](../lifecycle/index.mdx) section for more details.
+Le callback passé à `useResource$()` s'exécute juste après que les callbacks `useMount$()` et `useWatch$()` se soient terminés. Veuillez vous référer à la section [Cycle de vie](../lifecycle/index.mdx) pour plus de détails.
 
 ## `<Resource>`
 
-`<Resource>` is a component that renders its children when the resource is resolved, and renders a fallback when the resource is pending or rejected.
+`<Resource>` est un composant qui assure le rendu de ses enfants lorsque la ressource est résolue, et assure un rendu de secours lorsque la ressource est en attente ou rejetée.
 
 ```tsx
   <Resource
     value={weatherResource}
-    onPending={() => <div>Loading...</div>}
-    onRejected={() => <div>Failed to load weather</div>}
+    onPending={() => <div>Chargement...</div>}
+    onRejected={() => <div>Impossible de charger la météo</div>}
     onResolved={(weather) => {
-      return <div>Temperature: {weather.temp}</div>;
+      return <div>Température : {weather.temp}</div>;
     }}
   />
 ```
 
-Notice that `<Resource>` is not necessary to use `useResource$()`. It is just a convenient way to render the resource state.
+Notez que `<Resource>` n'est pas nécessaire pour utiliser `useResource$()`, c'est juste un moyen pratique de faire le rendu de l'état de la ressource.
 
-### Example using `useResource$()` with `<Resource>`
+### Exemple d'utilisation de `useResource$()` avec `<Resource>`
 
-Example showing how `useResource` is used to perform a fetch call to request the weather whenever the input city name changes.
+Exemple montrant comment `useResource` est utilisé pour effectuer un appel pour requêter la météo lorsque le nom de la ville en saisie change.
 
 ```tsx
 export const Cmp = component$(() => {
@@ -87,9 +87,9 @@ export const Cmp = component$(() => {
       <input name="city" onInput$={(ev: any) => (store.city = ev.target.value)} />
       <Resource
         value={weatherResource}
-        onPending={() => <div>Loading...</div>}
+        onPending={() => <div>Chargement...</div>}
         onResolved={(weather) => {
-          return <div>Temperature: {weather.temp}</div>;
+          return <div>Température : {weather.temp}</div>;
         }}
       />
     </div>
@@ -98,7 +98,7 @@ export const Cmp = component$(() => {
 ```
 
 
-### Example without `<Resource>`
+### Exemple sans `<Resource>`
 
 ```tsx
 export const Cmp = component$(() => {
@@ -121,16 +121,16 @@ export const Cmp = component$(() => {
     <div>
       <input name="city" onInput$={(ev: any) => (store.city = ev.target.value)} />
       {weatherResource.state === 'pending' && (
-        <div>Loading...</div>
+        <div>Chargement...</div>
       )}
       {weatherResource.state === 'resolved' && (
-        <div>Temperature: {weatherResource.resolved.temp}</div>
+        <div>Température : {weatherResource.resolved.temp}</div>
       )}
     </div>
   );
 });
 ```
 
-> **NOTE**
-> We strongly recommend to use `<Resource/>` whenever possible, since this component will more efficiently avoid rerenders and it is also optimized for SSR.
+> **REMARQUE**
+> Nous recommandons fortement d'utiliser `<Resource/>` chaque fois que c'est possible, car ce composant évitera plus efficacement les re-rendus et il est également optimisé pour SSR.
 

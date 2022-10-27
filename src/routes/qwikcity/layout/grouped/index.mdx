@@ -1,23 +1,23 @@
 ---
-title: Qwik City - Grouped Layouts
+title: Qwik City - Mises en page groupées
 contributors:
   - adamdbradley
   - Craiqser
 ---
 
-# Grouped Layouts
+# Mises en page groupées
 
-Common purpose routes are often placed into directories so they can share layouts, and so related source files are logically grouped next to each other. However, it may be desirable that the directory, which was used to group similar files and share layouts, is excluded from the public-facing URL. This is where "grouped" layouts come in (also referred to as a "pathless" layout route).
+Les routes utilisées à des fins communes sont souvent placées dans des répertoires afin qu'elles puissent partager des mises en page, et que les fichiers sources apparentés soient logiquement regroupés les uns à côté des autres. Cependant, il peut être souhaitable que le répertoire, qui a été utilisé pour regrouper des fichiers similaires et partager des présentations, soit exclu de l'URL publique. C'est là qu'interviennent les mises en page "groupées" (également appelées routes de mise en page « sans chemin »).
 
-By surrounding any directory name with parentheses, such as `(name)`, then the directory name itself will not be included in the URL pathname.
+En entourant tout nom de répertoire de parenthèses, comme `(nom)`, le nom du répertoire lui-même ne sera pas inclus dans le chemin d'accès de l'URL.
 
-For example, let's say an app placed all _account_ routes together in a directory, however, `/account/` could be dropped from the URL for cleaner, shorter URLs. In the example below, notice that the paths are within the `src/routes/(account)/` directory. However, the URL paths exclude `(account)/`.
+Par exemple, disons qu'une appli a placé toutes les routes _account_ dans un répertoire, cependant, `/account/` pourrait être supprimé de l'URL pour des URL plus propres et plus courtes. Dans l'exemple ci-dessous, remarquez que les chemins sont dans le répertoire `src/routes/(account)/`. Cependant, les chemins de l'URL excluent `(account)/`.
 
 ```
 src/
 └── routes/
-    └── (account)/             # Notice the parentheses
-        ├── layout.tsx         # Shared account layout
+    └── (account)              # Remarquez les parenthèses
+        ├── layout.tsx         # Mise en page partagée du compte
         └── profile/
             └── index.tsx      # https://example.com/profile
         └── settings/

@@ -1,16 +1,16 @@
 ---
-title: Lazy Loading Closures
+title: Chargement différé des closures
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-A closure can be converted into a lazy-loaded reference using the `$()` function. This generates a `QRL<Function>` type. A QRL is a lazy-loadable reference of the closure. In our case, we have extracted the closure associated with the `onInput` event into the component body. Because it is no longer inlined we need to change how the JSX refers to it from `onInput$` to `onInputQrl`.
+Une closure peut être convertie en une référence chargée de manière différée en utilisant la fonction `$()`. Cela génère un type `QRL<Function>`. Une QRL est une référence chargeable de manière différée de la closure. Dans notre cas, nous avons extrait la closure associée à l'événement `onInput` dans le corps du composant. Comme elle n'est plus en ligne, nous devons changer la façon dont le JSX s'y réfère, de `onInput$` vers `onInputQrl`.
 
-Notice that our closure closes over the `store` that is captured by the Optimizer and then restored as needed.
+Remarquez que notre closure se ferme sur le `store` qui est capturé par l'Optimiseur et ensuite restauré si nécessaire.
 
-### Example
+### Exemple
 
-In this example, we would like to demonstrate how easy it is to lazy-load behavior in Qwik. Let's lazy load the code that is executed when the `Enter` key is pressed. Wrap the code associated with `Enter` with `$()` to mark it for lazy loading. The resulting `QRL<()=>void>` can then be lazy-invoked with `.invoke()` and the result can be awaited with `await` keyword.
+Dans cet exemple, nous voulons montrer comment il est facile de charger de manière différée un comportement dans Qwik. Chargeons de manière différée le code qui est exécuté lorsque la touche `Enter` est pressée. Enveloppez le code associé à `Enter` avec `$()` pour le marquer pour le chargement différé. Le `QRL<()=>void>` résultant peut alors être appelé de manière différée avec `.invoke()` et le résultat peut être attendu avec le mot-clé `await`.
 
-Look at the `Symbols` tab to see how the code was broken up into pieces.
+Regardez l'onglet `Symbols` pour voir comment le code a été découpé en morceaux.

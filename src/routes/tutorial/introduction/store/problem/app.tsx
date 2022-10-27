@@ -1,8 +1,8 @@
 import { component$ } from '@builder.io/qwik';
 
 export const App = component$(() => {
-  // `github` is just a constant object.
-  // Convert it to a Store that can be serialized to JSON on application pause.
+  // `github` est simplement un objet constant.
+  // Convertissez-le en un store qui peut être sérialisé en JSON lors de la mise en pause de l'application.
   const github = {
     org: 'BuilderIO',
     repos: ['qwik', 'partytown'] as string[] | null,
@@ -11,7 +11,7 @@ export const App = component$(() => {
   return (
     <div>
       <span>
-        GitHub username:
+        Nom d'utilisateur GitHub :
         <input value={github.org} />
       </span>
       <div>
@@ -26,7 +26,7 @@ export const App = component$(() => {
             ))}
           </ul>
         ) : (
-          'loading...'
+          'chargement...'
         )}
       </div>
     </div>

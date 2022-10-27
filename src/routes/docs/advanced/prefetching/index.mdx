@@ -1,48 +1,48 @@
 ---
-title: Prefetching
+title: Prélecture
 contributors:
   - adamdbradley
   - RATIU5
   - manucorporat
 ---
 
-# Prefetching
+# Prélecture
 
-Prefetching is a way for applications to begin downloading modules in a background task, before the user may actually require these modules. The ideal solution is to only prefetch the smallest amount of code that is highly likely to be executed from a user's interaction, but avoiding any JavaScript that's _couldn't_ be used.
+La prélecture est un moyen pour les applications de commencer à télécharger des modules en tâche de fond, avant que l'utilisateur n'ait réellement besoin de ces modules. La solution idéale est de ne précharger que la plus petite quantité de code qui est hautement susceptible d'être exécutée à partir de l'interaction de l'utilisateur, tout en omettant tout JavaScript qui ne pourrait pas être utilisé.
 
-Only downloading and executing a minimal amount of JavaScript is an area where Qwik applications excel. And since Qwik is able to understand how individual components are used (and what's not used), it can also best decide which bundles should be prefetched.
+Qwik excelle dans le téléchargement et l'exécution d'une quantité minimale de JavaScript. Et puisque Qwik est capable de comprendre comment les composants individuels sont utilisés (et ce qui n'est pas utilisé), il peut aussi mieux décider quels bundles doivent être préchargés.
 
-Remember, the [difference between resumability and hydration](../../concepts/resumable/index.mdx), is that resumability allows Qwik applications to avoid executing JavaScript just to restore the event listeners, component tree, and application state. By fundamentally breaking apart a component's event listeners, render function, and state, the amount of code to prefetch is also significantly smaller than from a traditional approach.
+Rappelez-vous, la [différence entre la résumabilité et l'hydratation](/docs/concepts/resumable/), est que la résumabilité permet aux applications Qwik d'éviter d'exécuter du JavaScript juste pour restaurer les écouteurs d'événements, l'arborescence des composants, et l'état de l'application. En séparant fondamentalement les écouteurs d'événements, la fonction de rendu et l'état d'un composant, la quantité de code à précharger est considérablement plus petite qu'une approche traditionnelle.
 
-## Collecting Used Symbols
+## Collecte des symboles utilisés
 
-When Qwik renders an app, it's able to collect which "symbols" were used during the render. A symbol includes various parts of a component, which are [extracted by the optimizer](../optimizer/index.mdx) in order to break apart the application. Individual event listeners, component state, and the component renderer itself are examples of different symbols that could be extracted.
+Lorsque Qwik fait le rendu d'une appli, il est capable de collecter les « symboles » qui ont été utilisés pendant le rendu. Un symbole comprend diverses parties d'un composant, qui sont [extraites par l'Optimiseur](../optimizer/index.mdx) afin de décomposer l'application. Les écouteurs d'événements individuels, l'état du composant et le moteur de rendu du composant lui-même sont des exemples de symboles différents qui peuvent être extraits.
 
-For example, a product page may have a click listener on the "Add to cart" button, and when this button is clicked, the user should immediately get feedback to show the product added to the cart. In this example, the Qwik optimizer would be able to understand that the only symbol a user could interact with is the "Add to cart" button click event listener.
+Par exemple, une page de produit peut avoir un écouteur de clic sur le bouton « Ajouter au panier », et quand ce bouton est cliqué, l'utilisateur devrait immédiatement avoir un retour pour montrer le produit ajouté au panier. Dans cet exemple, l'optimiseur de Qwik serait capable de comprendre que le seul symbole avec lequel un utilisateur pourrait interagir est l'écouteur d'événement de clic sur le bouton « Ajouter au panier ».
 
-For our "Add to cart" example, the optimizer would collect the symbols for only the click event listener, and the renderer for the add to cart widget. It would not, however, have to download, hydrate, and re-render any of the other parts of the application, since it's not even possible to re-render other sections of the page.
+Pour notre exemple « Ajouter au panier », l'Optimiseur ne collectera uniquement que les symboles pour l'écouteur d'événement du clic et le moteur de rendu du widget d'ajout au panier. Il n'aura cependant pas à télécharger, hydrater et re-rendre les autres parties de l'application, puisqu'il n'est même pas possible de re-rendre les autres sections de la page.
 
-Since Qwik understand what's possible, it's able to prefetch the code only for the event listener rather than all the JavaScript for the entire application or route. This is in contrast to the traditional approach, where prefetching is used to load the entire application or route, and framework code, just in order for the application to add the click event listener.
+Puisque Qwik comprend ce qui est possible, il est capable de précharger le code seulement pour l'écouteur d'événement plutôt que tout le JavaScript pour l'application ou la route entière. Ceci est en contraste avec l'approche traditionnelle, où la prélecture est utilisée pour charger l'application ou la route entière, et le code du framework, juste pour que l'application ajoute l'écouteur d'événement du clic.
 
-## Prefetching Strategy
+## Stratégie de prélecture
 
-The prefetching strategy is the logic which decides which JavaScript, if any, Qwik should prefetch in the background. By default, Qwik will prefetch any visible listeners on the page. To configure the prefetching strategy, use the options argument of the `renderToStream()` function, often found in the `src/entry.ssr.tsx` source file. Providing optimal prefetching strategies is an area Qwik will continue to research and experiment with.
+La stratégie de prélecture est la logique qui décide quel JavaScript, s'il y en a, que Qwik doit précharger en arrière plan. Par défaut, Qwik préchargera tous les écouteurs visibles sur la page. Pour configurer la stratégie de prélecture, utilisez l'argument options de la fonction `renderToStream()`, souvent trouvé dans le fichier source `src/entry.ssr.tsx`. La fourniture de stratégies optimales de prélecture est un sujet sur lequel Qwik va continuer à faire des recherches et des expérimentations.
 
 ```ts
 export default function (opts: RenderToStreamOptions) {
   return renderToStream(<Root />, {
     manifest,
     prefetchStrategy: {
-      // custom prefetching config
+      // configuration de la prélecture personnalisée
     },
     ...opts,
   });
 }
 ```
 
-## Prefetching Implementation
+## Implémentation de la prélecture
 
-Browsers offer numerous ways to "implement", or apply, a [prefetching strategy](#prefetching-strategy), and Qwik can be configured to prefer one implementation over another, each with their pros and cons. Depending on the configuration, the generated HTML content will include the prefetch implementation.
+Les navigateurs offrent de nombreuses façons de « mettre en œuvre », ou d'appliquer, une [stratégie de prélecture](#strategie-de-prelecture), et Qwik peut être configuré pour privilégier une implémentation plutôt qu'une autre, chacune avec ses avantages et inconvénients. Selon la configuration, le contenu HTML généré inclura l'implémentation de la prélecture.
 
 ```ts
 export default function (opts: RenderToStreamOptions) {
@@ -50,7 +50,7 @@ export default function (opts: RenderToStreamOptions) {
     manifest,
     prefetchStrategy: {
       implementation: {
-        // custom prefetching implementation
+        // configuration de la prélecture personnalisée
       },
     },
     ...opts,
@@ -58,56 +58,56 @@ export default function (opts: RenderToStreamOptions) {
 }
 ```
 
-| Option              | Description                                                                                                                                                                                                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prefetchEvent`     | Dispatch a `qprefetch` event with detailed data containing the urls that should be prefetched. The event dispatch script will be inlined into the document's HTML.                                                                                                                                            |
-| `linkInsert`        | Insert the `<link>` element into the document. When using `html-append`, it will render each `<link>` directly within the html, appended at the end of the body. Using the `js-append` option, it will instead insert some JavaScript, which creates the elements at runtime and appends them at the end of the body. |
-| `linkRel`           | This option is used to define the [`rel` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types) of the `<link>` element. When the `linkInsert` option is used, the default is `prefetch`. Other options include `preload` and `modulepreload`.                                            |
-| `workerFetchInsert` | Prefetch urls by calling a `fetch()` for each module, with the goal that it populate's the network cache.                                                                                                                                                                                                   |
+| Option              | Description                                                                                                                                                                                                                                                                                                          |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prefetchEvent`     | Distribue un événement `qprefetch` avec des données détaillées contenant les urls qui doivent être préchargées. Le script de distribution de l'événement sera intégré dans le HTML du document.                                                                                                                      |
+| `linkInsert`        | Insère l'élément `<link>` dans le document. Si vous utilisez `html-append`, chaque `<link>` sera rendu directement dans le html, ajouté à la fin du body. En utilisant l'option `js-append`, il insérera plutôt du JavaScript, qui crée les éléments au moment de l'exécution et les ajoute à la fin du body.        |
+| `linkRel`           | Cette option est utilisée pour définir [l'attribut `rel`](https://developer.mozilla.org/fr/docs/Web/HTML/Link_types) de l'élément `<link>`. Lorsque l'option `linkInsert` est utilisée, la valeur par défaut est `prefetch`. Les autres options sont `preload` et `modulepreload`.                                   |
+| `workerFetchInsert` | Préférez les urls en appelant un `fetch()` pour chaque module, dans le but de remplir le cache du réseau.                                                                                                                                                                                                            |
 
-### Request/Response Cache and Service Workers
+### Cache de requête/réponse et Service Workers
 
-The preferred caching strategy used by [Qwik City](../../../qwikcity/prefetching/overview/index.mdx), is to use a Service Worker to populate the browser's [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache). Qwik itself should be configured to use the `prefetchEvent` implementation, which will dispatch a `qprefetch` event. Next, Qwik City will listen for this event and communicate with its service worker to persist the Request / Response object pairs so they are cached in long-lived memory.
+La stratégie de mise en cache préférée de prélecture utilisée par [Qwik City](../../../qwikcity/prefetching/overview/index.mdx), est d'utiliser un Service Worker pour remplir le [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) du navigateur. Qwik lui-même doit être configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un évènement `qprefetch`. Ensuite, Qwik City écoutera cet événement et communiquera avec son service worker pour persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire à longue durée de vie.
 
-By using a service worker to intercept fetch requests from the browser, this approach allows fine-grain caching control, along with preventing multiple-requests for the resource.
+En utilisant un service worker pour intercepter les requêtes de récupération du navigateur, cette approche permet un contrôle minutieux de la mise en cache, tout en empêchant les requêtes multiples pour la ressource.
 
-### Link `rel`
+### Lien `rel`
 
-Using the `<link>` element with the `rel` attribute is a common approach by today's frameworks, and Qwik can use this method by configuring the `linkInsert` and `linkRel` options. The challenge with the link rel approach is lack of support on _all_ devices, at least at the time of writing. Additionally, during development, it can be misleading that it works everywhere; while on mobile devices it is not easily visible that link prefetching is working correctly.
+L'utilisation de l'élément `<link>` avec l'attribut `rel` est une approche classique des frameworks actuels, et Qwik peut utiliser cette méthode en configurant les options `linkInsert` et `linkRel`. Le défi avec l'approche link rel est le manque de prise en charge sur _tous_ les appareils, au moins au moment où nous l'écrivons. En outre, pendant le développement, il peut être trompeur que cela fonctionne partout; alors que sur les appareils mobiles, il n'est pas facilement perceptible que la prélecture des liens fonctionne correctement.
 
-For example, Safari (the browser powering iPhones and iPads) does not support `modulepreload`. This is significant because mobile devices maybe benefit the most from module preloading. Next is Firefox, which does not support link rel `prefetch` when on `https`.
+Par exemple, Safari (le navigateur qui équipe les iPhones et les iPads) ne prend pas en charge `modulepreload`. Ceci est important car les appareils mobiles sont peut-être ceux qui bénéficient le plus du préchargement des modules. Ensuite, il y a Firefox, qui ne prend pas en charge le lien rel `prefetch` lorsqu'il est sur `https`.
 
-> Prefetch is a feature that's supposed to help make our visitor's experiences faster but with the wrong combination of browser and CDN / server it can actually make experiences slower!
+> Prefetch est une fonctionnalité censée accélérer l'expérience de nos visiteurs, mais avec une mauvaise combinaison de navigateur et de CDN/serveur, elle peut en fait ralentir l'expérience !
 >
-> \- <cite><a href="https://andydavies.me/blog/2020/07/08/rel-equals-prefetch-and-the-importance-of-effective-http-slash-2-prioritisation/">Rel=prefetch and the Importance of Effective HTTP/2 Prioritisation</a></cite>
+> \- <cite><a href="https://andydavies.me/blog/2020/07/08/rel-equals-prefetch-and-the-importance-of-effective-http-slash-2-prioritisation/">Rel=prefetch et l'importance d'une priorisation efficace de HTTP/2</a></cite>
 
-Additionally, it may be possible to fire off a multiple requests for the same resource. For example, let's say we want to prefetch `module-a.js`, and while that's being downloaded (which may take a short time, or a very long time), the user interacts with the app, which then decides to actually request and execute `module-a.js`. At the time of writing, browsers will often fire off a second request, which makes matters worse.
+De plus, il peut être possible de lancer plusieurs requêtes pour la même ressource. Par exemple, disons que nous voulons récupérer à l'avance `module-a.js`, et que pendant le chargement (qui peut prendre un temps court ou très long), l'utilisateur interagit avec l'appli, qui décide alors de demander et d'exécuter `module-a.js`. À l'heure où nous écrivons ces lignes, les navigateurs envoient souvent une deuxième requête, ce qui ne fait qu'empirer les choses.
 
 ### Web Worker Fetch
 
-A prefetching approach that can work is using a web worker to `fetch()` a JavaScript file, with the goal of priming the browser cache with the module. By using a web worker, the fetch and logic lives on another thread. Next, the fetch response should have an `immutable` or long cache-control header, so the browser doesn't make a second network request.
+Une approche de prélecture qui peut fonctionner est l'utilisation d'un worker web pour faire un `fetch()` d'un fichier JavaScript, dans le but d'amorcer le cache du navigateur avec le module. En utilisant un worker web, la récupération et la logique vivent sur un autre thread. Ensuite, la réponse à la récupération doit comporter une entête `immutable` ou un entête de contrôle de cache long, afin que le navigateur ne fasse pas une deuxième requête réseau.
 
-The downside is the fetched response is thrown away, and it's only at the browser level that hopefully caches the file.
+L'inconvénient, c'est que la réponse récupérée est rejetée et que ce n'est qu'au niveau du navigateur que l'on peut espérer mettre le fichier en cache.
 
-## Frequently Asked Prefetching Questions
+## Questions fréquemment posées sur la prélecture
 
-**QUESTION**: _Is lazy loading on user events slow because the user must wait for the code to download?_
+**QUESTION** : _Le chargement différé sur les événements utilisateur est lent car l'utilisateur doit attendre le téléchargement du code ?_
 
-Yes, that would create a noticeable delay, especially on slow 3G networks. This is why code prefetching is an important part of Qwik applications.
+Oui, cela créerait un retard notable, surtout sur les réseaux 3G lents. C'est pourquoi la prélecture du code est une composante importante des applications Qwik.
 
-Prefetching code ensures that all of the necessary code for running the application is fetched immediately on navigating to the page. This way, when the user performs an action, the code for that action comes from the prefetch cache rather than the network. The result is that the code execution is instant.
+La prélecture du code permet de s'assurer que tout le code nécessaire à l'exécution de l'application est récupéré immédiatement lors de la navigation sur la page. De cette manière, lorsque l'utilisateur effectue une action, le code correspondant à cette action provient du cache de prélecture plutôt que du réseau. Le résultat est que l'exécution du code est instantanée.
 
-**QUESTION**: _Doesn't code prefetch results in the same behavior as existing frameworks that download and execute all of the code eagerly?_
+**QUESTION** : _La prélecture du code n'entraîne-t-elle pas le même comportement que les frameworks existants qui téléchargent et exécutent tout le code par avance ?_
 
-No, for several reasons:
+Non, pour plusieurs raisons :
 
-- Existing frameworks must download and execute all of the code ([hydration](../../../docs/concepts/resumable/index.mdx)) before the application can be interactive. Typically the download of the code is a smaller time cost than the execution of the code.
-- Qwik code prefetch only downloads but does not execute the code. Therefore even if Qwik prefetches the same amount of code as the existing frameworks, the result is significant time cost savings.
-- Qwik only prefetches the code which is needed for the current page. Qwik avoids downloading code associated with components that are static. In the worst case, Qwik prefetches the same amount of code as the existing frameworks' best case. In most cases, Qwik prefetches a small fraction of code compared to the existing frameworks.
-- Prefetching of code can happen on other threads than the main thread. Many browsers can even pre-parse the AST of the code off the main thread.
-- If the user interaction happens before the prefetch is completed, the browser will automatically prioritize the interaction chunk before the remaining prefetch chunks.
-- Qwik can break up the application into many small chunks, and these chunks can be downloaded in the order of probability that the user will interact with them. Existing frameworks have trouble breaking up applications into small chunks, and there is no easy way to prioritize the chunk download order because hydration requires a single "main" entry point to the application.
+- Les frameworks existants doivent télécharger et exécuter tout le code ([hydratation](../../../docs/concepts/resumable/index.mdx)) avant que l'application puisse être interactive. Typiquement le téléchargement du code représente un coût en temps plus petit que l'exécution du code.
+- La prélecture de code de Qwik télécharge seulement le code mais ne l'exécute pas. Par conséquent, même si Qwik récupère la même quantité de code que les frameworks existants, le gain de temps est significatif.
+- Qwik pré lit seulement le code qui est nécessaire pour la page actuelle. Qwik évite de télécharger le code associé aux composants qui sont statiques. Dans le pire des cas, Qwik récupère la même quantité de code que les frameworks existants dans le cas le plus favorable. Dans la plupart des cas, Qwik récupère une petite portion de code comparé aux frameworks existants.- Prefetching of code can happen on other threads than the main thread. Many browsers can even pre-parse the AST of the code off the main thread.
+- La prélecture de code peut se faire sur d'autres threads que le thread principal. De nombreux navigateurs peuvent même précharger l'AST du code en dehors du thread principal.
+- Si l'interaction de l'utilisateur se produit avant que la prélecture soit terminée, le navigateur donnera automatiquement la priorité au morceau de l'interaction avant les autres morceaux de prélecture.
+- Qwik peut décomposer l'application en plusieurs petits morceaux, et ces morceaux peuvent être téléchargés selon l'ordre de probabilité que l'utilisateur interagisse avec eux. Les frameworks existants ont des difficultés à décomposer les applications en petits morceaux, et il n'y a pas de moyen facile de hiérarchiser l'ordre de téléchargement des morceaux car l'hydratation nécessite un seul point d'entrée "principal" dans l'application.
 
-**QUESTION**: _Who is responsible for knowing what code to prefetch?_
+**QUESTION** : _Qui est responsable de la détermination de la prélecture du code ?_
 
-Qwik can automatically generate the prefetch instructions as part of the SSR rendering. By executing the application, Qwik has runtime knowledge of which components are visible, which events the users can trigger and what code will need to be downloaded. The result is that the prefetch is an ideal set of files for this page. No action on the developers' part is required other than configuring the `renderToStream()` with prefetching strategy.
+Qwik peut générer automatiquement les instructions de la prélecture dans le cadre du rendu SSR. En exécutant l'application, Qwik a une connaissance d'exécution des composants visibles, des événements que les utilisateurs peuvent déclencher et du code qui devra être téléchargé. La conséquence est que la prélecture est un ensemble idéal de fichiers pour cette page. Aucune action de la part des développeurs n'est requise autre que de configurer le `renderToStream()` avec la stratégie de la prélecture.

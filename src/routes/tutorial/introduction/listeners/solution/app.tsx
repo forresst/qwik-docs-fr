@@ -9,7 +9,7 @@ export const App = component$(() => {
   return (
     <div>
       <span>
-        GitHub username:
+        Nom d'utilisateur GitHub :
         <input
           value={github.org}
           onInput$={(ev) => (github.org = (ev.target as HTMLInputElement).value)}

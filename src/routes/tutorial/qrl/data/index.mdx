@@ -1,19 +1,19 @@
 ---
-title: Loading Data
+title: Chargement des données
 contributors:
   - manucorporat
   - adamdbradley
   - felixsanz
 ---
 
-The Optimizer can be used to lazy-load data, not just functions. The benefit of doing that is that lazy loading any part of your application becomes easy.
+L'Optimiseur peut être utilisé pour le chargement différé de données, et pas seulement de fonctions. L'avantage de cette méthode est que le chargement différé de n'importe quelle partie de votre application devient facile.
 
-Use the stand-alone `$()` function to mark the data that you wish to lazy load. The `$()` function returns a `QRL` that is a reference that can be serialized by Qwik and that can later be resolved into the original value.
+Utilisez la fonction autonome `$()` pour marquer les données que vous souhaitez charger de manière différée. La fonction `$()` renvoie un `QRL` qui est une référence qui peut être sérialisée par Qwik et qui peut plus tard être résolue par la valeur originale.
 
-### Example
+### Exemple
 
-Load the data representing the message lazily as part of the click listener.
+Chargez les données représentant le message de manière différée au sein de l'écouteur de clic.
 
-For this exercise imagine that we wish to lazy load the `'Hello World!'` string. Use the `$()` function to mark the string as lazy-loadable. Then use `await` to resolve the lazy-loadable value.
+Pour cet exercice, imaginez que nous souhaitons charger de manière différée la chaîne `'Hello World!'`. Utilisez la fonction `$()` pour marquer la chaîne comme pouvant être chargée de manière différée. Ensuite, utilisez `await` pour résoudre la valeur du chargeable de manière différée.
 
-Go to the `Symbols` tab and examine how the code was broken down into parts.
+Allez dans l'onglet `Symbols` et examinez comment le code a été décomposé en plusieurs parties.

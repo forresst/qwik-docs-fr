@@ -5,21 +5,21 @@ contributors:
   - adamdbradley
 ---
 
-Projection is a way of passing content to a child component that in turn controls where the content is rendered. Projection is a collaboration between the parent and child component. The parent component decides what is the content that needs to be rendered, child component decides where and if the content should be rendered.
+La projection est un moyen de transmettre du contenu à un composant enfant qui, à son tour, contrôle l'endroit où le contenu est rendu. La projection est une collaboration entre le composant parent et le composant enfant. Le composant parent décide quel est le contenu qui doit être rendu, le composant enfant décide où et si le contenu doit être rendu.
 
-In our example, the content of the `<Panel>` element (inside the `<App>`) is the content that needs to be projected. The `<Panel>` component wraps the content in a `<div>` tag and should project it using the `<Slot>` element.
+Dans notre exemple, le contenu de l'élément `<Panel>` (à l'intérieur de l'élément `<App>`) est le contenu qui doit être projeté. Le composant `<Panel>` enveloppe le contenu dans une balise `<div>` et doit le projeter en utilisant l'élément `<Slot>`.
 
-## Why `<Slot>`?
+## Pourquoi `<Slot>` ?
 
-Why is Qwik opting to use `<Slot/>` rather than `children` property? The use of `<Slot>` is a strategic choice to enable the rendering of components out of order. (Meaning that a component should be capable of re-rendering even if the parent component is not yet resumed.) There are two issues with using `children` in Qwik.
+Pourquoi Qwik choisit-il d'utiliser `<Slot>` plutôt que `children` ? L'utilisation de `<Slot>` est un choix stratégique pour permettre le rendu des composants dans le désordre. (Ce qui signifie qu'un composant doit être capable d'effectuer un re-rendu même si le composant parent n'est pas encore résumé). Il y a deux problèmes avec l'utilisation de `children` dans Qwik.
 
-1. If Qwik would use the `children` property for projection the `children` property would need to be serializable. This is because when the child component renders it needs the `children` to insert someplace.
-2. A child component could modify the contents of the `children` before passing and inserting it into the render tree. This would prevent the parent component from rendering independently from the child. If a child would modify the children, then every time the parent component would change the `children` Qwik would have to re-run the child component to see what kind of modifications it would make to the `children` before inserting them into the render tree.
+1. Si Qwik utilisait la propriété `children` pour la projection, la propriété `children` devrait être sérialisable. Car lorsque le composant enfant est rendu, il a besoin de la propriété `children` pour l'insérer quelque part.
+2. Un composant enfant pourrait modifier le contenu de `children` avant de le transmettre et de l'insérer dans l'arborescence du rendu. Cela empêcherait le composant parent d'effectuer un rendu indépendamment du composant enfant. Si un enfant modifie les enfants, alors à chaque fois que le composant parent modifie `children`, Qwik doit ré-exécuter le composant enfant pour voir quel type de modifications il fait à `children` avant de les insérer dans l'arborescence du rendu.
 
-For Qwik, the `<Slot>` approach is preferable because it declaratively controls the content and location of the projection. This allows the parent component to change the projection content, without forcing the child component to re-render.
+Pour Qwik, l'approche `<Slot>` est préférable car elle contrôle de manière déclarative le contenu et l'emplacement de la projection. Cela permet au composant parent de modifier le contenu de la projection, sans obliger le composant enfant à effectuer un re-rendu.
 
-### Example
+### Exemple
 
-Change the `<Panel>` component to project the `<App>` content using the `<Slot>` element.
+Changez le composant `<Panel>` pour projeter le contenu de `<App>` en utilisant l'élément `<Slot>`.
 
-Notice that the `<App>` is re-render on button click, but the `<Panel>` is not re-rendered on interaction. This is because `<Slot/>` is declarative and allows Qwik to know where the content should be projected even if `<Panel>` is not loaded.
+Remarquez que l' `<App>` est re-rendu lors du clic sur le bouton, mais que le `<Panel>` n'est pas re-rendu lors de l'interaction. C'est parce que `<Slot/>` est déclaratif et permet à Qwik de savoir où le contenu doit être projeté même si `<Panel>` n'est pas chargé.

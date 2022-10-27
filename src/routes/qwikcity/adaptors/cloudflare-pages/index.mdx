@@ -1,20 +1,20 @@
 ---
-title: Qwik City - Cloudflare Pages Middleware
+title: Qwik City - Middleware de Cloudflare Pages
 contributors:
   - adamdbradley
 ---
 
-# Cloudflare Pages Middleware
+# Middleware de Cloudflare Pages
 
-You have to integrate cloudflare-pages using this command to see your files as the files below
+Vous devez intégrer cloudflare-pages en utilisant cette commande pour voir vos fichiers comme les fichiers ci-dessous
 
 ```bash
 npm run qwik add cloudflare-pages
 ```
 
-Qwik City Cloudflare Pages middleware allows you to connect Qwik City to [Cloudflare Pages](https://pages.cloudflare.com/).
+Le middleware Qwik City de Cloudflare Pages vous permet de connecter Qwik City à [Cloudflare Pages](https://pages.cloudflare.com/).
 
-Below is an example of using the built-in middleware within a user's app.
+Vous trouverez ci-dessous un exemple d'utilisation du middleware intégré dans l'appli d'un utilisateur.
 
 ```typescript
 // entry.cloudflare-pages.tsx
@@ -24,24 +24,24 @@ import { qwikCity } from '@builder.io/qwik-city/middleware/cloudflare-pages';
 export const onRequest = qwikCity(render);
 ```
 
-The compiled middleware can then be used anywhere in the cloudflare pages `/functions` directory.
+Le middleware compilé peut alors être utilisé n'importe où dans le répertoire `/functions` des pages cloudflare.
 
 ```typescript
-// export the compiled middleware where cloudflare pages can find it.
-// for example use /functions/[[path]].ts or /functions/_middleware.ts
-// to have qwik city handle all requests.
+// exporter le middleware compilé là où les Pages Cloudflare peuvent le trouver.
+// par exemple utilisez /functions/[[path]].ts ou /functions/_middleware.ts
+// pour que Qwik City gère toutes les requêtes.
 
 export { onRequest } from '../server/entry.cloudflare-pages';
 ```
 
-- [Cloudflare Pages Middleware Source](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/cloudflare-pages/index.ts)
-- [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/platform/functions/)
+- [Source du Middleware de Cloudflare Pages](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/cloudflare-pages/index.ts)
+- [Fonctions de Cloudflare Pages](https://developers.cloudflare.com/pages/platform/functions/)
 
-## Usage
+## Utilisation
 
-### Context
+### Contexte
 
-You may access Cloudflare Page's environment variables in the endpoint method's `platform` param:
+Vous pouvez accéder aux variables d'environnement de la page Cloudflare dans le paramètre `platform` de la méthode du endpoint :
 
 ```javascript
 export const onRequest = async ({ platform }) => {
@@ -49,7 +49,7 @@ export const onRequest = async ({ platform }) => {
 };
 ```
 
-Additionally, you may import the `RequestHandlerCloudflarePages` type to have have type completions in your editor.
+De plus, vous pouvez importer le type `RequestHandlerCloudflarePages` pour avoir des compléments de type dans votre éditeur.
 
 ```typescript
 import {type RequestHandlerCloudflarePages} from '@builder.io/qwik-city/middleware/cloudflare-pages';

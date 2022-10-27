@@ -1,19 +1,19 @@
 ---
-title: Listening to document/window
+title: Ecoute de document/window
 contributors:
   - adamdbradley
 ---
 
-So far you've interacted with events emitted from a DOM element such as a `<button>`, but what if you need to listen for global events?
+Jusqu'à présent, vous avez interagi avec les événements émis par un élément du DOM tel que `<button>`, mais que faire si vous avez besoin d'écouter des événements globaux ?
 
-Common global events include the `document`'s `mousemove` and the `window`'s `scroll` event.
+Les événements globaux courants sont les événements `mousemove` sur `document` et `scroll` sur `window`.
 
-Qwik has the `document:` and `window:` namespace prefixes which allow you to listen to global events.
+Qwik possède les préfixes d'espace de nom `document:` et `window:` qui vous permettent d'écouter les événements globaux.
 
-Open the browser's console and move your mouse over the text in the sample. Notice how moving the mouse logs the mouse position to the console. This logging only happens while moving the mouse over the text because the event is wired on the `div`'s `onMouseMove` event. Attaching at this level stops event bubbling beyond the element's listener.
+Ouvrez la console du navigateur et déplacez votre souris sur le texte de l'exemple. Remarquez comment le déplacement de la souris enregistre la position de la souris dans la console. Cet enregistrement ne se produit que lorsque vous déplacez la souris sur le texte, car l'événement est lié à l'événement `onMouseMove` de la `div`. L'attachement à ce niveau arrête le déclenchement de l'événement au-delà de l'écouteur de l'élément.
 
-How would you adjust the code to log the mouse position at all times?
+Comment ajuster le code pour enregistrer la position de la souris à tout moment ?
 
-Change to a global listener by adding the `document:` prefix to the `onMouseMove` declaration.
+Passez à un écouteur global en ajoutant le préfixe `document:` à la déclaration `onMouseMove`.
 
-With this change, notice how moving the mouse anywhere on the application (even outside of the text) shows output in the console.
+Avec ce changement, observez comment le déplacement de la souris n'importe où dans l'application (même en dehors du texte) fait apparaître une entrée dans la console.

@@ -1,17 +1,17 @@
 ---
-title: useRef() Hook
+title: Hook useRef()
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-Use `useRef()` to get a hold of DOM elements created by the component.
+Utilisez `useRef()` pour prendre la main sur les éléments DOM créés par le composant.
 
-There are two parts to retrieving a DOM element reference:
+La récupération d'une référence d'un élément du DOM se fait en deux temps :
 
-1. `useRef()` returns a `ref` object that contains a `current` property which will eventually contain the reference.
-2. `ref={_ref_variable_}` is a prop binding that will set the `current` property of the `ref` object to the DOM element.
+1. `useRef()` renvoie un objet `ref` qui contient une propriété `current` qui contiendra éventuellement la référence.
+2. `ref={_ref_variable_}` est une liaison de prop qui va définir la propriété `current` de l'objet `ref` à l'élément du DOM.
 
-### Example
+### Exemple
 
-The example on the right uses `useRef()` to get a reference to the `input` element. However, it is missing the `ref` prop binding. Add the `ref` prop binding to make the example work as expected
+L'exemple de droite utilise `useRef()` pour obtenir une référence à l'élément `input`. Cependant, il lui manque la liaison de la prop `ref`. Ajoutez la liaison de la prop `ref` pour que l'exemple fonctionne comme prévu.

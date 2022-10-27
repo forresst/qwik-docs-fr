@@ -1,5 +1,5 @@
 ---
-title: Lifecycles
+title: Cycles de vie
 contributors:
   - nnelgxorz
   - RATIU5
@@ -8,44 +8,44 @@ contributors:
 
 import diagram from './diagram2.svg';
 
-# Lifecycles
+# Cycles de vie
 
 <img src={diagram}/>
 
-## Rules
+## Règles
 
-When using lifecycle hooks, you must adhere to the following rules:
+Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règles suivantes :
 
-  - They can only be called in `component$`
-  - They can only be called at the root level of a function / arrow function context, not inside of branches or conditional blocks
-  - They can only be called from another `use*$` method, allowing for composition
+  - Ils ne peuvent être appelés que dans `component$`.
+  - Ils ne peuvent être appelés qu'au niveau de la racine d'une fonction ou d'un contexte de fonction fléchée, et non à l'intérieur de branches ou de blocs conditionnels.
+  - Ils ne peuvent être appelés qu'à partir d'une autre méthode `use*$`, ce qui permet la composition.
 
 ```tsx
-useHook() // <-- ❌ does not work
+useHook() // <-- ❌ ne fonctionne pas
 
 export default component$(() => {
-  useHook() // <-- ✅ does work
+  useHook() // <-- ✅ fonctionne
   if (condition) {
-    useHook() // <-- ❌ does not work
+    useHook() // <-- ❌ ne fonctionne pas
   }
-  const myQrl = $(() => useHook()) // <-- ✅ does work
-  return <button onClick$={() => useHook()}></button> // <-- ✅ does work
+  const myQrl = $(() => useHook()) // <-- ✅ fonctionne
+  return <button onClick$={() => useHook()}></button> // <-- ✅ fonctionne
 })
 
 const useCustomHook = () => {
-  useHook() // <-- ✅ does work
+  useHook() // <-- ✅ fonctionne
 }
 ```
 
 ## `useMount$()`
 
-`useMount$()` registers a hook to be executed upon component creation. `useMount$()` will block the rendering of the component until after the `useMount$()` callback resolves. (This is useful for fetching asynchronous data and delaying rendering until data is received, ensuring that the rendered component contains the data)
+`useMount$()` enregistre un hook à exécuter à la création du composant. `useMount$()` bloquera le rendu du composant jusqu'à ce que le callback `useMount$()` soit résolu. (Ceci est utile pour récupérer des données asynchrones et retarder le rendu jusqu'à ce que les données soient reçues, ce qui garantit que le composant rendu contienne les données).
 
-While `useMount$()` can execute on either the server or on the client, it runs exactly once. (Either on the server or on the client, depending on where the component got first rendered)
+Alors que `useMount$()` peut être exécuté sur le serveur ou le client, il ne s'exécute qu'une seule fois. (Soit sur le serveur, soit sur le client, selon l'endroit où le composant a été rendu pour la première fois).
 
-See also the `useServerMount$()` hook which has the same semantics but only runs on the server.
+Consultez également le hook `useServerMount$()` qui a la même sémantique mais ne fonctionne que sur le serveur.
 
-### Example
+### Exemple
 
 ```tsx
 export const Cmp = component$(() => {
@@ -53,7 +53,7 @@ export const Cmp = component$(() => {
     users: [],
   });
   useMount$(async () => {
-    // This code will run on component creation to fetch the data.
+    // Ce code sera exécuté à la création du composant pour récupérer les données.
     store.users = await db.requestUsers();
   });
   return (
@@ -76,9 +76,9 @@ export function User(props: { user: User }) {
 
 ## `useServerMount$()`
 
-`useServerMount$()` registers a server-mounted hook that only runs on the server when the component is first mounted.
+`useServerMount$()` enregistre un hook monté sur le serveur qui s'exécute uniquement sur le serveur lorsque le composant est monté pour la première fois.
 
-### Example
+### Exemple
 
 ```tsx
 export const Cmp = component$(() => {
@@ -86,7 +86,7 @@ export const Cmp = component$(() => {
     users: [],
   });
   useServerMount$(async () => {
-    // This code will ONLY run once in the server, when the component is mounted
+    // Ce code sera exécuté QU'UNE SEULE FOIS dans le serveur, lorsque le composant sera monté.
     store.users = await db.requestUsers();
   });
   return (
@@ -109,17 +109,17 @@ export function User(props: { user: User }) {
 
 ## `useWatch$()`
 
-Re-runs the `watchFn` when the tracked inputs change.
+Ré-exécute `watchFn` lorsque les saisies traquées changent.
 
-Use `useWatch` to track changes on a set of inputs, and then re-execute the `watchFn` when those inputs change.
+Utilisez `useWatch` pour traquer les changements sur un ensemble de saisies, puis ré-exécutez `watchFn` lorsque ces saisies changent.
 
-The `watchFn` only executes if the tracked inputs change. To track the inputs, use the `track` function to wrap property reads. This will create subscriptions that will trigger the `watchFn` to re-run.
+La fonction `watchFn` ne s'exécute que si les saisies traquées changent. Pour traquer les saisies, utilisez la fonction `track` pour envelopper les lectures de propriété. Cela créera des abonnements qui déclencheront la ré-exécution de `watchFn`.
 
-See also the `useClientEffect$()` hook that has the same semantics but only runs on the client.
+Consultez également le hook `useClientEffect$()` qui a la même sémantique mais qui ne fonctionne que sur le client.
 
-### Example
+### Exemple
 
-The `useWatch` function is used to observe the `state.count` property. Any changes to the `state.count` cause the `watchFn` to execute which in turn updates the `state.doubleCount` to the double of `state.count`.
+La fonction `useWatch` est utilisée pour observer la propriété `state.count`. Toute modification de la propriété `state.count` entraîne l'exécution de la fonction `watchFn` qui, à son tour, met à jour la propriété `state.doubleCount` pour obtenir le double de `state.count`.
 
 ```tsx
 export const Cmp = component$(() => {
@@ -128,12 +128,12 @@ export const Cmp = component$(() => {
     doubleCount: 0,
     debounced: 0,
   });
-  // Double count watch
+  // Surveillance pour la mise à jour de doubleCount
   useWatch$(({ track }) => {
     const count = track(() => store.count);
     store.doubleCount = 2 * count;
   });
-  // Debouncer watch
+  // Surveillance pour la mise à jour de debounced
   useWatch$(({ track }) => {
     const doubleCount = track(() => store.doubleCount);
     const timer = setTimeout(() => {
@@ -157,11 +157,11 @@ export const Cmp = component$(() => {
 
 ## `useClientEffect$()`
 
-Re-runs the `watchFn` when the tracked inputs change.
+Ré-exécute le `watchFn` lorsque les saisies trackées changent.
 
-If no `track` is being used, it will execute exactly once.
+Si aucun `track` n'est utilisé, il sera exécuté exactement une fois.
 
-### Example
+### Exemple
 
 ```tsx
 export const Timer = component$(() => {
@@ -169,7 +169,7 @@ export const Timer = component$(() => {
     count: 0,
   });
   useClientEffect$(() => {
-    // Only runs in the client
+    // S'exécute uniquement dans le client
     const timer = setInterval(() => {
       store.count++;
     }, 500);
