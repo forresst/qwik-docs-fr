@@ -5,7 +5,7 @@ export const App = component$(() => {
 
   return (
     <>
-      <div>Count: {counter.count}</div>
+      <div>Compteur : {counter.count}</div>
       <button onClick$={() => counter.count++}>+1</button>
     </>
   );

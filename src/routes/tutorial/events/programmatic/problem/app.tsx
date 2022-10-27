@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 
 export const App = component$(() => {
-  // hint: useOn('click', $(() => ...));
+  // indice : useOn('click', $(() => ...));
 
-  return <div>App Component. Click me.</div>;
+  return <div>Composant App. Cliquez-moi.</div>;
 });

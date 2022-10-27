@@ -16,7 +16,7 @@ export const App = component$(() => {
     greetNames: $((parent) => alert(parent.name)),
   };
   parent.children = [
-    // insert few items here
+    // insérer quelques éléments ici
   ];
   const parentStore = useStore<ParentStore>(parent, { recursive: true });
   return (

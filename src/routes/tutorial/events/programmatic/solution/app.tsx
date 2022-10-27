@@ -6,5 +6,5 @@ export const App = component$(() => {
     $(() => alert('Hello World!'))
   );
 
-  return <div>App Component. Click me.</div>;
+  return <div>Composant App. Cliquez-moi.</div>;
 });

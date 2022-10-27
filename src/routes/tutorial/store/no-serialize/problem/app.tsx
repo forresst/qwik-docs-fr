@@ -11,12 +11,12 @@ export const App = component$(() => {
   });
   return (
     <>
-      <div>Current Time: {store.time}</div>
+      <div>Heure actuelle : {store.time}</div>
       <button
         onClick$={() => {
           // @ts-ignore
           const id = setInterval(() => (store.time = new Date().toString()), 1000);
-          // assign a cleanup function to: store.cleanup
+          // assigner une fonction cleanup (nettoyage) à : store.cleanup
         }}
       >
         start
