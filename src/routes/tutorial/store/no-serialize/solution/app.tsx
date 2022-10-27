@@ -11,7 +11,7 @@ export const App = component$(() => {
   });
   return (
     <>
-      <div>Current Time: {store.time}</div>
+      <div>Heure actuelle : {store.time}</div>
       <button
         onClick$={() => {
           const id = setInterval(() => (store.time = new Date().toString()), 1000);

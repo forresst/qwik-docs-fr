@@ -12,10 +12,10 @@ export const App = component$(() => {
   });
   console.log('Render: <App>');
   useWatch$(({ track }) => {
-    // tracking `store.count`
-    // setup a timer to copy `count => delayCount` after 2 seconds.
+    // traquez `store.count`
+    // configurez une temporisation pour copier `count => delayCount` après 2 secondes.
     return () => {
-      // cleanup code
+      // code de nettoyage
     };
   });
   return (

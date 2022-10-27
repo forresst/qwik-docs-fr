@@ -8,7 +8,7 @@ export const App = component$(() => {
   useContextProvider(
     TodosContext,
     useStore<TodosStore>({
-      items: ['Learn Qwik', 'Build Qwik app', 'Profit'],
+      items: ['Apprendre Qwik', 'Construire une appli Qwik', 'En tirer profit'],
     })
   );
 
@@ -16,7 +16,7 @@ export const App = component$(() => {
 });
 
 export const Items = component$(() => {
-  // replace this with context retrieval.
+  // remplacer ceci par la récupération du contexte.
   const todos = { items: [] };
   return (
     <ul>
