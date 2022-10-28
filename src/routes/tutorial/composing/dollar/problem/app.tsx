@@ -14,12 +14,12 @@ export const App = component$(() => {
   const store = useStore({ count: 0, delay: 0 });
   return (
     <>
-      Count: {store.count} <br />
-      Delay: {store.delay} <br />
+      Compteur : {store.count} <br />
+      Délai : {store.delay} <br />
       <button
         onClick$={async () => {
           store.count++;
-          // This code should be delayed by 1000ms
+          // Ce code doit être retardé de 1000ms
           store.delay++;
         }}
       >

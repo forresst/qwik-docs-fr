@@ -6,43 +6,43 @@
       {
         "id": "hello-world",
         "title": "Hello World",
-        "description": "The simplest Qwik app.",
+        "description": "L'appli Qwik la plus simple.",
         "icon": "🌎"
       }
     ]
   },
   {
     "id": "reactivity",
-    "title": "Reactivity",
+    "title": "Réactivité",
     "apps": [
       {
         "id": "watch",
-        "title": "Simple useWatch()",
-        "description": "Learn how to react to changes in variables.",
+        "title": "Un simple useWatch()",
+        "description": "Apprenez à réagir aux changements de variables.",
         "icon": "👀"
       },
       {
         "id": "counter",
-        "title": "Counter",
-        "description": "A simple standard counter example.",
+        "title": "Compteur",
+        "description": "Un exemple simple de compteur standard.",
         "icon": "⏲"
       },
       {
         "id": "auto-complete",
-        "title": "Auto-complete",
-        "description": "Auto-complete searching for Star Wars characters using the SWAPI API",
+        "title": "Auto-complétion",
+        "description": "Recherche par autocomplétion des personnages de Star Wars à l'aide de l'API SWAPI",
         "icon": "🎬"
       }
     ]
   },
   {
     "id": "visibility",
-    "title": "Visibility",
+    "title": "Visibilité",
     "apps": [
       {
         "id": "clock",
-        "title": "Below the fold Clock",
-        "description": "Component which requires lazy initialization when it comes into view.",
+        "title": "Horloge en bas de page",
+        "description": "Composant qui nécessite une initialisation différée lorsqu'il est affiché.",
         "icon": "⏰"
       }
     ]
@@ -54,7 +54,7 @@
       {
         "id": "hackernews-index",
         "title": "HackerNews",
-        "description": "HackerNews landing page.",
+        "description": "Page d'accueil de HackerNews.",
         "icon": "📰"
       }
     ]

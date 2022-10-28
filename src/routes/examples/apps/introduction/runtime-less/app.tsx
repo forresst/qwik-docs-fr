@@ -6,8 +6,8 @@ export const App = component$(() => {
     <div id="container">
       <button
         onClick$={() => {
-          // The click handler is completely stateless, and does not use any QWIK api.
-          // Meaning, the qwik runtime is NEVER downloaded, nor executed
+          // Le gestionnaire de clics est complètement apatride et n'utilise pas d'API QWIK.
+          // Ce qui signifie que le runtime de QWIK n'est JAMAIS chargé, ni exécuté.
           console.log('click');
           const div = document.querySelector('#container')! as HTMLElement;
           div.style.background = 'yellow';
