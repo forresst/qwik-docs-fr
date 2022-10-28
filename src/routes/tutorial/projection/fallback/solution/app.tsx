@@ -19,16 +19,16 @@ export const App = component$(() => {
     <>
       <Card>
         <span q:slot="title">Qwik</span>
-        <span q:slot="body">Qwik is a resumable framework for building instant web apps.</span>
+        <span q:slot="body">Qwik est un framework résumable pour construire des applis web rapides.</span>
       </Card>
       <Card>
         <span q:slot="title">Partytown</span>
       </Card>
       <Card>
         <span q:slot="body">
-          Builder.io allows you to visually build on your tech stack Empower your entire team to
-          visually create and optimize high-speed experiences on your sites and apps. Provide
-          whole-team autonomy with a platform that is developer approved.
+          Builder.io vous permet de construire visuellement sur votre pile technologique Donnez à toute votre
+          équipe la possibilité de créer visuellement et d'optimiser des expériences à haut débit sur vos
+          sites et applis. Offrez une autonomie à toute l'équipe grâce à une plateforme approuvée par les développeurs.
         </span>
       </Card>
     </>
@@ -51,9 +51,9 @@ export const CSS = `
   border-bottom: 1px solid black;
 }
 
-/* Fallback for slot named "title" */
+/* Solution de secours pour le slot nommé "title" */
 .title:empty::before {
-  content: 'Fallback title';
+  content: 'Solution secours titre';
   color: red;
 }
 
@@ -61,9 +61,9 @@ export const CSS = `
   padding: 0.5em;
 }
 
-/* Fallback for slot named "body" */
+/* Solution de secours pour le slot nommé "body" */
 .body:empty::before {
-  content: 'Fallback body';
+  content: 'Solution secours corps';
   color: orange;
 }
 `;

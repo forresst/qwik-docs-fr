@@ -6,7 +6,7 @@ export const App = component$(() => {
   console.log('Render: <App>');
   return (
     <Panel>
-      Count: {store.count}. <button onClick$={() => store.count++}>+1</button>
+      Compteur : {store.count}. <button onClick$={() => store.count++}>+1</button>
     </Panel>
   );
 });

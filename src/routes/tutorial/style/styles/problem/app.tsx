@@ -6,8 +6,8 @@ export const App = component$(() => {
 
   return (
     <div class="parent">
-      <button onClick$={() => (store.open = !store.open)}>toggle</button>
-      <button onClick$={() => store.siblings.push(0)}>addSibling</button>
+      <button onClick$={() => (store.open = !store.open)}>Affiche/Masque Child</button>
+      <button onClick$={() => store.siblings.push(0)}>Ajoute un Sibling</button>
       {store.open ? <Child key="child" /> : null}
       {store.siblings.map(() => (
         <Sibling />
@@ -35,8 +35,8 @@ export const Sibling = component$(() => {
   );
 });
 
-//TODO: These should be import as: import AppCSS from './app.css';
-// however the playground does not yet support such imports.
+// A FAIRE : Ceci devrait être importé ainsi : import AppCSS from './app.css';
+// mais l'outil pour tester ne prend pas encore en charge de telles importations.
 export const AppCSS = `
 .parent {
   border: 1px solid black;

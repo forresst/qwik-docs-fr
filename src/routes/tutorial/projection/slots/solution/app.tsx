@@ -4,9 +4,9 @@ export const App = component$(() => {
   console.log('Render: <App>');
   return (
     <Collapsable>
-      <div q:slot="closed">▶ (collapsed summary)</div>
+      <div q:slot="closed">▶ (résumé replié)</div>
       <div q:slot="open">
-        ▼<div> Content that should be displayed when the collapse component is open. </div>
+        ▼<div>  Le contenu qui doit être affiché lorsque le composant pliable est déplié. </div>
       </div>
     </Collapsable>
   );
