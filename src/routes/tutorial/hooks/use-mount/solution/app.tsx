@@ -12,7 +12,7 @@ export const App = component$(() => {
 
   return (
     <div>
-      <span>GitHub username: {github.org}</span>
+      <span>Nom d'utilisateur GitHub : {github.org}</span>
       <div>
         {github.repos ? (
           <ul>
@@ -23,7 +23,7 @@ export const App = component$(() => {
             ))}
           </ul>
         ) : (
-          'loading...'
+          'chargement...'
         )}
       </div>
     </div>

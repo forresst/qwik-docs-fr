@@ -34,13 +34,13 @@ export const App = component$(() => {
   return (
     <ul>
       <li>
-        Element: ({store.element.x}, {store.element.y})
+        Élément : ({store.element.x}, {store.element.y})
       </li>
       <li>
-        Document: ({store.document.x}, {store.document.y})
+        Document : ({store.document.x}, {store.document.y})
       </li>
       <li>
-        Window: ({store.window.x}, {store.window.y})
+        Window : ({store.window.x}, {store.window.y})
       </li>
     </ul>
   );

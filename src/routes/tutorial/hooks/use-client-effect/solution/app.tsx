@@ -44,10 +44,10 @@ export function updateClock(store: ClockStore) {
 export const App = component$(() => {
   return (
     <div>
-      <p>This is an example of Lazy executing code on component when component becomes visible.</p>
+      <p>C'est un exemple d'exécution différée de code sur le composant lorsque celui-ci devient visible.</p>
 
       <p style={{ height: '800px' }}>
-        ⬇️ <strong>Scroll down</strong> until the clock is in view.
+        ⬇️ <strong>Faites défiler vers le bas</strong> jusqu'à ce que l'horloge soit visible.
       </p>
 
       <Clock />
