@@ -17,11 +17,9 @@ Qwik est résumable. La résumabilité signifie que l'application démarre sur l
 
 ## Variantes de `useMount$()`
 
-Le hook `useMount$()` est divisé en deux versions, l'une serveur et l'autre client :
+Le hook `useMount$()` a aussi une version `useServerMount$()` qui s'exécute sur le composant monté lorsqu'il est dans un environnement serveur. Ceci est utile parce que le serveur a souvent des APIs différentes pour récupérer les données.
 
-- `useServerMount$()` : Hook qui s'exécute sur le montage du composant lorsqu'il se trouve dans un environnement serveur. Ceci est utile car le serveur a souvent des API différentes pour la récupération des données.
-
-Utilisez `useMount$()` si le code qui doit être exécuté est identique.
+Utilisez `useMount$()` si le code qui doit être exécuté est identique sur le serveur et le client.
 
 ## Importations sur serveur uniquement
 

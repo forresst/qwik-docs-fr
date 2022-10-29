@@ -44,9 +44,9 @@ L'état `resource.state` peut être l'une des chaînes suivantes :
 
 Le callback passé à `useResource$()` s'exécute juste après que les callbacks `useMount$()` et `useWatch$()` se soient terminés. Veuillez vous référer à la section [Cycle de vie](../lifecycle/index.mdx) pour plus de détails.
 
-## `<Resource>`
+## `<Resource />`
 
-`<Resource>` est un composant qui assure le rendu de ses enfants lorsque la ressource est résolue, et assure un rendu de secours lorsque la ressource est en attente ou rejetée.
+`<Resource />` est un composant qui assure le rendu de ses enfants lorsque la ressource est résolue, et assure un rendu de secours lorsque la ressource est en attente ou rejetée.
 
 ```tsx
   <Resource
@@ -58,12 +58,12 @@ Le callback passé à `useResource$()` s'exécute juste après que les callbacks
     }}
   />
 ```
+Il est intéressant de noter que `<Resource />` n'est pas obligatoire lorsqu'on utilise `useResource$()`. C'est juste un moyen pratique de rendre l'état de la ressource.
 
-Notez que `<Resource>` n'est pas nécessaire pour utiliser `useResource$()`, c'est juste un moyen pratique de faire le rendu de l'état de la ressource.
+### Exemples :
+- #### `useResource$()` avec `<Resource />`
 
-### Exemple d'utilisation de `useResource$()` avec `<Resource>`
-
-Exemple montrant comment `useResource` est utilisé pour effectuer un appel pour requêter la météo lorsque le nom de la ville en saisie change.
+Exemple montrant comment `useResource$` est utilisé pour effectuer un appel pour requêter la météo lorsque le nom de la ville en saisie change.
 
 ```tsx
 export const Cmp = component$(() => {
@@ -98,7 +98,7 @@ export const Cmp = component$(() => {
 ```
 
 
-### Exemple sans `<Resource>`
+- #### sans `<Resource />`
 
 ```tsx
 export const Cmp = component$(() => {
@@ -131,6 +131,5 @@ export const Cmp = component$(() => {
 });
 ```
 
-> **REMARQUE**
-> Nous recommandons fortement d'utiliser `<Resource/>` chaque fois que c'est possible, car ce composant évitera plus efficacement les re-rendus et il est également optimisé pour SSR.
-
+> **REMARQUE :**
+> Nous recommandons fortement d'utiliser `<Resource />` chaque fois que cela est possible, car cela évitera les re-rendus du composant et c'est également optimisé pour SSR.
