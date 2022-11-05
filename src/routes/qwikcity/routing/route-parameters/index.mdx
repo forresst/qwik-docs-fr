@@ -80,3 +80,25 @@ src/
 
 La structure ci-dessus correspond à :
 - `https://example.com/sku/1234/5678/end-of-route`
+
+
+## Groupes
+Dans certains cas, vous souhaitez déplacer vos routes dans un sous-répertoire sans affecter le nom du chemin que qwik city génère en fonction de la structure du dossier. Ou vous avez plusieurs routes sur le même niveau qui doivent utiliser des mises en page différentes. Dans ce cas, vous pouvez créer des répertoires entre parenthèses (ex : `(products)`). Voyons un exemple :
+
+```
+src/
+└── routes/
+    └── (product)/
+            ├── detail/
+            |   └──index.tsx
+            ├── preview/
+            |   └──index.tsx
+            └── promotion/
+                └──index.tsx
+```
+La structure ci-dessus correspondra à :
+- `https://example.com/detail`
+- `https://example.com/preview`
+- `https://example.com/promotion`
+
+Notez que `product` ne fait pas partie du chemin d'accès.

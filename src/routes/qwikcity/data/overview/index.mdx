@@ -42,4 +42,86 @@ Les fonctions de traitement des requêtes reçoivent un argument `RequestEvent` 
 | `next`     | Prochaine fonction du middleware                                                                   |
 | `abort`    | Fonction d'annulation de la requête                                                                |
 | `params`   | Paramètres personnalisés de l'utilisateur trouvés dans l'URL                                       |
+| `cookie`   | Obtenir et définir des cookies.                                                                    |
 | `platform` | Objet de données de plateforme (utile pour Cloudflare, Netlify, etc.)                              |
+
+
+### Cookie
+
+```typescript
+interface Cookie {
+  get: (key: string) => CookieValue | null,
+  set: (key: string, value: string | number | Record<string, any>, options?: CookieOptions) => void,
+  delete: (key: string) => void,
+  has: (key: string) => boolean
+}
+```
+
+La classe cookie est utilisée pour obtenir et définir les cookies dans votre appli Qwik City. Elle expose les méthodes suivantes :
+
+**get**
+
+Prend une chaîne avec le nom du cookie et renvoie la `CookieValue`, si elle est présente et nulle sinon.
+
+```typescript
+interface CookieValue {
+  value: string;
+  json: <T = unknown>() => T;
+  number: () => number;
+}
+```
+
+Une valeur de cookie est un enregistrement simple comportant trois champs :
+  1. `value` : Contient la valeur du cookie sous forme de chaîne
+  2. `json()` : Exécute `JSON.parse()` sur la valeur et renvoie le résultat
+  3. `number()` : Exécute `Number()` sur la valeur et renvoie le résultat
+
+**set**
+
+Prend une clé et une valeur et crée une entête qui sera ajoutée à la réponse. La valeur peut être un `string | number | Record<string, any>`
+
+Comme troisième argument, vous pouvez éventuellement fournir un enregistrement `CookieOptions` pour définir des champs supplémentaires.
+
+```typescript
+export interface CookieOptions {
+  domain?: string;
+  expires?: Date | string;
+  httpOnly?: boolean;
+  maxAge?: number | [number, 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks'];
+  path?: string;
+  sameSite?: 'lax' | 'none' | 'strict';
+  secure?: boolean;
+}
+```
+
+Pour plus d'informations sur ces attributs et leurs valeurs, veuillez consulter [l'article de MDN sur l'entête Set-Cookie](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Set-Cookie#attributs).
+
+**delete**
+
+Ajoute une entête avec la clé fournie au cookie. La nouvelle entête aura une date d'expiration dans le champ `expires`, indiquant aux navigateurs de la supprimer.
+
+```typescript
+cookie.delete('my-cookie')
+```
+
+Équivalent à un appel :
+
+```typescript
+cookie.set('my-cookie', 'deleted', new Date(0))
+```
+
+En option, vous pouvez définir le chemin et/ou le domaine lors de la suppression du cookie. Si votre cookie a été créé avec un chemin/domaine, vous devez définir ces champs pour que la suppression prenne effet.
+
+```typescript
+cookie.delete('my-cookie', { domain: 'https://qwik.builder.io', path: '/docs/'})
+```
+
+**has**
+
+Une méthode pratique qui renvoie true ou false en fonction de la présence de la clé fournie dans le cookie.
+
+Équivalent à l'appel :
+
+```typescript
+!!cookie.get('my-cookie')
+```

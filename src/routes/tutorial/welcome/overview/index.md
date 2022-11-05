@@ -19,7 +19,7 @@ Les tutoriels sont divisés en plusieurs sections :
 - [Props](../../props/basic/index.mdx) : Une immersion en profondeur dans la déclaration et le travail avec les props et les composants et les contraintes de sérialisation.
 - [Réactivité](../../reactivity/template/index.mdx) : Une immersion en profondeur dans le fonctionnement de la réactivité et la façon dont elle peut être utilisée pour construire une application plus complexe.
 - [Contexte](../../context/basic/index.mdx) : Rendre les données globalement disponibles pour votre application grâce au contexte.
-- [Hooks](../../hooks/use-mount/index.mdx) : Hooks du cycle de vie des composants.
+- [Cycle de vie des Hooks](../../hooks/use-mount/index.mdx) : Hooks du cycle de vie des composants.
 - [Projection](../../projection/basic/index.mdx) : Une immersion en profondeur dans le fonctionnement de la projection et comment l'utiliser dans des scénarios plus complexes.
 - [Style](../../style/styles/index.mdx) : Styliser votre application avec du CSS.
 - [Optimiseur](../../qrl/optimizer/index.mdx) : Comprendre les contraintes de l'Optimiseur.

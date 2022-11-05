@@ -42,6 +42,6 @@
 
 ## Communauté
 
-- [Github](https://github.com/BuilderIO/qwik)
+- [GitHub](https://github.com/BuilderIO/qwik)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [Discord](https://qwik.builder.io/chat)

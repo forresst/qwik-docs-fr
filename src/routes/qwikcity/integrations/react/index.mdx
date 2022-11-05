@@ -88,7 +88,7 @@ Notez que par défaut, aucun code React ne sera exécuté dans le navigateur, ce
 /** @jsxImportSource react */
 import { qwikify$ } from '@builder.io/qwik-react';
 import { Slider } from '@mui/material';
-export const MUISlides = qwikify$(Button);
+export const MUISlider = qwikify$(Slider);
 ```
 
 ```tsx
@@ -169,7 +169,7 @@ Il s'agit d'une API avancée qui permet d'hydrater le composant lorsque le signa
 
 ```tsx
 export default component$(() => {
-  const hydrateReact = useSignal$(false);
+  const hydrateReact = useSignal(false);
   return (
     <>
       <button onClick$={() => hydrateReact.value = true}>
