@@ -64,33 +64,41 @@ Il est intéressant de noter que `<Resource />` n'est pas obligatoire lorsqu'on 
 ### Exemples :
 - #### `useResource$()` avec `<Resource />`
 
-Exemple montrant comment `useResource$` est utilisé pour effectuer un appel pour requêter la météo lorsque le nom de la ville en saisie change.
+Exemple montrant comment `useResource$` est utilisé pour effectuer un appel de récupération vers l'API agify.io. Ceci va deviner l'âge d'une personne
+en se basant sur le nom tapé par l'utilisateur, et sera mis à jour chaque fois que l'utilisateur tape le nom.
 
 ```tsx
-export const Cmp = component$(() => {
-  const store = useStore({
-    city: '',
-  });
+export default component$(() => {
+  const store = useStore<{ name?: string }>({
+    name: undefined
+  })
 
-  const weatherResource = useResource$<any>(async ({ track, cleanup }) => {
-    const cityName = track(() => store.city);
+  const ageResource = useResource$<{
+    name: string;
+    age: number;
+    count: number;
+  }>(async ({track, cleanup}) => {
+    track(() => store.name);
     const abortController = new AbortController();
-    cleanup(() => abortController.abort('cleanup'));
-    const res = await fetch(`http://weatherdata.com?city=${cityName}`, {
-      signal: abortController.signal,
+    cleanup(() => abortController.abort("cleanup"));
+    const res = await fetch(`https://api.agify.io?name=${store.name}`, {
+      signal: abortController.signal
     });
-    const data = res.json();
-    return data;
+    return res.json();
   });
 
   return (
     <div>
-      <input name="city" onInput$={(ev: any) => (store.city = ev.target.value)} />
+      <h1>Entrez votre nom, et je devinerai votre âge !</h1>
+      <input onInput$={(e: Event) => store.name = (e.target as HTMLInputElement).value}/>
       <Resource
-        value={weatherResource}
+        value={ageResource}
         onPending={() => <div>Chargement...</div>}
-        onResolved={(weather) => {
-          return <div>Température : {weather.temp}</div>;
+        onRejected={() => <div>Échec des données de la personne</div>}
+        onResolved={(ageGuess) => {
+          return <div>
+            {store.name && <>{ageGuess.name} {ageGuess.age} years</>}
+          </div>;
         }}
       />
     </div>
@@ -100,36 +108,42 @@ export const Cmp = component$(() => {
 
 - #### sans `<Resource />`
 
-```tsx
-export const Cmp = component$(() => {
-  const store = useStore({
-    city: '',
-  });
+Le composant `<Resource />` est hautement optimisé pour éviter les re-rendus inutiles et pour le SSR.
+Nous vous recommandons vivement d'utiliser `<Resource />` chaque fois que cela est possible. Occasionnellement, vous pouvez
+rencontrer un cas particulier dans lequel vous avez besoin de plus de contrôle. Pour ces situations, Qwik vous permet également d'utiliser
+les données retournées par `useResource()` directement dans votre code TSX, comme montré ci-dessous.
 
-  const weatherResource = useResource$<any>(async ({ track, cleanup }) => {
-    const cityName = track(() => store.city);
+```tsx
+export default component$(() => {
+  const store = useStore<{ name?: string }>({
+    name: undefined
+  })
+
+  const ageResource = useResource$<{
+    name: string;
+    age: number;
+    count: number;
+  }>(async ({track, cleanup}) => {
+    track(() => store.name);
     const abortController = new AbortController();
-    cleanup(() => abortController.abort('cleanup'));
-    const res = await fetch(`http://weatherdata.com?city=${cityName}`, {
-      signal: abortController.signal,
+    cleanup(() => abortController.abort("cleanup"));
+    const res = await fetch(`https://api.agify.io?name=${store.name}`, {
+      signal: abortController.signal
     });
-    const data = res.json();
-    return data;
+    return res.json();
   });
 
   return (
     <div>
-      <input name="city" onInput$={(ev: any) => (store.city = ev.target.value)} />
-      {weatherResource.state === 'pending' && (
-        <div>Chargement...</div>
-      )}
-      {weatherResource.state === 'resolved' && (
-        <div>Température : {weatherResource.resolved.temp}</div>
-      )}
+      <h1>Entrez votre nom, et je devinerai votre âge !</h1>
+      <input onInput$={(e: Event) => store.name = (e.target as HTMLInputElement).value}/>
+      <div>
+        {ageResource.loading && <div>Chargement de l'âge supposé...</div>}
+        {!ageResource.loading && store.name && <div>{ageResource.promise.then(ageGuess => (
+          <div>{ageGuess.name} {ageGuess.age} years</div>
+        ))}</div>}
+      </div>
     </div>
   );
 });
 ```
-
-> **REMARQUE :**
-> Nous recommandons fortement d'utiliser `<Resource />` chaque fois que cela est possible, car cela évitera les re-rendus du composant et c'est également optimisé pour SSR.
