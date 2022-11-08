@@ -15,18 +15,19 @@ Le middleware Node de Qwik City vous permet de connecter Qwik City à un serveur
 Vous trouverez ci-dessous un exemple d'utilisation du middleware Node intégré dans l'appli [Express](https://expressjs.com/) d'un utilisateur. Notez que l'utilisateur peut décider de l'ordre des middlewares, y compris la gestion des ressources statiques et la façon de traiter les réponses 404.
 
 ```typescript
-import { qwikCity } from '@builder.io/qwik-city/middleware/node';
+import { createQwikCity } from '@builder.io/qwik-city/middleware/node';
+import qwikCityPlan from '@qwik-city-plan';
+import render from './entry.ssr';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import render from './entry.ssr';
 
 // Répertoires où se trouvent les ressources statiques
 const distDir = join(fileURLToPath(import.meta.url), '..', '..', 'dist');
 const buildDir = join(distDir, 'build');
 
 // Crée le middleware Qwik City
-const { router, notFound } = qwikCity(render);
+const { router, notFound } = createQwikCity({ render, qwikCityPlan });
 
 // Crée le serveur express
 const app = express();

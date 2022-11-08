@@ -4,16 +4,95 @@ contributors:
   - manucorporat
 ---
 
-## `useStyles$()`
-
-Une référence chargée de manière différée pour les styles du composant.
-
-Les styles de composants permettent à Qwik de charger de manière différée les informations de style pour le composant seulement quand c'est nécessaire. (Et d'éviter le double chargement en cas d'hydratation du SSR).
+## Styles globaux
+De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront téléchargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
 
 ```tsx
-import styles from './code-block.css?inline';
+import './global.css'
+```
+
+## Styles critiques en ligne
+Pour réduire le temps de blocage de la première représentation, Qwik peut mettre en ligne les styles critiques pour la vue courante. Cela signifie que le navigateur n'aura pas besoin de charger les styles pour la vue courante. Pour dire à Qwik de mettre les styles en ligne, il suffit d'ajouter le paramètre de requête `?inline` à l'importation.
+
+```tsx
+import from './my-component.css?inline'
+```
+
+## Pourquoi ne pas utiliser les styles en ligne avec la balise `<style>` ?
+
+Une façon naïve de s'assurer que les styles sont chargés correctement dans un composant est d'intégrer les informations de style dans le composant comme suit.
+
+```typescript
+export const MyComponent = () => {
+  return (
+    <>
+      <style>.my-class { color: red; }</style>
+      My Component
+    </>
+  );
+}
+```
+
+Le problème avec cette approche est que nous allons charger les styles deux fois.
+
+1. Les styles sont insérés dans le HTML en tant que partie du SSR.
+2. Ensuite, lorsque le composant est invalidé et doit être re-rendu, les styles sont rechargés car ils sont intégrés.
+
+Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert `useStyles$()`. Il y a deux scénarios :
+
+1. Le composant est rendu sur le serveur et les styles sont insérés dans le `<head>` en tant que partie du SSR.
+   - L'ajout d'une nouvelle instance d'un composant à l'application ne nécessite pas de charger les styles car ils sont déjà inclus dans le SSR.
+2. Le composant est rendu sur le client pour la première fois. Dans ce cas, le nouveau composant n'a pas de styles dans le `<head>` car le composant ne faisait pas partie du SSR.
+   - L'ajout d'un nouveau composant qui ne faisait pas partie du SSR nécessite que les styles soient chargés et insérés dans le `<head>`.
+
+
+## `useStyles$()`
+Une référence chargée de manière différée pour les styles du composant.
+
+Les styles de composants permettent à Qwik de charger de manière différée les informations de style pour le composant seulement quand cela est nécessaire. (Et d'éviter de les charger deux fois en cas d'hydratation du SSR).
+
+```tsx
+import {useStyles$} from '@builder.io/qwik';
+import styles from './code-block.css';
+
 export const CmpStyles = component$(() => {
   useStyles$(styles);
-  return <>Un peu de texte</>;
+  return <span class="my-text">Some text</span>;
 });
 ```
+
+```css
+// code-block.css
+.my-text {
+  color: red;
+}
+```
+
+## `useStylesScope$`
+Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook `useStyles$()`.
+Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. 
+Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
+
+```tsx
+import {useStylesScoped$} from '@builder.io/qwik';
+import styles from './code-block.css';
+
+export const CmpStyles = component$(() => {
+  useStylesScoped$(styles);
+  return <span class="my-text">Some text</span>;
+});
+```
+
+```css
+// code-block.css
+.my-text {
+  color: blue;
+}
+```
+
+## Préprocesseurs
+### SASS / SCSS
+Qwik fonctionne bien avec SCSS et SASS sans aucune installation supplémentaire. Assurez-vous que vos fichiers ont l'extension `.scss` ou `.sass`.
+
+### Tailwind
+Pour utiliser Tailwind dans votre appli, suivez ces [instructions](../../../qwikcity/integrations/tailwind).

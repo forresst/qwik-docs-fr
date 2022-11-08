@@ -19,6 +19,7 @@
 - [Composants légers](components/lite-components/index.mdx)
 - [Projection de contenu](components/projection/index.mdx)
 - [Rendu](components/rendering/index.mdx)
+- [Style](components/styles/index.mdx)
 
 ## Aide-mémoire
 
