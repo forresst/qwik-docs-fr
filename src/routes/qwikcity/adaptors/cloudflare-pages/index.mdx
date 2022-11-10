@@ -1,33 +1,50 @@
 ---
-title: Qwik City - Middleware de Cloudflare Pages
+title: Qwik City - Adaptateur et middleware de Cloudflare Pages
 contributors:
   - adamdbradley
 ---
 
-# Middleware de Cloudflare Pages
+# Adaptateur de Cloudflare Pages
 
-Vous devez intégrer cloudflare-pages en utilisant cette commande pour voir vos fichiers comme les fichiers ci-dessous
+L'adaptateur de Cloudflare Pages de Qwik City vous permet de connecter Qwik City à [Cloudflare Pages](https://pages.cloudflare.com/).
+
+Pour intégrer l'adaptateur `cloudflare-pages`, utilisez la commande `npm run qwik add` :
 
 ```bash
 npm run qwik add cloudflare-pages
 ```
 
-Le middleware Qwik City de Cloudflare Pages vous permet de connecter Qwik City à [Cloudflare Pages](https://pages.cloudflare.com/).
+L'adaptateur ajoutera un nouveau `vite.config.ts` dans le répertoire `adaptors/`, et un nouveau fichier d'entrée sera créé, comme suit :
 
-Vous trouverez ci-dessous un exemple d'utilisation du middleware intégré dans l'appli d'un utilisateur.
-
-```typescript
-// entry.cloudflare-pages.tsx
-import render from './entry.ssr';
-import { qwikCity } from '@builder.io/qwik-city/middleware/cloudflare-pages';
-
-export const onRequest = qwikCity(render);
+```
+└── adaptors/
+    └── cloudflare-pages/
+        └── vite.config.ts
+└── src/
+    └── entry.cloudflare-pages.tsx
 ```
 
-Le middleware compilé peut alors être utilisé n'importe où dans le répertoire `/functions` des pages cloudflare.
+De plus, dans le `package.json`, le script `build.server` sera mis à jour avec le build de Cloudflare.
+
+## Middleware d'entrée de Cloudflare Pages
+
+Lorsque l'adaptateur `cloudflare-pages` est ajouté, un nouveau fichier d'entrée sera créé `src/entry.cloudflare-pages.tsx`. Vous trouverez ci-dessous un exemple d'utilisation du middleware intégré dans le fichier d'entrée.
 
 ```typescript
-// exporter le middleware compilé là où les Pages Cloudflare peuvent le trouver.
+// src/entry.cloudflare-pages.tsx
+import { createQwikCity } from '@builder.io/qwik-city/middleware/cloudflare-pages';
+import qwikCityPlan from '@qwik-city-plan';
+import render from './entry.ssr';
+
+const onRequest = createQwikCity({ render, qwikCityPlan });
+
+export { onRequest };
+```
+
+Le middleware compilé sera construit dans le répertoire `server/` et pourra alors être utilisé n'importe où dans le répertoire `/functions` des pages cloudflare.
+
+```typescript
+// exportez le middleware compilé là où les Pages Cloudflare peuvent le trouver.
 // par exemple utilisez /functions/[[path]].ts ou /functions/_middleware.ts
 // pour que Qwik City gère toutes les requêtes.
 
@@ -36,6 +53,37 @@ export { onRequest } from '../server/entry.cloudflare-pages';
 
 - [Source du Middleware de Cloudflare Pages](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/cloudflare-pages/index.ts)
 - [Fonctions de Cloudflare Pages](https://developers.cloudflare.com/pages/platform/functions/)
+- [Configuration de la fonction d'invocation des routes](https://developers.cloudflare.com/pages/platform/functions/function-invocation-routes/)
+
+## Fonction d'invocation des routes de Cloudflare Pages
+
+La [Configuration de la fonction d'invocation des routes](https://developers.cloudflare.com/pages/platform/functions/function-invocation-routes/) de Cloudflare Pages peut être utilisée pour inclure, ou exclure, certains chemins à utiliser par la fonction. Le fait d'avoir un fichier `_routes.json` donne aux développeurs un contrôle plus fin sur le moment où votre fonction est invoquée.
+
+Ceci est utile pour déterminer si la réponse à une page doit être « Server-Side Rendered » (SSR) ou si la réponse doit utiliser à la place un fichier `index.html` généré par un site statique (SSG).
+
+Par défaut, l'adaptateur Cloudflare Pages n'inclut pas de configuration `public/_routes.json`, mais celle-ci est générée automatiquement à partir de la construction par l'adaptateur Cloudflare. Un exemple de `dist/_routes.json` auto-généré serait :
+
+```json
+{
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/_headers",
+    "/_redirects",
+    "/build/*",
+    "/favicon.ico",
+    "/manifest.json",
+    "/service-worker.js",
+    "/about"
+  ],
+  "version": 1
+}
+```
+
+Dans l'exemple ci-dessus, il est dit que _toutes_ les pages doivent être SSR. Cependant, les fichiers statiques racine tels que `/favicon.ico` et tous les ressources statiques dans `/build/*` doivent être exclus des fonctions, et traités comme un fichier statique.
+
+Dans la plupart des cas, le fichier généré `dist/_routes.json` est idéal. Cependant, si vous avez besoin d'un contrôle plus précis sur chaque chemin, vous pouvez fournir votre propre fichier `public/_routes.json`. Lorsque le projet fournit son propre fichier `public/_routes.json`, l'adaptateur Cloudflare ne générera pas automatiquement la configuration des routes et utilisera celle qui a été validée dans le répertoire `public`.
 
 ## Utilisation
 

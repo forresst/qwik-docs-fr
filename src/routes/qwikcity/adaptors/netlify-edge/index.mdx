@@ -1,41 +1,71 @@
 ---
-title: Qwik City - Middleware de Netlify Edge
+title: Qwik City - Adaptateur et middleware de Netlify Edge
 contributors:
   - adamdbradley
 ---
 
-# Middleware de Netlify Edge
+# Adaptateur de Netlify Edge
 
-Le middleware de Qwik City pour Netlify Edge vous permet de connecter Qwik City à [Netlify Edge](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/).
+L'adaptateur de Qwik City pour Netlify Edge vous permet de connecter Qwik City aux [Fonctions de Netlify Edge](https://docs.netlify.com/edge-functions/overview/).
 
-## Ajout au projet Qwik
-
-Exécutez cette commande pour intégrer netlify-edge à votre appli :
+Pour intégrer l'adaptateur `netlify-edge`, utilisez la commande `npm run qwik add` :
 
 ```bash
 npm run qwik add netlify-edge
 ```
 
-La commande précédente créera `src/entry.netlify-edge.tsx` en utilisant le middleware intégré dans l'appli d'un utilisateur.
+L'adaptateur ajoutera un nouveau `vite.config.ts` dans le répertoire `adaptors/`, et un nouveau fichier d'entrée sera créé, comme suit :
 
-## Ajout manuel de Netlify Edge
-
-Si vous voulez ajouter Netilify Edge manuellement, vous pouvez ajouter ou modifier les fichiers comme ci-dessous :
-
-`src/entry.netlify-edge.tsx`
-
-```typescript
-import { qwikCity } from '@builder.io/qwik-city/middleware/netlify-edge';
-import render from './entry.ssr';
-
-const qwikCityHandler = qwikCity(render);
-
-export default qwikCityHandler;
+```
+└── adaptors/
+    └── netlify-edge/
+        └── vite.config.ts
+└── src/
+    └── entry.netlify-edge.tsx
 ```
 
-`vite.config.ts`
+De plus, dans le `package.json`, le script `build.server` sera mis à jour avec le build de Netlify Edge.
+
+## Middleware d'entrée de Netlify Edge
+
+Lorsque l'adaptateur `netlify-edge` est ajouté, un nouveau fichier d'entrée sera créé `src/entry.netlify-edge.tsx`. Vous trouverez ci-dessous un exemple d'utilisation du middleware intégré dans le fichier d'entrée.
 
 ```typescript
+// src/entry.netlify-edge.tsx
+import { createQwikCity } from '@builder.io/qwik-city/middleware/netlify-edge';
+import qwikCityPlan from '@qwik-city-plan';
+import render from './entry.ssr';
+
+export default createQwikCity({ render, qwikCityPlan });
+```
+
+Le middleware compilé sera construit dans le répertoire `.netlify/edge-functions`.
+
+## Déclarations des fonctions Netlify Edge
+
+Les [Déclarations des fonctions Netlify Edge](https://docs.netlify.com/edge-functions/declarations/) 
+peuvent être configurées pour s'exécuter sur des modèles d'URL spécifiques. Chaque déclaration de fonction edge associe
+un modèle de chemin d'accès au site à une fonction à exécuter sur les requêtes qui correspondent à ce chemin. Une seule requête peut exécuter une chaîne de fonctions edge à partir d'une série de déclarations. Une même fonction edge peut être associée à plusieurs chemins d'accès à travers plusieurs déclarations.
+
+Ceci est utile pour déterminer si la réponse à une page doit être « Server-Side Rendered » (SSR) ou si la réponse doit utiliser à la place un fichier `index.html` généré par un site statique (SSG).
+
+Par défaut, l'adaptateur Netlify Edge génère un fichier `.netlify/edge-middleware/manifest.json`, qui est utilisé par le déploiement Netlify pour déterminer quels chemins doivent, ou non, utiliser les fonctions edge.
+
+Pour remplacer le manifeste généré, vous pouvez [ajouter une déclaration](https://docs.netlify.com/edge-functions/declarations/#add-a-declaration) au fichier `netlify.toml` en utilisant la config `[[edge_functions]]`. Par exemple :
+
+```toml
+[[edge_functions]]
+  path = "/admin"
+  function = "auth"
+```
+
+## Migration
+
+Les versions précédentes de Qwik City utilisaient le plugin `@netlify/vite-plugin-netlify-edge`. Ce plugin fonctionne toujours très bien, mais utilise une approche « attrappe tout », ce qui signifie que toutes les requêtes passeront par les fonctions edge, en incluant les fichiers statiques.
+
+L'adaptateur mis à jour, en utilisant la commande `npm run qwik add netlify-edge`, générera à la place une configuration `.netlify/edge-functions/manifest.json` au moment de la construction. Si vous souhaitez utiliser le nouvel adaptateur, vous pouvez supprimer le plugin `@netlify/vite-plugin-netlify-edge` du fichier racine `vite.config.ts`, et du fichier racine `netlify.toml`.
+
+```diff
 import { defineConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
@@ -47,25 +77,25 @@ export default defineConfig(() => {
     plugins: [
       qwikCity(),
       qwikVite({
-+        ssr: {
-+          outDir: "netlify/edge-functions",
-+        },
+-        ssr: {
+-          outDir: "netlify/edge-functions",
+-        },
       }),
       tsconfigPaths(),
-+      netlifyEdge({
-+        functionName: "entry.netlify-edge",
-+      }),
+-      netlifyEdge({
+-        functionName: "entry.netlify-edge",
+-      }),
     ],
   };
 });
 ```
 
-Configurez `netlify.toml`
+Supprimez la configuration `edge_functions` (« attrappe tout ») de `netlify.toml`.
 
-```toml
-[[edge_functions]]
-path = "/*"
-function = "entry.netlify-edge"
+```diff
+-[[edge_functions]]
+-path = "/*"
+-function = "entry.netlify-edge"
 ```
 
 ## Utilisation
