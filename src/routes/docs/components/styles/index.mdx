@@ -5,7 +5,7 @@ contributors:
 ---
 
 ## Styles globaux
-De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront téléchargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
+De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront chargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
 
 ```tsx
 import './global.css'

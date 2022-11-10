@@ -101,7 +101,7 @@ L'exemple ci-dessus montre comment le composant `MyApp` peut utiliser le composa
 
 Les composants Qwik sont réactifs au niveau du composant. Les props des composants, ainsi que les stores, sont des proxies. Ces proxies surveillent les lectures ainsi que les écritures.
 
-- Un proxie de lecture pendant l'exécution de la méthode OnRender permet à Qwik de savoir que la méthode OnRender dépend d'une propriété donnée. Une lecture crée un abonnement sur cette propriété. Dans notre [exemple](../../concepts/reactivity/#counter-example), OnRender lit `{store.count}`, ce qui crée un abonnement qui indique à Qwik que chaque fois que `store.count` change, le composant doit être invalidé.
+- Un proxie de lecture pendant l'exécution de la méthode OnRender permet à Qwik de savoir que la méthode OnRender dépend d'une propriété donnée. Une lecture crée un abonnement sur cette propriété. Dans notre [exemple](../../concepts/reactivity/#exemple-du-compteur), OnRender lit `{store.count}`, ce qui crée un abonnement qui indique à Qwik que chaque fois que `store.count` change, le composant doit être invalidé.
 - Un proxie d'écriture notifie à Qwik que toutes les abonnements associés doivent être invalidés.
 
 Lorsque les composants sont invalidés, ils sont ajoutés à la file d'attente d'invalidation, qui est vidée (rendu) sur la prochaine `requestAnimationFrame`. Cela agit comme une forme de coalescence pour le rendu des composants.
@@ -157,7 +157,7 @@ const Parent_onRender = () => (
 
 Remarquez qu'après que l'Optimiseur ait transformé le code, le `Parent` ne fait plus directement référence au `Child`. Ceci est important car cela permet au bundler (et aux tree shakers) de déplacer librement les symboles dans différents morceaux sans entraîner le reste de l'application avec lui.
 
-Alors que se passe-t-il lorsque le composant `Parent` est rendu et que le composant `Child` n'a pas encore été téléchargé ? D'abord, le composant `Parent` rend son JSX comme ceci.
+Alors que se passe-t-il lorsque le composant `Parent` est rendu et que le composant `Child` n'a pas encore été chargé ? D'abord, le composant `Parent` rend son JSX comme ceci.
 
 ```html
 <div>

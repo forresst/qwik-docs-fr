@@ -7,7 +7,7 @@ contributors:
 
 # Qwikloader
 
-Qwik est conçu pour le chargement différé de votre application. Pour réaliser le chargement différé, Qwik nécessite un petit morceau de JavaScript à charger au début qui sait comment télécharger le reste de l'application en fonction des besoins. Nous appelons ce JavaScript Qwikloader.
+Qwik est conçu pour le chargement différé de votre application. Pour réaliser le chargement différé, Qwik nécessite un petit morceau de JavaScript à charger au début qui sait comment charger le reste de l'application en fonction des besoins. Nous appelons ce JavaScript Qwikloader.
 
 Qwikloader est :
 
@@ -39,7 +39,7 @@ Vous trouverez ci-dessous un HTML simple avec Qwikloader et un bouton avec le co
 </html>
 ```
 
-1. Le navigateur télécharge le HTML et exécute le script Qwikloader intégré. Le Qwikloader met en place des écouteurs globaux pour tous les événements du navigateur.
+1. Le navigateur charge le HTML et exécute le script Qwikloader intégré. Le Qwikloader met en place des écouteurs globaux pour tous les événements du navigateur.
 2. L'utilisateur clique sur `<button>`. Le navigateur génère un événement `click` qui remonte dans le DOM jusqu'à ce que l'écouteur global de Qwikloader l'intercepte.
 3. Le Qwikloader retrace le chemin de l'événement et recherche l'attribut `on:click` sur les éléments.
 4. Le Qwikloader utilise les attributs `on:click` et `q:base` ainsi que le `document.baseURI` pour construire une URL complète permettant de récupérer le gestionnaire chargé de manière différée. En supposant que la page originale a été servie à partir de `http://localhost/`, l'URL de récupération devient `http://localhost/build/myHandler.js`.
@@ -53,7 +53,7 @@ L'enregistrement de l'écouteur crée deux problèmes dans le contexte du SSR/SS
 1. **Localisation de l'écouteur** : Qwik a besoin de savoir où se trouvent les événements dans le HTML qui provient du SSR/SSG.
 2. **Code de l'écouteur** : Qwik a besoin de savoir quel code doit être exécuté si l'évènement est déclenché.
 
-Sans les informations ci-dessus, Qwik serait obligé de télécharger le template du composant et de l'exécuter pour que l'emplacement et la closure de l'écouteur puissent être récupérés. Ce processus est connu sous le nom d'hydratation, et Qwik essaie explicitement d'éviter l'hydratation.
+Sans les informations ci-dessus, Qwik serait obligé de charger le template du composant et de l'exécuter pour que l'emplacement et la closure de l'écouteur puissent être récupérés. Ce processus est connu sous le nom d'hydratation, et Qwik essaie explicitement d'éviter l'hydratation.
 
 Qwik sérialise les écouteurs d'événements dans le DOM sous la forme de [QRL](../qrl/index.mdx). Par exemple :
 

@@ -49,6 +49,6 @@ Le problème de l'approche link rel est l'absence de prise en charge sur _tous_ 
 
 ### Requêtes en double
 
-Il peut être possible de lancer des requêtes en double pour la même ressource. Par exemple, disons que nous voulons récupérer à l'avance `module-a.js`, et que pendant le téléchargement (qui peut prendre un temps court ou très long, nous ne le savons pas), l'utilisateur interagit avec l'appli, qui décide alors de demander et d'exécuter `module-a.js`. À l'heure où nous écrivons ces lignes, les navigateurs envoient souvent une deuxième requête, ce qui ne fait qu'empirer les choses.
+Il peut être possible de lancer des requêtes en double pour la même ressource. Par exemple, disons que nous voulons récupérer à l'avance `module-a.js`, et que pendant le chargement (qui peut prendre un temps court ou très long, nous ne le savons pas), l'utilisateur interagit avec l'appli, qui décide alors de demander et d'exécuter `module-a.js`. À l'heure où nous écrivons ces lignes, les navigateurs envoient souvent une deuxième requête, ce qui ne fait qu'empirer les choses.
 
 L'approche du service worker peut [éviter cela](../parallelizing-network-requests/index.mdx) en identifiant une demande déjà en cours, en attendant que la première demande pour `module-a.js` se termine, puis en la clonant pour la deuxième demande. Cela signifie qu'une seule requête réseau se produira, même si de nombreux modules et prélectures peuvent appeler la même requête/réponse.

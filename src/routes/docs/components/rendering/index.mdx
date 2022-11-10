@@ -17,7 +17,7 @@ Le rendu est le processus de mise à jour du DOM basé sur
 Qwik est unique car il sait comment rendre les templates de manière non ordonnée et asynchrone.
 
 - **De manière non ordonné** : cela signifie que Qwik n'a pas l'obligation que le composant parent ou le composant enfant soit lui aussi rendu pour faire le rendu d'un composant.
-- **Asynchrone** : cela signifie que la fonction `render` de Qwik est consciente qu'elle peut avoir besoin de télécharger des composants enfants, et donc l'opération de rendu est asynchrone.
+- **Asynchrone** : cela signifie que la fonction `render` de Qwik est consciente qu'elle peut avoir besoin de charger des composants enfants, et donc l'opération de rendu est asynchrone.
 
 Un simple exemplede compteur :
 
@@ -47,7 +47,7 @@ Qwik utilise JSX pour exprimer le template du composant. La description de JSX e
 
 ## Le rendu des composants enfants
 
-Qwik charge les composants de manière différée, selon les besoins. Pour minimiser le nombre de composants à télécharger, Qwik ne descend dans les composants enfants que si les props du composant ont changé.
+Qwik charge les composants de manière différée, selon les besoins. Pour minimiser le nombre de composants à charger, Qwik ne descend dans les composants enfants que si les props du composant ont changé.
 
 ```tsx
 export const Parent = component$(() => {
@@ -69,7 +69,7 @@ export const Greeter = component$((props: { name: string }) => {
 
 Dans l'exemple ci-dessus, il y a deux boutons :
 
-1. Cliquer sur le premier bouton change la direction du compteur (`store.step` bascule entre `+1` et `-1`.). Le changement du `store` nécessite l'exécution de la fonction `OnRender` du composant. Le JSX résultant met à jour le DOM pour afficher `+1` ou `-1`. Cependant, changer la direction ne changera pas les props sur `<Greeter name={'World_' + store.count}/>`. Pour cette raison, Qwik ne descendra pas dans le composant `<Greeter>`, et donc le template de `Greeter` n'a pas besoin d'être téléchargé ou exécuté. Un tel élagage agressif permet à Qwik de minimiser la quantité de code qui doit être présent pour rendre un composant.
+1. Cliquer sur le premier bouton change la direction du compteur (`store.step` bascule entre `+1` et `-1`.). Le changement du `store` nécessite l'exécution de la fonction `OnRender` du composant. Le JSX résultant met à jour le DOM pour afficher `+1` ou `-1`. Cependant, changer la direction ne changera pas les props sur `<Greeter name={'World_' + store.count}/>`. Pour cette raison, Qwik ne descendra pas dans le composant `<Greeter>`, et donc le template de `Greeter` n'a pas besoin d'être chargé ou exécuté. Un tel élagage agressif permet à Qwik de minimiser la quantité de code qui doit être présent pour rendre un composant.
 2. Cliquer sur le second bouton incrémente (ou décrémente) `store.count`. Cela provoque à son tour le changement des props sur `<Greeter name={'World_' + store.count}/>`. Un changement dans les props signifie que Qwik va aussi descendre et rendre `<Greeter>`. Cependant, il est possible que Qwik n'ait pas de référence au composant enfant. Dans ce cas, Qwik va charger de manière différée le composant et continuer le rendu une fois que la fonction de rendu du composant sera disponible.
 
 ## `render()` est asynchrone
@@ -80,4 +80,4 @@ La plupart des frameworks de la génération actuelle ont un processus `render()
 
 ## Mise en mémoire des mises à jour du DOM
 
-La nature asynchrone de `render()` signifie que les utilisateurs peuvent voir un rendu intermédiaire de l'interface utilisateur pendant le téléchargement des composants. Voir un état intermédiaire n'est pas souhaitable, par conséquent, Qwik mettra en mémoire toutes les mises à jour du DOM et ne purgera les opérations du DOM que lorsque tous les composants auront été téléchargés et leurs fonctions JSX exécutées. Ainsi, l'interface utilisateur sera mise à jour comme une opération atomique, et l'utilisateur ne verra pas les étapes intermédiaires.
+La nature asynchrone de `render()` signifie que les utilisateurs peuvent voir un rendu intermédiaire de l'interface utilisateur pendant le chargement des composants. Voir un état intermédiaire n'est pas souhaitable, par conséquent, Qwik mettra en mémoire toutes les mises à jour du DOM et ne purgera les opérations du DOM que lorsque tous les composants auront été chargés et leurs fonctions JSX exécutées. Ainsi, l'interface utilisateur sera mise à jour comme une opération atomique, et l'utilisateur ne verra pas les étapes intermédiaires.

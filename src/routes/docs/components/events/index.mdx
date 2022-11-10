@@ -23,7 +23,7 @@ export const Counter = component$(() => {
 
 Dans l'exemple ci-dessus, l'attribut `onClick$` de l'élément `<button>` est utilisé pour indiquer à Qwik qu'un callback `() => store.count++` doit être exécuté à chaque fois que l'évènement `click` est déclenché par le `<button>`.
 
-Remarquez que `onClick$` se termine par `$`. C'est une indication à la fois pour l'Optimiseur Qwik et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique ici une zone de chargement différé. Le code associé au gestionnaire de `click` ne sera pas téléchargé jusqu'à ce que l'utilisateur déclenche l'évènement `click`. Voir les [règles de l'Optimiseur](../../advanced/optimizer/index.mdx) pour plus de détails.
+Remarquez que `onClick$` se termine par `$`. C'est une indication à la fois pour l'Optimiseur Qwik et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique ici une zone de chargement différé. Le code associé au gestionnaire de `click` ne sera pas chargé jusqu'à ce que l'utilisateur déclenche l'évènement `click`. Voir les [règles de l'Optimiseur](../../advanced/optimizer/index.mdx) pour plus de détails.
 
 Dans l'exemple ci-dessus, l'implémentation de l'écouteur `click` est simple. Mais dans les applications réelles, l'écouteur peut faire référence à un code complexe. En créant une zone de chargement différé, Qwik peut faire du [tree shaking](https://developer.mozilla.org/fr/docs/Glossary/Tree_shaking) sur tout le code derrière l'écouteur `click` et retarder son chargement jusqu'à ce que l'utilisateur clique sur le bouton.
 

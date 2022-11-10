@@ -6,16 +6,16 @@ contributors:
   - adamdbradley
 ---
 
-# Think Qwik
+# Pensez Qwik
 
 Qwik est très similaire aux autres frameworks web sur le plan général. Qwik est un framework qui rend un arbre de composants aboutissant à une application interactive.
 
 La partie unique de Qwik n'est pas dans ce qu'il fait mais dans la façon dont il atteint ses objectifs. L'objectif de Qwik est d'avoir des applications instantanées, même sur les appareils mobiles. Qwik atteint cet objectif grâce à deux stratégies principales :
 
-1. Retarder l'exécution et le téléchargement du JavaScript aussi longtemps que possible.
+1. Retarder l'exécution et le chargement du JavaScript aussi longtemps que possible.
 2. Sérialiser l'état d'exécution de l'application et du framework sur le serveur et le reprendre sur le client.
 
-Le but de Qwik est de télécharger et exécuter que le strict minimum de l'application.
+Le but de Qwik est de charger et exécuter que le strict minimum de l'application.
 
 ## Principe central
 
@@ -23,15 +23,15 @@ Le but de Qwik est de télécharger et exécuter que le strict minimum de l'appl
 
 Les applications Qwik démarrent rapidement car il y a une quantité minimale de code JavaScript à exécuter. (Dans sa plus simple expression, une application Qwik n'a besoin que d'environ 1KB de JavaScript pour devenir interactive).
 
-En retardant agressivement le téléchargement et l'exécution de l'application, Qwik peut fournir des performances de démarrage quasi instantanées que les générations actuelles de frameworks web ne peuvent pas égaler.
+En retardant considérablement le chargement et l'exécution de l'application, Qwik peut fournir des performances de démarrage quasi instantanées que les générations actuelles de frameworks web ne peuvent pas égaler.
 
-Qwik est rapide non pas parce qu'il utilise des algorithmes intelligents mais parce qu'il est conçu de telle manière que la plupart du JavaScript n'a jamais besoin d'être téléchargé ou exécuté. Sa vitesse vient du fait qu'il ne fait pas de choses (comme l'hydratation) que les autres frameworks doivent faire.
+Qwik est rapide non pas parce qu'il utilise des algorithmes intelligents mais parce qu'il est conçu de telle manière que la plupart du JavaScript n'a jamais besoin d'être chargé ou exécuté. Sa vitesse vient du fait qu'il ne fait pas certaines choses (comme l'hydratation) que les autres frameworks doivent faire.
 
 ## Résumabilité & sérialisation
 
 La résumabilité est abordée en détail [ici](../concepts/resumable/index.mdx). La résumabilité permet aux applications Qwik de continuer l'exécution là où le serveur s'est arrêté. Tous les frameworks ont besoin de garder la trace des structures de données internes concernant l'état de l'application. La génération actuelle de frameworks ne préserve pas ces informations de la transition entre le serveur et le navigateur. Par conséquent, les structures de données du framework doivent être reconstruites dans le navigateur. La reconstruction des structures de données et l'attachement des écouteurs sont appelés hydratation.
 
-Qwik sérialise les écouteurs, les structures de données internes, et l'état de l'application dans le HTML lors du transfert du navigateur au serveur. Puisque toute l'information est sérialisée dans le HTML, le client peut simplement reprendre l'exécution là où le serveur s'est arrêté.
+Qwik sérialise les écouteurs, les structures de données internes, et l'état de l'application dans le HTML lors du transfert du serveur au navigateur. Puisque toute l'information est sérialisée dans le HTML, le client peut simplement reprendre l'exécution là où le serveur s'est arrêté.
 
 
 ### Quel est le problème ?
@@ -39,9 +39,9 @@ Qwik sérialise les écouteurs, les structures de données internes, et l'état 
 Les sites Web modernes nécessitent de grandes quantités de JavaScript pour devenir interactifs. Trop de JavaScript se manifeste par deux problèmes :
 
 1. **La bande passante du réseau** : Une grande quantité de code est envoyée au client, ce qui peut prendre beaucoup de temps sur les réseaux lents.
-2. **Temps de démarrage** : Une fois sur le client, le code doit être exécuté (dans le cadre de l'hydratation) pour rendre le site interactif.
+2. **Le temps de démarrage** : Une fois sur le client, le code doit être exécuté (dans le cadre de l'hydratation) pour rendre le site interactif.
 
-Comme nos applications deviennent de plus en plus complexes et interactives, la quantité de code n'a cessé d'augmenter au fil des ans, sans aucun signe de ralentissement. En d'autres termes, nos sites deviennent de plus en plus complexes. Une augmentation de la complexité du site, à son tour, nécessite plus de code. Tout ce code a un impact négatif sur les performances de démarrage du site.
+Comme nos applications deviennent de plus en plus complexes et interactives, la quantité de code n'a cessé d'augmenter au fil des ans, et cela se poursuit. En d'autres termes, nos sites deviennent de plus en plus complexes. Une augmentation de la complexité du site, à son tour, nécessite plus de code. Tout ce code a un impact négatif sur les performances de démarrage du site.
 
 Pour ne rien arranger, JavaScript est un langage mono-thread. Par conséquent, nos sites complexes ne peuvent pas tirer parti des processeurs multi-cœurs modernes.
 
@@ -51,11 +51,11 @@ La solution au problème ci-dessus est à la fois évidente et compliquée : en
 
 C'est évident car nous sommes tous d'accord pour dire que les sites avec moins de JavaScript seraient plus performants.
 
-C'est difficile parce que nos outils ne nous aident pas à y parvenir. Presque tous nos outils résolvent les problèmes d'une manière qui rend difficile l'envoi de moins de JavaScript. Cela est dû au fait que la plupart de nos outils sont conçus pour résoudre un problème spécifique sans penser à la quantité de JavaScript qu'ils génèrent.
+C'est difficile parce que nos outils ne nous aident pas à y parvenir. Presque tous nos outils règlent des problématiques où il est difficile d'expédier moins de JavaScript. Car la plupart de nos outils sont conçus pour résoudre un problème spécifique sans penser à la quantité de JavaScript qu'ils génèrent.
 
 Vous avez besoin de résoudre des problèmes de rendu, de style, d'animation, de tests A/B, d'analyse, etc. Il existe un outil pour cela. Il suffit d'importer ou d'ajouter une balise `<script>`, et ces outils résoudront vos problèmes, mais au prix de l'augmentation du _bundle_ initial.
 
-En tant qu'industrie, nous n'avons pas réfléchi à l'implication du poinds des _bundles_. Chaque outil résout individuellement un problème spécifique, mais la taille ne fait pas partie de l'équation. La taille est le problème qui émerge lorsque vous mettez tous les outils ensemble, et à ce moment-là, le développeur ne peut pas faire grand-chose.
+En tant qu'industrie, nous n'avons pas réfléchi à l'implication du poids des _bundles_. Chaque outil résout individuellement un problème spécifique, mais la taille ne fait pas partie de l'équation. La taille est le problème qui émerge lorsque vous mettez tous les outils ensemble, et à ce moment-là, le développeur ne peut pas faire grand-chose.
 
 ### Quelle est la solution ?
 
@@ -63,7 +63,7 @@ Qwik est conçu depuis le début pour résoudre le problème du poids. Son objec
 
 Qwik ne cherche pas à créer moins de JavaScript. Qwik permet d'éviter l'envoi au client de tout ce JavaScript en une seule fois au démarrage de l'application. La finalité de Qwik, c'est l'idée de retarder le chargement du JavaScript à l'extrême.
 
-Oui, Qwik nécessite une façon différente de penser et de concevoir votre application, mais la solution, c'est presque zéro JavaScript au départ avec un téléchargement progressif du JavaScript basé sur les interactions de l'utilisateur.
+Oui, Qwik nécessite une façon différente de penser et de concevoir votre application, mais la solution, c'est presque zéro JavaScript au départ avec un chargement progressif du JavaScript basé sur les interactions de l'utilisateur.
 
 ### Le poids ne devrait pas être un souci pour les développeurs
 
@@ -73,16 +73,16 @@ Les meilleures pratiques de notre industrie mènent à de gros bundles, et le we
 
 Le mantra de Qwik est que le poids des bundles ne devrait pas être quelque chose auquel les développeurs devraient penser. Cela devrait juste se faire naturellement comme une étape dans la conception du framework.
 
-Qwik est conçu depuis le début pour produire beaucoup de zones de chargement différé. L'outillage peut décomposer votre application en plusieurs morceaux avec du chargement différé, et le runtime peut les télécharger seulement quand c'est nécessaire.
+Qwik est conçu depuis le début pour produire beaucoup de zones de chargement différé. L'outillage peut décomposer votre application en plusieurs morceaux avec du chargement différé, et le moteur d'exécution peut les charger seulement quand c'est nécessaire.
 
 ### Pourquoi ne pas corriger les frameworks/outils existants ?
 
 Pour faire court, la philosophie du chargement différé se situe à un bas niveau et ne peut être ajoutée rétroactivement aux frameworks/outils existants sans les modifier fondamentalement. Un tel changement fondamental serait incompatible avec les frameworks/outils et leurs écosystèmes respectifs, ce qui les rendrait inutilisables.
 
-Lorsqu'un framework part de certaines hypothèses, comme le fait que tous les rendus sont synchrones, l'ajout du chargement différé asynchrone devient pratiquement impossible. Ou encore, si un framework récupère l'emplacement des écouteurs à partir de templates, le téléchargement et l'exécution de ces templates sont indispensables pour que le site puisse être interactif. Ce ne sont là que quelques-uns des exemples les plus évidents, mais dans la pratique, il existe une longue liste de raisons infinies pour lesquelles le modèle mental actuel ne répond pas aux exigences de la résumabilité.
+Lorsqu'un framework part de certaines hypothèses, comme le fait que tous les rendus sont synchrones, l'ajout du chargement différé asynchrone devient pratiquement impossible. Ou encore, si un framework récupère l'emplacement des écouteurs à partir de templates, le chargement et l'exécution de ces templates sont indispensables pour que le site puisse être interactif. Ce ne sont là que quelques-uns des exemples les plus évidents, mais dans la pratique, il existe une longue liste de raisons infinies pour lesquelles le modèle mental actuel ne répond pas aux exigences de la résumabilité.
 
 Ce qui précède signifie également qu'il n'est pas possible pour les frameworks existants d'ajouter la résumabilité comme fonctionnalité. Les frameworks existants ne seront jamais capable de faire ce que Qwik peut faire (sans casser la rétro-compatibilité).
 
 ### Pourquoi construisons-nous Qwik ?
 
-Parce que nous pensons qu'il existe une meilleure façon de construire des sites. Une façon qui n'implique pas des tonnes de JavaScript qui doivent être téléchargées par avance au démarrage avant que votre site ne devienne interactif. Une façon qui permet au développeur de penser à l'ajout de fonctionnalités plutôt qu'à la façon de diviser l'énorme base de code en petits morceaux. Un moyen d'avoir des sites instantanés pour une meilleure expérience utilisateur. Et tout cela, d'une manière indépendante de la taille du code de l'application.
+Parce que nous pensons qu'il existe une meilleure façon de construire des sites. Une façon qui n'implique pas des tonnes de JavaScript qui doivent être chargées par avance au démarrage avant que votre site ne devienne interactif. Une façon qui permet au développeur de penser à l'ajout de fonctionnalités plutôt qu'à la façon de diviser l'énorme base de code en petits morceaux. Un moyen d'avoir des sites instantanés pour une meilleure expérience utilisateur. Et tout cela, d'une manière indépendante de la taille du code de l'application.

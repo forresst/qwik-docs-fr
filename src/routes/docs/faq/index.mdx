@@ -86,9 +86,9 @@ export const App_component_p_onClick_01pEgC10cpw = ()=>console.log('hello');
 
 
 
-## Est-ce que Qwik télécharge du JS quand l'utilisateur interagit ?
+## Est-ce que Qwik charge du JS quand l'utilisateur interagit ?
 
-Non, en production Qwik utilise beaucoup d'informations générées pendant le SSR pour commencer la [prélecture](../../qwikcity/prefetching/overview/index.mdx) uniquement des morceaux d'interactivité de la page courante dès que possible (ASAP), de cette façon quand l'utilisateur clique ou interagit, le JS est déjà téléchargé.
+Non, en production Qwik utilise beaucoup d'informations générées pendant le SSR pour commencer la [prélecture](../../qwikcity/prefetching/overview/index.mdx) uniquement des morceaux d'interactivité de la page courante dès que possible (ASAP), de cette façon quand l'utilisateur clique ou interagit, le JS est déjà chargé.
 
 ## Si Qwik précharge le JS, alors quelle est la différence ?
 
@@ -115,7 +115,7 @@ Non, React n'est pas utilisé du tout, mais Qwik utilise JSX comme syntaxe de te
 
 Il faut noter que JSX n'est pas React, en fait JSX est seulement une syntaxe sans sémantique. Nous avons choisi JSX pour plusieurs raisons :
 
-- **Syntaxe très simple** : Elle ne réinvente pas la roue, mais exploite les JS existants pour les boucles, les conditions... [La spécification JSX est étonnamment simple et compacte] (https://facebook.github.io/jsx/)
+- **Syntaxe très simple** : Elle ne réinvente pas la roue, mais exploite les JS existants pour les boucles, les conditions... [La spécification JSX est étonnamment simple et compacte](https://facebook.github.io/jsx/)
 - **Ecosystème** : Bien supporté par les IDE, les linters, les outils d'audit de sécurité, les outils de débogage, la mise en évidence...
 - **Similaire à HTML** : JSX est visuellement et conceptuellement similaire à HTML, une arborescence. D'autres systèmes de template comme *html templates* (lit-html) ne sont pas des arborescence mais des tableaux de tokens, ce qui rend plus difficile la construction par dessus et la transformation.
 - **Populaire** : Qu'on le veuille ou non, JSX est la syntaxe de template la plus utilisée au monde.
@@ -132,13 +132,13 @@ Vous pouvez déployer votre appli Qwik comme un site statique, s'il n'y a pas be
 
 ## Le SPA est plus rapide que le MPA
 
-Cela dépend. Pour le SPA, la plupart des coûts sont réglés en amont, en téléchargeant tout au début de la session. Ainsi, lorsqu'un utilisateur interagit avec l'appli, le coût est minime.
+Cela dépend. Pour le SPA, la plupart des coûts sont réglés en amont, en chargeant tout au début de la session. Ainsi, lorsqu'un utilisateur interagit avec l'appli, le coût est minime.
 
 ## Le MPA est plus rapide que le SPA
 
-Cela dépend, le MPA est extrêmement rapide à charger, car il n'a pas besoin de télécharger beaucoup de JS, mais lorsque l'utilisateur navigue, cela signifie généralement un rechargement complet de la page.
+Cela dépend, le MPA est extrêmement rapide à charger, car il n'a pas besoin de charger beaucoup de JS, mais lorsque l'utilisateur navigue, cela signifie généralement un rechargement complet de la page.
 
-Un rechargement complet de la page est généralement super rapide, car les navigateurs sont extrêmement rapides pour télécharger et analyser le HTML, mais l'approche SPA ne convient pas à tout le monde, car il est parfois idéal de conserver l'état entre les navigations, et SPA le fait très bien.
+Un rechargement complet de la page est généralement super rapide, car les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche SPA ne convient pas à tout le monde, car il est parfois idéal de conserver l'état entre les navigations, et SPA le fait très bien.
 
 Qwik est le seul framework qui est à la fois MPA et SPA.
 
@@ -187,16 +187,16 @@ OUI, il y a une communauté grandissante de développeurs Qwik sur [Discord](htt
 
 ## Est-ce que Qwik est prêt pour la production ?
 
-OUI ! Mais cela dépend. Qwik est en développement depuis 2 ans maintenant, et nous avons atteint [les jalons de la bêta] (https://www.builder.io/blog/qwik-and-qwik-city-have-reached-beta), ce qui signifie que nous sommes confiants dans le fait que Qwik est prêt pour la production, et qu'il n'y a pas de changements de rupture attendus.
+OUI ! Mais cela dépend. Qwik est en développement depuis 2 ans maintenant, et nous avons atteint [les jalons de la bêta](https://www.builder.io/blog/qwik-and-qwik-city-have-reached-beta), ce qui signifie que nous sommes confiants dans le fait que Qwik est prêt pour la production, et qu'il n'y a pas de changements de rupture attendus.
 
 [Builder.io](https://www.builder.io/) et beaucoup d'équipes utilisent déjà Qwik en production, donc vous ne serez pas les seuls.
 
 
 ## Les rechargements de pages complètes sont-ils plus lents que ceux du SPA ?
 
-Cela dépend, les rechargements de pages complètes sont extrêmement rapides, parce que les navigateurs sont extrêmement rapides pour télécharger et analyser le HTML, mais l'approche SPA n'est pas pour tout le monde, car il est parfois nécessaire de conserver un état entre les pages, et le SPA le fait très bien.
+Cela dépend, les rechargements de pages complètes sont extrêmement rapides, parce que les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche SPA n'est pas pour tout le monde, car il est parfois nécessaire de conserver un état entre les pages, et le SPA le fait très bien.
 
-Le MPA peut être lent dans les frameworks existants lorsqu'on essaie de faire du MPA avec de l'interactivité parce que les frameworks existants devront exécuter [l'hydratation au moment du chargement, ce qui peut être très lent] (https://www.builder.io/blog/hydration-is-pure-overhead).
+Le MPA peut être lent dans les frameworks existants lorsqu'on essaie de faire du MPA avec de l'interactivité parce que les frameworks existants devront exécuter [l'hydratation au moment du chargement, ce qui peut être très lent](https://www.builder.io/blog/hydration-is-pure-overhead).
 
 
 ## Qwik sérialise trop de données dans le HTML

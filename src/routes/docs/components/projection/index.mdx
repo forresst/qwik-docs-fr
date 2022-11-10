@@ -268,7 +268,7 @@ Qwik utilise l'approche déclarative de la projection. La raison est que Qwik do
 Reprenons l'exemple de notre `Collapsible` ci-dessus :
 
 - Le parent doit être capable de changer le titre et le texte sans forcer le composant `Collapsible` à refaire un rendu. Qwik doit être capable de redistribuer les changements au template `MyApp` sans affecter le composant `Collapsible`.
-- Le composant enfant a besoin de changer ce qui est projeté sans que le composant parent ne refasse de rendu. Dans notre cas, `Collapsible` doit être capable de montrer/cacher le `q:slot` par défaut sans télécharger et refaire le rendu du composant `MyApp`.
+- Le composant enfant a besoin de changer ce qui est projeté sans que le composant parent ne refasse de rendu. Dans notre cas, `Collapsible` doit être capable de montrer/cacher le `q:slot` par défaut sans charger et refaire le rendu du composant `MyApp`.
 
 Pour que les deux composants aient un cycle de vie indépendant, la projection doit être déclarative. De cette façon, le parent ou l'enfant peuvent changer ce qui est projeté ou comment il est projeté sans que l'autre ne soit à nouveau rendu.
 

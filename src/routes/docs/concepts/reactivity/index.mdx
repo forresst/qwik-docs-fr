@@ -48,7 +48,7 @@ export const Counter = component$(() => {
 3. Le serveur sérialise l'état de l'application dans le HTML. Cela inclut le `store` ainsi que les informations d'abonnement qui disent que `Counter` est abonné à `store.count`.
 4. Dans le navigateur, l'utilisateur clique sur le bouton. Comme le gestionnaire d'événement du clic est fermé sur `store`, Qwik restaure le proxy du store. Le proxy contient l'état de l'application (le compteur) et l'abonnement, qui associe le `Counter` avec `state.count`.
 5. Le gestionnaire d'événement incrémente le `store.count`. Comme le `store` est un proxy, il remarque l'écriture et utilise les informations de l'abonnement pour invalider le `Counter`.
-6. Après `requestAnimationFrame`, le `Counter` télécharge la fonction de rendu et re-exécute la méthode OnRender.
+6. Après `requestAnimationFrame`, le `Counter` charge la fonction de rendu et re-exécute la méthode OnRender.
 7. Pendant le OnRender, la liste d'abonnement est vidée, et une nouvelle liste d'abonnement est construite en observant les lectures effectuées par la construction JSX.
 
 ## Exemple de désabonnement
@@ -158,4 +158,4 @@ Dans l'exemple ci-dessus, il y a deux composants `<Child/>`.
 - Si `store.a` a été incrémenté, seul `<Child count={store.a}/>` sera rendu à nouveau.
 - Si `store.b` a été incrémenté, seul `<Child count={store.b}/>` sera rendu à nouveau.
 
-Remarquez que les composants enfants ne sont rendus que lorsque leurs props changent. C'est une propriété importante des applications Qwik car elle limite significativement la quantité de rendu que l'application doit faire lors d'un changement d'état. Alors que la réduction du rendu a des avantages de performance, le vrai avantage est que de grandes parties des applications ne sont pas téléchargées si elles n'ont pas besoin d'être rendues.
+Remarquez que les composants enfants ne sont rendus que lorsque leurs props changent. C'est une propriété importante des applications Qwik car elle limite significativement la quantité de rendu que l'application doit faire lors d'un changement d'état. Alors que la réduction du rendu a des avantages de performance, le vrai avantage est que de grandes parties des applications ne sont pas chargées si elles n'ont pas besoin d'être rendues.

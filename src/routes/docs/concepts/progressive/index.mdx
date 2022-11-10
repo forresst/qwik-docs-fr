@@ -8,7 +8,7 @@ contributors:
 
 # Progressivement
 
-Progressivement, il s'agit de télécharger le code au fur et à mesure des besoins de l'application, sans avoir à télécharger l'ensemble de la base de code par avance.
+Progressivement, il s'agit de charger le code au fur et à mesure des besoins de l'application, sans avoir à charger l'ensemble de la base de code en amont.
 
 Ceci est lié au [principe de base](../../think-qwik/index.mdx) de Qwik qui se concentre sur le retardement du **chargement** et de l'exécution du JavaScript aussi longtemps que possible. Qwik a besoin de décomposer l'application en plusieurs morceaux chargeable de manière différée pour atteindre cet objectif.
 
@@ -19,16 +19,16 @@ Ceci est lié au [principe de base](../../think-qwik/index.mdx) de Qwik qui se c
 - Les zones du chargement différé sont déléguées à 100 % au développeur.
 - Les frameworks ne peuvent charger de manière différée que les composants qui ne sont pas dans l'arborescence du rendu en cours.
 
-Le problème est que les frameworks doivent récupérer leur état interne avec le DOM. Et cela signifie qu'au moins une fois lors de l'hydratation de l'application, ils doivent être en mesure d'effectuer un rendu complet pour reconstruire l'état interne du framework. Après le premier rendu, les frameworks peuvent être plus chirurgicaux quant à leurs mises à jour, mais le mal a été fait, le code a été téléchargé. Nous avons donc deux problèmes :
+Le problème est que les frameworks doivent récupérer leur état interne avec le DOM. Et cela signifie qu'au moins une fois lors de l'hydratation de l'application, ils doivent être en mesure d'effectuer un rendu complet pour reconstruire l'état interne du framework. Après le premier rendu, les frameworks peuvent être plus chirurgicaux quant à leurs mises à jour, mais le mal a été fait, le code a été chargé. Nous avons donc deux problèmes :
 
-- Les frameworks doivent télécharger et exécuter les composants pour reconstruire l'arborescence du rendu au démarrage. (Voir [l'hydratation est une pure perte de temps](https://www.builder.io/blog/hydration-is-pure-overhead)) Cela force le téléchargement et l'exécution par avance de tous les composants de l'arborescence du rendu.
-- Les gestionnaires d'événements sont fournis avec les composants, même s'ils ne sont pas nécessaires au moment du rendu. L'inclusion des gestionnaires d'événements force le téléchargement de code inutile.
+- Les frameworks doivent charger et exécuter les composants pour reconstruire l'arborescence du rendu au démarrage. (Voir [l'hydratation est une pure perte de temps](https://www.builder.io/blog/hydration-is-pure-overhead)) Cela force le chargement et l'exécution par avance de tous les composants de l'arborescence du rendu.
+- Les gestionnaires d'événements sont fournis avec les composants, même s'ils ne sont pas nécessaires au moment du rendu. L'inclusion des gestionnaires d'événements force le chargement de code inutile.
 
 ## Solution
 
-L'architecture Qwik profite pleinement des outils modernes pour automatiser le problème de la génération des points d'entrée. Les développeurs peuvent écrire des composants normalement, tandis que l'optimiseur Qwik va diviser les composants en morceaux et les télécharger selon les besoins.
+L'architecture Qwik profite pleinement des outils modernes pour automatiser le problème de la génération des points d'entrée. Les développeurs peuvent écrire des composants normalement, tandis que l'optimiseur Qwik va diviser les composants en morceaux et les charger selon les besoins.
 
-De plus, le moteur d'exécution du framework n'a pas besoin de télécharger le code qui n'est pas nécessaire à l'interactivité, même si le composant fait partie de l'arborescence du rendu.
+De plus, le moteur d'exécution du framework n'a pas besoin de charger le code qui n'est pas nécessaire à l'interactivité, même si le composant fait partie de l'arborescence du rendu.
 
 ### L'Optimiseur
 
@@ -50,9 +50,9 @@ Le chargement différé est asynchrone. Qwik est un framework asynchrone. Qwik c
 Dans Qwik tout est chargeable de manière différée :
 
 - Composant pour le rendu (bloc d'initialisation et bloc de rendu)
-- Composant pour la surveillance (effets secondaires, seulement téléchargé si les entrées changent)
-- Écouteurs (seulement téléchargé sur l'interaction)
-- Styles (uniquement téléchargés si le serveur ne les a pas déjà fournis)
+- Composant pour la surveillance (effets secondaires, seulement chargé si les entrées changent)
+- Écouteurs (seulement chargé sur l'interaction)
+- Styles (uniquement chargés si le serveur ne les a pas déjà fournis)
 
 Le chargement différé est une propriété essentielle du framework et non un ajout après coup.
 

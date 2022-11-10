@@ -19,7 +19,7 @@ L'ensemble de ces opérations est connu sous le nom d'hydratation. Toutes les g�
 
 [L'hydratation est coûteuse](https://www.builder.io/blog/hydration-is-pure-overhead) pour deux raisons :
 
-1. Les frameworks doivent télécharger tout le code du composant associé à la page actuelle.
+1. Les frameworks doivent charger tout le code du composant associé à la page actuelle.
 2. Les frameworks doivent exécuter les templates associés aux composants de la page pour reconstruire l'emplacement des écouteurs et l'arborescence interne des composants.
 
 ![Résumable vs. hydratation](https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F04681212764f4025b2b5f5c6a258ad6e?format=webp&width=2000)
@@ -30,7 +30,7 @@ L'hydratation de tous les autres frameworks **rejoue** toute la logique de l'app
 
 # Introduction à la résumabilité
 
-La résumabilité consiste à mettre en pause l'exécution sur le serveur et reprendre l'exécution sur le client sans avoir à rejouer et télécharger toute la logique de l'application.
+La résumabilité consiste à mettre en pause l'exécution sur le serveur et reprendre l'exécution sur le client sans avoir à rejouer et charger toute la logique de l'application.
 
 Un bon modèle mental est que les applications Qwik à n'importe quel moment de leur cycle de vie peuvent être sérialisées et déplacées vers une instance VM différente (le serveur vers le navigateur). Là, l'application reprend simplement là où la sérialisation s'est arrêtée. Aucune hydratation n'est nécessaire. C'est pourquoi nous disons que les applications Qwik ne s'hydratent pas, elles reprennent.
 
@@ -40,13 +40,13 @@ Afin de réaliser ceci, Qwik a besoin de résoudre les 3 problèmes (les écoute
 
 Un DOM sans écouteurs d'événements n'est qu'une page statique, ce n'est pas une application. La norme actuelle pour tous les sites est un niveau élevé d'interactivité, de sorte que même les sites les plus statiques sont remplis d'écouteurs d'événements. Il peut s'agir de menus, de survols, de dépliages de détails ou même d'applis interactives complètes.
 
-Les frameworks existants résolvent le problème des écouteurs d'événements en téléchargeant les composants et en exécutant leurs templates pour collecter les écouteurs d'événements qui sont ensuite attachés au DOM. L'approche actuelle présente les problèmes suivants :
+Les frameworks existants résolvent le problème des écouteurs d'événements en chargeant les composants et en exécutant leurs templates pour collecter les écouteurs d'événements qui sont ensuite attachés au DOM. L'approche actuelle présente les problèmes suivants :
 
-1. Le code du template doit être téléchargé par avance.
+1. Le code du template doit être chargé par avance.
 2. Exige que le code du template soit exécuté par avance.
-3. Le code du gestionnaire d'événements doit être téléchargé par avance (pour être attaché).
+3. Le code du gestionnaire d'événements doit être chargé par avance (pour être attaché).
 
-L'approche ci-dessus n'est pas viable à grande échelle. Au fur et à mesure que l'application se complique, la quantité de code à télécharger par avance et à exécuter augmente proportionnellement par rapport à la taille de l'application. Cela a un impact négatif sur les performances de démarrage de l'application et donc sur l'expérience utilisateur.
+L'approche ci-dessus n'est pas viable à grande échelle. Au fur et à mesure que l'application se complique, la quantité de code à charger en amont et à exécuter augmente proportionnellement par rapport à la taille de l'application. Cela a un impact négatif sur les performances de démarrage de l'application et donc sur l'expérience utilisateur.
 
 Qwik résout le problème ci-dessus en sérialisant les écouteurs d'événements dans le DOM comme ceci :
 
@@ -57,12 +57,12 @@ Qwik résout le problème ci-dessus en sérialisant les écouteurs d'événement
 Qwik a encore besoin de collecter les informations des écouteurs, mais cette étape est faite comme une partie du SSR/SSG. Les résultats du SSR/SSG sont ensuite sérialisés en HTML afin que le navigateur n'ait pas besoin de faire quoi que ce soit pour reprendre l'exécution. Remarquez que l'attribut `on:click` contient toutes les informations permettant de reprendre l'application sans faire quoi que ce soit par avance.
 
 1. Qwikloader met en place un seul écouteur global au lieu de plusieurs écouteurs individuels par élément du DOM. Cette étape peut être réalisée sans la présence de code de l'application.
-2. Le HTML contient une URL vers le morceau et le nom du symbole. L'attribut indique à Qwikloader le morceau de code à télécharger et le symbole à récupérer dans ce morceau.
+2. Le HTML contient une URL vers le morceau et le nom du symbole. L'attribut indique à Qwikloader le morceau de code à charger et le symbole à récupérer dans ce morceau.
 3. Enfin, pour rendre tout ce qui précède possible, l'implémentation du traitement des événements de Qwik comprend l'asynchronicité qui permet l'insertion d'un chargement différé asynchrone.
 
 ## L'arborescence des composants
 
-Les frameworks fonctionnent avec des arborescences de composants. Pour cela, les frameworks ont besoin d'une connaissance complète des arborescences des composants pour savoir quels composants doivent être rendus et quand. Si vous regardez la sortie SSR/SSG du framework existant, les informations sur les limites des composants ont été détruites. Il n'y a aucun moyen de savoir où se trouvent les limites des composants en regardant le HTML résultant. Pour recréer ces informations, les frameworks réexécutent les templates des composants et mémorisent l'emplacement des limites des composants. La réexécution constitue l'hydratation. L'hydratation est coûteuse car elle nécessite à la fois le téléchargement des templates de composants et leur exécution.
+Les frameworks fonctionnent avec des arborescences de composants. Pour cela, les frameworks ont besoin d'une connaissance complète des arborescences des composants pour savoir quels composants doivent être rendus et quand. Si vous regardez la sortie SSR/SSG du framework existant, les informations sur les limites des composants ont été détruites. Il n'y a aucun moyen de savoir où se trouvent les limites des composants en regardant le HTML résultant. Pour recréer ces informations, les frameworks réexécutent les templates des composants et mémorisent l'emplacement des limites des composants. La réexécution constitue l'hydratation. L'hydratation est coûteuse car elle nécessite à la fois le chargement des templates de composants et leur exécution.
 
 Qwik recueille les informations sur les limites des composants comme une partie du SSR/SSG et ensuite sérialise ces informations en HTML. Le conséquence est que Qwik peut :
 
