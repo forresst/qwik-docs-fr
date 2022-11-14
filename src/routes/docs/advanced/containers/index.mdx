@@ -8,7 +8,50 @@ contributors:
 
 # Conteneurs
 
-Les conteneurs sont un moyen de décomposer une application en parties plus petites. Nous appelons ces parties des conteneurs. Les conteneurs présentent plusieurs avantages. Chaque conteneur sur la page peut être indépendamment :
+Chaque application Qwik est contenue dans un élément, généralement l'élément `<html>`. Cet élément devient le conteneur de l'application. Le conteneur est l'élément racine de l'application et tous les composants, l'état et les événements sont contenus à l'intérieur.
+
+```html
+<html q:container="paused" q:version="0.12.1" q:base="/build">
+  ...
+</html>
+```
+
+## Attributs du conteneur
+
+Comme les conteneurs sont implicitement rendus par le moteur d'exécution de Qwik, il n'est pas possible de définir des attributs HTML personnalisés en utilisant JSX, cependant, les APIs de rendu du SSR, comme `renderToString` et `renderToStream`, fournissent l'option `containerAttributes` pour définir des attributs personnalisés :
+
+```tsx
+renderToStream(<Root />, {
+  containerAttributes: {
+    lang: 'en',
+  },
+});
+```
+
+Le code ci-dessus rendra le HTML suivant :
+
+```html
+<html lang="en" q:container="paused" q:version="0.12.1" q:base="/build">
+  ...
+</html>
+```
+
+Dans l'exemple ci-dessus, l'attribut `lang` est ajouté à l'élément conteneur `<html>`.
+
+> Notez que cet attribut ne sera pas réactif, si l'appli a besoin de changer cette valeur dynamiquement, elle devra faire une manipulation manuelle du DOM.
+
+Avec les attributs personnalisés, Qwik rendra automatiquement les attributs `q:container`, `q:version`, `q:render` et `q:base`.
+
+- `q:container` - L'état du conteneur. Cet attribut est utilisé par le moteur d'exécution de Qwik pour déterminer si le conteneur est dans un état de pause ou non. La valeur de cet attribut est soit `paused` soit `resumed`.
+
+- `q:version` - La version du moteur d'exécution de Qwik.
+
+- `q:render` - Indique comment le conteneur a été rendu. La valeur de cet attribut est soit `ssr`, `ssr-dev`, `dom` ou `dom-dev`.
+
+
+## Propriétés
+
+Comme le moteur d'exécution assure l'isolation entre les conteneurs, plusieurs conteneurs peuvent coexister dans le même document, un conteneur peut même contenir un autre conteneur imbriqué, cette propriété permet aux conteneurs de décomposer une application en petites parties.
 
 - **résumé** : Chaque conteneur peut être résumé indépendamment de tous les autres composants de la page. La possibilité de résumabilité indépendante réduit encore la quantité d'état qui se désérialise lors de la reprise.
 - **mis à jour** : Chaque conteneur peut être mis à jour/remplacé à tout moment en utilisant `innerHTML`. Cela permet de mettre à jour une partie de la page sans forcer la récupération d'un document HTML complet, sans charger ou exécuter le JavaScript.
@@ -16,6 +59,27 @@ Les conteneurs sont un moyen de décomposer une application en parties plus peti
 - **versionné** : Chaque conteneur peut exécuter une version différente du framework Qwik. Permettant la composabilité du site web à partir de nombreux petits conteneurs.
 
 Les conteneurs peuvent être imbriqués dans une arborescence et peuvent communiquer et partager des données. La communication inter-composants nécessite que les composants aient des zones bien définies, que nous appelons protocoles de conteneurs.
+
+```html
+<html q:container="paused" q:version="0.12.1" q:base="/build">
+    <head>
+    <title>Mon application Qwik</title>
+  </head>
+  <body>
+    <header q:container="resumed" q:version="0.11.1" q:base="https://server.a/build">
+      <div>
+        <h1>Il s'agit de l'entête d'un conteneur</h1>
+      </div>
+    </header>
+
+    <footer q:container="paused" q:version="0.13.0" q:base="https://footer.server.b/">
+      <div>
+        <h1>Il s'agit d'un pied de page</h1>
+      </div>
+    </header>
+  </body>
+</html>
+```
 
 ## Conteneurs vs. composants
 

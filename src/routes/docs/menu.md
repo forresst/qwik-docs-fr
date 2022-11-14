@@ -16,10 +16,10 @@
 - [Cycle de vie](components/lifecycle/index.mdx)
 - [Contexte](components/context/index.mdx)
 - [Ressource](components/resource/index.mdx)
-- [Composants légers](components/lite-components/index.mdx)
-- [Projection de contenu](components/projection/index.mdx)
+- [Slots](components/projection/index.mdx)
 - [Rendu](components/rendering/index.mdx)
 - [Style](components/styles/index.mdx)
+- [Composants légers](components/lite-components/index.mdx)
 
 ## Aide-mémoire
 
@@ -34,11 +34,12 @@
 
 ## Avancé
 
-- [Prélecture](advanced/prefetching/index.mdx)
+- [Le signe dollar $](advanced/dollar/index.mdx)
 - [Conteneurs](advanced/containers/index.mdx)
-- [Optimiseur](advanced/optimizer/index.mdx)
+- [Prélecture](advanced/prefetching/index.mdx)
 - [QRL](advanced/qrl/index.mdx)
 - [Qwikloader](advanced/qwikloader/index.mdx)
+- [Optimiseur](advanced/optimizer/index.mdx)
 - [Répertoire personnalisé de construction](advanced/custom-build-dir/index.mdx)
 - [Internationalisation](advanced/i18n/index.mdx)
 

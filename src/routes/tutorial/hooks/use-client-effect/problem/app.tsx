@@ -39,7 +39,7 @@ export function updateClock(store: ClockStore) {
   store.hour = now.getHours() * (360 / 12);
 }
 
-export const App = component$(() => {
+export default component$(() => {
   return (
     <div>
       <p>C'est un exemple d'exécution différée de code sur le composant lorsque celui-ci devient visible.</p>

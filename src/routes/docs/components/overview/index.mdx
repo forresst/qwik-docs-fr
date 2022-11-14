@@ -177,43 +177,43 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 ### État
 
-- `useStore(initialState)` - crée un store réactif
-- `useRef$(initialState)` -crée une ref
-- `createContext(contentName)` - crée un contexte
-- `useContextProvider$()` - crée un fournisseur de contexte
-- `useContext$()` - utilise un contexte
+- [`useStore(initialState)`](../state/index.mdx) - crée un objet réactif qui peut être utilisé pour stocker l'état.
+- [`useSignal$(initialState)`](../state/index.mdx)  - crée une valeur réactive
+- [`createContext(contentName)`](../context/index.mdx)  - crée une référence de contexte
+- [`useContextProvider$()`](../context/index.mdx) - fournit une valeur à un contexte donné
+- [`useContext$()`](../context/index.mdx) - lit la valeur du contexte actuel
 
 ### Styles
 
-- `useStylesScoped$()` - crée un style scopé
-- `useStyles$()` - crée un style global
+- [`useStylesScoped$()`](../styles/index.mdx) - ajoute des styles scopés au composant
+- [`useStyles$()`](../styles/index.mdx) - ajoute les styles non scopés au composant
 
 ### Événements
 
-- `useOn()` - crée un écouteur d'événement
-- `useOnWindow()` - crée un écouteur d'événements de window
-- `useOnDocument()` - crée un écouteur d'événement de document
+- [`useOn()`](../events/index.mdx) styles - ajoute un écouteur au composant par voie programmatique
+- [`useOnWindow()`](../events/index.mdx) - ajoute un écouteur pour window au composant par voie programmatique
+- [`useOnDocument()`](../events/index.mdx) - ajoute un écouteur pour document au composant par voie programmatique
 
 ### Cycles de vie
 
-- `useMount$()` - crée un post rendu
-- `useServerMount$()` - crée un post rendu
-- `useWatch$()` -crée une surveillance
-- `useClientEffect$()` - crée un post rendu
-- `useResource$()` - crée une ressource
+- [`useMount$()`](../lifecycle/index.mdx) - définit un callback qui sera exécuté au moment du montage
+- [`useServerMount$()`](../lifecycle/index.mdx) - définit un callback qui sera exécuté au moment du montage uniquement sur le serveur
+- [`useWatch$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé avant le rendu et/ou lors des changements d'un store surveillé
+- [`useClientEffect$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
+- [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
 
 ### Autre
 
-- `$()` - crée un QRL
+- [`$()`](../../advanced/qrl/index.mdx) - crée un QRL
 - `noSerialize()`
 - `useErrorBoundary()`
 
 ### Composants
 
-- `<Slot>` - crée un slot
-- `<SSRStreamBlock>` - crée un bloc de stream
-- `<SSRStream>` - crée un stream
-- `<Fragment>` - crée un fragment
+- [`<Slot>`](../projection/index.mdx) - déclare un emplacement de projection de contenu
+- `<SSRStreamBlock>` - déclare un bloc de stream
+- `<SSRStream>` - déclare un stream
+- `<Fragment>` - déclare un fragment JSX
 
 ## Voir aussi :
 

@@ -24,7 +24,7 @@ Les inconvénients de l'approche à l'exécution sont les suivants :
   1. Une fois comme chaîne originale dans le code.
   2. Une fois en tant que clé dans une map de traduction.
   3. Une fois en tant que valeur traduite dans la map de traduction.
-- Les outils ne savent pas comment découper la map de traduction, pour cette raison, la map de traduction entière doit être chargée par avance au démarrage de l'application. C'est un problème parce que cela annule l'effort que Qwik a mis dans la décomposition et le chargement différé de votre base de code. En outre, parce que les maps de traduction ne sont pas divisées, le navigateur va charger des traductions inutiles. Par exemple, les traductions pour les composants statiques qui ne seront jamais rendus sur le client. 
+- Les outils ne savent pas comment découper la map de traduction, pour cette raison, la map de traduction entière doit être chargée par avance au démarrage de l'application. C'est un problème parce que cela annule l'effort que Qwik a mis dans la décomposition et le chargement différé de votre base de code. En outre, parce que les maps de traduction ne sont pas divisées, le navigateur va charger des traductions inutiles. Par exemple, les traductions pour les composants statiques qui ne seront jamais rendus sur le client.
 - Il y a un coût d'exécution pour les recherches de traduction.
 
 Les avantages de l'approche à la compilation sont :
@@ -33,7 +33,7 @@ Les avantages de l'approche à la compilation sont :
 
 Les inconvénients de l'approche à la compilation sont :
 - Étape de construction supplémentaire.
-- Le changement de langue nécessite un rechargement de la page. 
+- Le changement de langue nécessite un rechargement de la page.
 
 ## Recommandation
 
@@ -55,7 +55,7 @@ Au cours du développement, la réduction du nombre d'étapes de construction se
 
 Notre recommandation est d'utiliser un outil qui fournirait une approche d'exécution sur le serveur, et d'exécution ou de compilation sur le client selon que nous sommes en développement ou en production. De cette façon, il est possible d'offrir la meilleure expérience utilisateur et la meilleure expérience de développement, et d'utiliser le moins de ressources serveur possible.
 
-# Bibliothèques d'internationalisation
+## Bibliothèques d'internationalisation
 
 - [$localize](https://github.com/mhevery/qwik-i18n)
 - [qwik-speak](https://github.com/robisim74/qwik-speak)

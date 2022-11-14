@@ -8,6 +8,12 @@
         "title": "Hello World",
         "description": "L'appli Qwik la plus simple.",
         "icon": "🌎"
+      },
+      {
+        "id": "runtime-less",
+        "title": "Runtime-less",
+        "description": "Une appli interactive sans moteur d'exécution.",
+        "icon": "🪶"
       }
     ]
   },

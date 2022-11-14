@@ -1,6 +1,7 @@
 ---
 title: Composants légers
 contributors:
+  - voluntadpear
   - RATIU5
   - ykou
   - adamdbradley
@@ -34,3 +35,6 @@ Dans l'exemple ci-dessus, le `MyButton` est un composant léger. Le chargement d
 - `MyButton` n'a pas d'élément hôte.
 
 On peut considérer que les composants légers sont intégrés dans le composant, où ils sont instanciés.
+
+> **Limitations**
+> Contrairement aux composants habituels de Qwik, les composants légers ne peuvent pas utiliser les méthodes `use`, comme `useSignal` ou `useStore`. Comme son nom l'indique, les composants légers sont plutôt utilisés pour des pièces légères de balisage puisqu'ils offrent la commodité d'être regroupés avec le composant parent.

@@ -12,7 +12,7 @@ contributors:
 
 La réactivité est un composant clé de Qwik. La réactivité permet à Qwik de suivre quels composants sont abonnés à quel état. Cette information permet à Qwik d'invalider seulement le composant approprié lors d'un changement d'état, ce qui minimise le nombre de composants qui doivent être re-rendus. Sans réactivité, un changement d'état nécessiterait un re-rendu à partir du composant racine, ce qui obligerait l'ensemble de l'arborescence des composants à être par avance chargée.
 
-# Proxy
+## Proxy
 
 La réactivité exige que le framework garde la trace de la relation entre l'état des applications et des composants. Le framework doit rendre l'ensemble de l'application au moins une fois pour construire le graphe de réactivité. La construction du graphe de réactivité se passe initialement sur le serveur et est sérialisée dans le HTML afin que le navigateur puisse utiliser l'information sans être obligé de faire un seul passage par tous les composants pour reconstruire le graphe. (Qwik n'a pas besoin de faire l'hydratation pour enregistrer les événements ou construire le graphe de réactivité).
 

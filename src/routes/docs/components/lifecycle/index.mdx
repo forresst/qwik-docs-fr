@@ -24,12 +24,12 @@ Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règle
 useHook() // <-- ❌ ne fonctionne pas
 
 export default component$(() => {
-  useHook() // <-- ✅ fonctionne
+  useCustomHook() // <-- ✅ fonctionne
   if (condition) {
     useHook() // <-- ❌ ne fonctionne pas
   }
-  const myQrl = $(() => useHook()) // <-- ✅ fonctionne
-  return <button onClick$={() => useHook()}></button> // <-- ✅ fonctionne
+  const myQrl = $(() => useHook()) // <-- ❌ ne fonctionne pas
+  return <button onClick$={() => useHook()}></button> // <-- ❌ ne fonctionne pas
 })
 
 const useCustomHook = () => {

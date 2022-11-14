@@ -16,8 +16,40 @@ L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombr
 
 Il est important de noter que l'état dans Qwik n'est pas un état de composant, mais plutôt un état d'appli qui peut être instancié par n'importe quel composant.
 
+## `useSignal()`
+
+`const signal = useSignal(initialState)` est un hook qui crée un signal réactif. Il prend une valeur initiale et renvoie un signal réactif.
+
+Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété `signal.value`. Si vous modifiez une propriété de valeur de l'objet, tout composant qui en dépend sera mis à jour.
+
+
+### Exemple
+
+Un exemple montrant comment `useSignal` est utilisé dans l'exemple Counter pour garder la trace du compteur.
+
+```tsx
+export default component$(() => {
+  const count = useSignal(0);
+
+  return (
+    <>
+      <button onClick$={() => count.value++}>Incrémenter</button>
+      Compteur : {count.value}
+    </>
+  );
+});
+
+```
+
+Dans l'exemple ci-dessus, le composant App utilise `useSignal()` pour créer un signal. Le signal est ensuite utilisé pour suivre le compteur.
+
+En accédant simplement à la propriété `count.value`, le composant sera mis à jour si la valeur du signal change, lorsque la propriété est modifiée dans le gestionnaire de clic.
+
 
 ## `useStore()`
+
+Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale, pensez à un store comme un signal à valeurs multiples, ou un objet composé de plusieurs signaux.
+
 
 `const reactive = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial comme paramètre, et retourne un objet réactif.
 
@@ -31,7 +63,7 @@ L'objet réactif renvoyé par `useStore()` est comme n'importe quel autre objet,
 Un exemple montrant comment `useStore` est utilisé dans l'exemple Counter pour garder le suivi du compteur.
 
 ```tsx
-export const App = component$(() => {
+export default component$(() => {
   const state = useStore({ count: 0 });
 
   return (
@@ -57,7 +89,7 @@ Par exemple, ceci ne fonctionnera pas :
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
-export const App = component$(() => {
+export default component$(() => {
   const store = useStore({
     nested: { fields: { are: "not tracked" }}
   })
@@ -80,7 +112,7 @@ store.nested = { fields: { are: { "tracked" } } }
 Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à notre useStore, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
 
 ```tsx
-export const App = component$(() => {
+export default component$(() => {
   const store = useStore({
     nested: { fields: { are: "not tracked" }}
   }, { recursive: true })
@@ -99,7 +131,7 @@ Maintenant, le composant sera mis à jour comme prévu. Cela permettra égalemen
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
-export const App = component$(() => {
+export default component$(() => {
   const store = useStore({
     letters: ["A", "B", "C"]
   }, { recursive: true })
@@ -195,7 +227,7 @@ La principale différence entre les deux est que `useWatch$()` permet les effets
 ### Exemple de `useWatch$()`
 
 ```tsx
-export const App = component$(() => {
+export default component$(() => {
   const state = useStore({
     count: 0,
     doubleCount: 0
@@ -219,7 +251,7 @@ export const App = component$(() => {
 ### Exemple de `useResource$()`
 
 ```tsx
-export const App = component$(() => {
+export default component$(() => {
   const state = useStore({
     count: 0,
   });
@@ -244,3 +276,27 @@ Les notions de [useWatch](../lifecycle/index.mdx#usewatch) et de [useResource](.
 ## Réactivité
 
 Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l'état seront mis à jour. C'est un énorme gain de performance, car seuls les composants qui ont besoin d'être mis à jour le seront.
+
+
+## `noSerialize()`
+
+Parfois, vous souhaitez stocker une valeur dans l'état, mais vous ne voulez pas qu'elle soit sérialisée. Ceci est utile pour stocker des valeurs qui ne sont pas sérialisables, comme les fonctions ou les classes.
+
+```tsx
+import {component$, useStore, noSerialize} from '@builder.io/qwik';
+
+export const App = component$(() => {
+  const state = useStore({
+    monacoInstance: null
+  });
+
+  useClientEffect$(() => {
+    // Monaco n'est pas sérialisable, donc nous ne pouvons pas le stocker dans l'état en utilisant `noSerialize()`
+    state.monacoInstance = noSerialize(new Monaco());
+  });
+  return (
+    <>
+    </>
+  );
+});
+```

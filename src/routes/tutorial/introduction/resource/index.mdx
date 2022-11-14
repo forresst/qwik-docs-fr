@@ -36,7 +36,7 @@ Utilisez `useResource$()` pour configurer la façon dont les données sont récu
   });
 ```
 
-La fonction `useResource$()` retourne un objet `ResourceReturn`, qui est un objet de type Promise qui peut être sérialisé par Qwik. La fonction `useResource$()` vous permet de traquer (`track`) les propriétés de l'historique afin que la fonction `useResource$()` puisse être réactive sur les changements du store. La fonction `cleanup` vous permet d'enregistrer un code qui doit être exécuté pour libérer les ressources de l'exécution précédente. Enfin, la fonction `useResource$()` renvoie une promesse qui sera résolue avec la valeur.
+La fonction `useResource$()` retourne un objet `ResourceReturn`, qui est un objet de type Promise qui peut être sérialisé par Qwik. La fonction `useResource$()` vous permet de traquer (`track`) les propriétés du store afin que la fonction `useResource$()` puisse être réactive sur les changements du store. La fonction `cleanup` vous permet d'enregistrer un code qui doit être exécuté pour libérer les ressources de l'exécution précédente. Enfin, la fonction `useResource$()` renvoie une promesse qui sera résolue avec la valeur.
 
 ## Rendu des données
 

@@ -28,7 +28,7 @@ Qwik est différent car il ne nécessite pas d'hydratation pour reprendre une ap
 
 L'hydratation de tous les autres frameworks **rejoue** toute la logique de l'application sur le client. Qwik au contraire met en pause l'exécution sur le serveur, et reprend l'exécution sur le client.
 
-# Introduction à la résumabilité
+## Introduction à la résumabilité
 
 La résumabilité consiste à mettre en pause l'exécution sur le serveur et reprendre l'exécution sur le client sans avoir à rejouer et charger toute la logique de l'application.
 
@@ -36,7 +36,7 @@ Un bon modèle mental est que les applications Qwik à n'importe quel moment de 
 
 Afin de réaliser ceci, Qwik a besoin de résoudre les 3 problèmes (les écouteurs, l'arborescence des composants et l'état de l'application) d'une manière qui soit compatible avec un démarrage sans code.
 
-## Les écouteurs
+### Les écouteurs
 
 Un DOM sans écouteurs d'événements n'est qu'une page statique, ce n'est pas une application. La norme actuelle pour tous les sites est un niveau élevé d'interactivité, de sorte que même les sites les plus statiques sont remplis d'écouteurs d'événements. Il peut s'agir de menus, de survols, de dépliages de détails ou même d'applis interactives complètes.
 
@@ -60,7 +60,7 @@ Qwik a encore besoin de collecter les informations des écouteurs, mais cette é
 2. Le HTML contient une URL vers le morceau et le nom du symbole. L'attribut indique à Qwikloader le morceau de code à charger et le symbole à récupérer dans ce morceau.
 3. Enfin, pour rendre tout ce qui précède possible, l'implémentation du traitement des événements de Qwik comprend l'asynchronicité qui permet l'insertion d'un chargement différé asynchrone.
 
-## L'arborescence des composants
+### L'arborescence des composants
 
 Les frameworks fonctionnent avec des arborescences de composants. Pour cela, les frameworks ont besoin d'une connaissance complète des arborescences des composants pour savoir quels composants doivent être rendus et quand. Si vous regardez la sortie SSR/SSG du framework existant, les informations sur les limites des composants ont été détruites. Il n'y a aucun moyen de savoir où se trouvent les limites des composants en regardant le HTML résultant. Pour recréer ces informations, les frameworks réexécutent les templates des composants et mémorisent l'emplacement des limites des composants. La réexécution constitue l'hydratation. L'hydratation est coûteuse car elle nécessite à la fois le chargement des templates de composants et leur exécution.
 
@@ -70,11 +70,11 @@ Qwik recueille les informations sur les limites des composants comme une partie 
 2. Qwik peut faire cela de manière différée seulement pour les composants qui ont besoin d'être re-rendu plutôt que de le faire pour tous en même temps.
 3. Qwik collecte les informations de relation entre les stores et les composants. Cela crée un modèle d'abonnement qui informe Qwik des composants qui ont besoin d'être re-rendu suite à un changement d'état. L'information d'abonnement est aussi sérialisée dans le HTML.
 
-## L'état de l'application
+### L'état de l'application
 
 Les frameworks existants ont généralement un moyen de sérialiser l'état de l'application dans le HTML afin que l'état puisse être restauré dans le cadre de l'hydratation. De cette façon, ils sont très similaires à Qwik. Cependant, Qwik a une gestion d'état plus fortement intégrée dans le cycle de vie des composants. En pratique, cela signifie que le composant peut être chargé de façon différée indépendamment de l'état du composant. Ceci n'est pas facilement réalisable dans les frameworks existants car les props des composants sont généralement créés par le composant parent. Cela crée une réaction en chaîne. Afin de restaurer le composant X, ses parents doivent être restaurés aussi. Qwik permet à n'importe quel composant d'être restauré sans que le code du composant parent soit présent.
 
-### Sérialisation
+#### Sérialisation
 
 La façon la plus simple de penser à la sérialisation est de passer par `JSON.stringify`. Cependant, JSON a plusieurs limitations. Qwik peut surmonter certaines limitations, mais certaines ne peuvent pas être surmontées, et elles placent des limites sur ce que le développeur peut faire. Comprendre ces limitations est important lors de la construction d'applications Qwik.
 
@@ -91,13 +91,13 @@ Limitations du JSON que Qwik ne résout pas :
 - Sérialisation des classes (`instanceof` et prototype)
 - Sérialisation des `Promise`s, Streams, etc...
 
-## Écriture d'applications en tenant compte de la sérialisabilité
+### Écriture d'applications en tenant compte de la sérialisabilité
 
 La propriété de résumabilité du framework doit s'étendre à la résumabilité de l'application également. Cela signifie que le framework doit fournir des mécanismes permettant au développeur d'exprimer les composants et les entités des applications afin qu'ils puissent être sérialisés puis repris (sans redémarrage). Il faut donc que les applications soient écrites en tenant compte des contraintes de la résumabilité. Il n'est tout simplement pas possible pour les développeurs de continuer à écrire des applications en se concentrant sur la pile et de s'attendre à ce qu'un meilleur framework puisse en quelque sorte compenser cette approche sous-optimale.
 
 Les développeurs doivent écrire leurs applications en se concentrant sur le DOM. Cela nécessitera un changement de comportement et un rééquipement des compétences des développeurs web. Les frameworks doivent fournir des conseils et des API pour permettre aux développeurs d'écrire facilement leurs applications de cette manière.
 
-## Autres avantages de la résumabilité
+### Autres avantages de la résumabilité
 
 L'avantage le plus évident de l'utilisation de la résumabilité est le rendu côté serveur. Cependant, il existe des avantages secondaires :
 
