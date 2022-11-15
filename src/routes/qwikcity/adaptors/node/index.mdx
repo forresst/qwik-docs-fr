@@ -12,38 +12,41 @@ Le middleware Node de Qwik City vous permet de connecter Qwik City à un serveur
 - [Connect](https://www.npmjs.com/package/connect)
 - [Polka](https://www.npmjs.com/package/polka)
 
-Vous trouverez ci-dessous un exemple d'utilisation du middleware Node intégré dans l'appli [Express](https://expressjs.com/) d'un utilisateur. Notez que l'utilisateur peut décider de l'ordre des middlewares, y compris la gestion des ressources statiques et la façon de traiter les réponses 404.
+## Installation
 
-```typescript
-import { createQwikCity } from '@builder.io/qwik-city/middleware/node';
-import qwikCityPlan from '@qwik-city-plan';
-import render from './entry.ssr';
-import express from 'express';
-import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+Pour intégrer l'adaptateur `node`, utilisez la commande `add` :
 
-// Répertoires où se trouvent les ressources statiques
-const distDir = join(fileURLToPath(import.meta.url), '..', '..', 'dist');
-const buildDir = join(distDir, 'build');
-
-// Crée le middleware Qwik City
-const { router, notFound } = createQwikCity({ render, qwikCityPlan });
-
-// Crée le serveur express
-const app = express();
-
-// Utilise le routeur de pages et le endpoint de Qwik City
-app.use(router);
-
-// Gestionnaires de ressources statiques
-app.use(`/build`, express.static(buildDir, { immutable: true, maxAge: '1y', index: false }));
-app.use(express.static(distDir, { index: false }));
-
-// Utilise le gestionnaire 404 de Qwik City
-app.use(notFound);
-
-// Démarre le serveur express
-app.listen(3000);
+```shell
+npm run qwik add express
 ```
 
-- [Source du Middleware Node](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/node/index.ts)
+## Construction de la production
+
+Pour construire l'application pour la production, utilisez la commande `build`, cette commande lancera automatiquement `npm run build.server` et `npm run build.client` :
+
+```shell
+npm run build
+```
+
+[Lisez le guide complet ici](https://github.com/BuilderIO/qwik/blob/main/starters/adaptors/netlify-edge/README.md)
+
+
+## Déploiement pour le dev
+
+Pour déployer l'application pour le développement :
+
+```shell
+npm run deploy
+```
+
+Notez que vous pouvez avoir besoin d'un [compte Netlify](https://docs.netlify.com/get-started/) afin de compléter cette étape !
+
+
+## Déploiement de la production
+
+Puisque vous avez choisi Node, vous êtes ici dans la vôtre, après avoir exécuté `npm run build` :
+
+- Le dossier `dist` sera créé en incluant tous les fichiers statiques.
+- Le dossier `server` sera créé en incluant tous les fichiers du serveur de node.
+
+Afin de déployer le serveur, vous devez exécuter le fichier `server/entry.express.js` dans le serveur de votre choix.

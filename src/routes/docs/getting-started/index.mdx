@@ -32,8 +32,6 @@ npm create qwik@latest
 
 Le CLI vous guidera à travers un menu interactif pour définir le nom du projet et sélectionner l'un des _starters_ :
 
-<script id="asciicast-514542" src="https://asciinema.org/a/514542.js" async></script>
-
 Après la création de votre nouvelle appli, vous verrez un affichage comme le suivant dans votre terminal :
 
 ```shell
@@ -66,19 +64,14 @@ Après la création de votre nouvelle appli, vous verrez un affichage comme le s
 
 Une fois que l'application est chargée.
 
-1. Allez dans le répertoire créé par `npm create qwik@latest`.
+1. Allez dans le répertoire créé par `npm create qwik`.
 
 ```shell
 cd qwik-app
 ```
 
-2. Installez les modules NPM :
 
-```shell
-npm install
-```
-
-3. Appelez le serveur de développement
+2. Appelez le serveur de développement
 
 ```shell
 npm start
@@ -97,11 +90,30 @@ npm start
 
 5. Visitez http://localhost:5174/ pour découvrir l'appli.
 
-## Commandes
 
-Voici quelques commandes utiles pour vous aider à démarrer. Pour une liste complète, veuillez vous référer au `package.json`.
+## Exécution en production
 
-- `npm start` : alias pour `npm run dev`(par défaut, il s'agit d'exécuter du SSR)
-- `npm run preview` : Construction de la production et démarrage du serveur de prévisualisation.
-- `npm run build` : construit l'application pour la production.
-- `npm run qwik add` : Sélectionne une intégration à ajouter.
+Pour exécuter l'application localement en production, exécutez la commande suivante :
+
+```shell
+npm run preview
+```
+
+Il construira votre application et le [serveur de prévisualisation Vite](https://vitejs.dev/config/preview-options.html) pour servir l'application.
+
+
+## Déploiement
+
+Il est très facile de déployer votre application Qwik vers le cloud, en tant que fichiers statiques, ou votre propre serveur.
+
+Veuillez consulter la section [déploiement](/qwikcity/adaptors/overview/index.mdx) pour plus de détails.
+
+## Autres intégrations
+
+Qwik est conçu pour être intégré avec d'autres outils. Comme `vitest`, `tailwind`, `partytown`... lancez la commande suivante pour voir la liste des intégrations disponibles :
+
+```shell
+npm run qwik add
+```
+
+et n'oubliez pas de consulter la section [intégrations](/qwikcity/integrations/overview/index.mdx) pour plus de détails.

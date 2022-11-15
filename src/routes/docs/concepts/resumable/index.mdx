@@ -1,6 +1,7 @@
 ---
 title: Resumable
 contributors:
+  - voluntadpear
   - RATIU5
   - adamdbradley
 ---
@@ -83,13 +84,17 @@ Limites du JSON que Qwik résout :
 - JSON produit des DAG. DAG signifie Directed Acyclic Graph, ce qui signifie que l'objet qui est sérialisé ne peut pas avoir de références circulaires. C'est une grande limitation car l'état de l'application est souvent circulaire. Qwik garantit que lorsque le graphe des objets est sérialisé, les références circulaires sont correctement sauvegardées et ensuite restaurées.
 - JSON ne peut pas sérialiser certains types d'objets. Par exemple, les références DOM, Dates, etc... Le format de sérialisation de Qwik garantit que de tels objets peuvent être correctement sérialisés et restaurés. Voici une liste des types qui peuvent être sérialisés avec Qwik :
   - Références DOM
-  - Dates (pas encore implémenté)
-  - Closures de fonctions (si enveloppées dans QRL).
+  - Promesses (Voir [resources](../../components/resource/))
+  - Closures de fonctions (si enveloppées dans QRL)
+  - Dates
+  - Objets `URL`
+  - Instances `Map` et `Set`
 
 Limitations du JSON que Qwik ne résout pas :
 
 - Sérialisation des classes (`instanceof` et prototype)
-- Sérialisation des `Promise`s, Streams, etc...
+  -  Bien que certaines classes sont intégrées, telles que [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL), [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map), [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) sont prises en chage.
+- Sérialisation des Streams, etc...
 
 ### Écriture d'applications en tenant compte de la sérialisabilité
 

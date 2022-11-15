@@ -1,10 +1,18 @@
 ---
-title: Qwik City Adaptateurs et middleware
+title: Déploiement
 contributors:
   - adamdbradley
 ---
 
-# Adaptateurs et middleware
+# Déploiement
+
+Lorsqu'il est temps de déployer votre application, Qwik est livré avec une intégration prête à l'emploi qui rend cela très facile !
+
+```shell
+npm run qwik add
+```
+
+## Adaptateurs et middleware
 
 Le middleware de Qwik City est un code qui connecte le framework de rendu du serveur (tel que Cloudflare, Netlify, Express etc.) avec le meta-framework de Qwik City.
 
@@ -14,33 +22,18 @@ Qwik City est livré en pré-bundle avec :
 - [netlify-edge](../netlify-edge/index.mdx)
 - [node](../node/index.mdx)
 
-## Construction
+## Construction de la production
 
-Utiliser le cli vite de Qwik City `--ssr` pour spécifier l'entrée SSR
+Lorsqu'une nouvelle intégration est ajoutée au projet, un script `build.server` est ajouté au fichier `package.json`. Ce script est utilisé pour construire le projet pour la production.
 
-```bash
-vite build --ssr src/entry.MIDDLEWARE.ts
+La seule chose que vous devez faire est d'exécuter la commande suivante :
+
+```shell
+npm run build
 ```
 
-le répertoire de sortie par défaut est `./server` et il est configurable en mettant l'option du plugin `qwikVite`.
+> Sous le capot, le script `build` exécutera les scripts `build.server` et `build.client`.
 
-```typescript
-// file vite.config.ts
-import { qwikVite } from '@builder.io/qwik/optimizer';
-
-export default defineConfig(() => {
-  return {
-    plugins: [
-      // ...autres plugins
-      qwikVite({
-        ssr: {
-          outDir: 'CUSTOM_DIR',
-        },
-      }),
-    ],
-  };
-});
-```
 
 ## Avancé
 

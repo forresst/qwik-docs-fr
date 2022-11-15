@@ -8,11 +8,15 @@ contributors:
 
 L'adaptateur de Qwik City pour Netlify Edge vous permet de connecter Qwik City aux [Fonctions de Netlify Edge](https://docs.netlify.com/edge-functions/overview/).
 
+## Installation
+
 Pour intégrer l'adaptateur `netlify-edge`, utilisez la commande `npm run qwik add` :
 
-```bash
+```shell
 npm run qwik add netlify-edge
 ```
+
+> Il installera automatiquement les dépendances requises, y compris le [CLI de Netlify](https://cli.netlify.com/).
 
 L'adaptateur ajoutera un nouveau `vite.config.ts` dans le répertoire `adaptors/`, et un nouveau fichier d'entrée sera créé, comme suit :
 
@@ -25,6 +29,37 @@ L'adaptateur ajoutera un nouveau `vite.config.ts` dans le répertoire `adaptors/
 ```
 
 De plus, dans le `package.json`, le script `build.server` sera mis à jour avec le build de Netlify Edge.
+
+## Construction de la production
+
+Pour construire l'application pour la production, utilisez la commande `build`, cette commande lancera automatiquement `npm run build.server` et `npm run build.client` :
+
+```shell
+npm run build
+```
+
+[Lisez le guide complet ici](https://github.com/BuilderIO/qwik/blob/main/starters/adaptors/netlify-edge/README.md)
+
+
+## Déploiement pour le dev
+
+Pour déployer l'application pour le développement :
+
+```shell
+npm run deploy
+```
+
+Notez que vous pouvez avoir besoin d'un [compte Netlify](https://docs.netlify.com/get-started/) afin de compléter cette étape !
+
+
+## Déploiement de la production
+
+Après avoir installé l'intégration en utilisant `npm run qwik add`. Le projet est prêt à être déployé sur Netlify. Cependant, vous devrez créer un dépôt git et y pousser le code.
+
+Veuillez vous référer à la documentation de Netlify pour plus d'informations sur la façon de déployer votre site : [docs de Netlify](https://docs.netlify.com/site-deploys/create-deploys/)
+
+
+## Avancé
 
 ## Middleware d'entrée de Netlify Edge
 
@@ -41,7 +76,7 @@ export default createQwikCity({ render, qwikCityPlan });
 
 Le middleware compilé sera construit dans le répertoire `.netlify/edge-functions`.
 
-## Déclarations des fonctions Netlify Edge
+### Déclarations des fonctions Netlify Edge
 
 Les [Déclarations des fonctions Netlify Edge](https://docs.netlify.com/edge-functions/declarations/) peuvent être configurées pour s'exécuter sur des modèles d'URL spécifiques. Chaque déclaration de fonction edge associe un modèle de chemin d'accès au site à une fonction à exécuter sur les requêtes qui correspondent à ce chemin. Une seule requête peut exécuter une chaîne de fonctions edge à partir d'une série de déclarations. Une même fonction edge peut être associée à plusieurs chemins d'accès à travers plusieurs déclarations.
 
@@ -57,7 +92,42 @@ Pour remplacer le manifeste généré, vous pouvez [ajouter une déclaration](ht
   function = "auth"
 ```
 
-## Migration
+
+### Contexte
+
+Le [contexte Netlify](https://docs.netlify.com/edge-functions/api/#netlify-specific-context-object) est disponible dans le paramètre `platform` :
+
+```javascript
+export const onRequest = async ({ platform }) => {
+  platform.log('requested ip:', platform.ip)
+};
+```
+
+De plus, vous pouvez importer le type `RequestHandlerNetlify` pour avoir des compléments de type dans votre éditeur.
+
+```typescript
+import {type RequestHandlerNetlify} from '@builder.io/qwik-city/middleware/netlify-edge';
+
+export const onGet: RequestHandlerNetlify = (({platform}) => {
+ //...
+})
+```
+
+### Variables d'environnement
+
+```javascript
+export const onRequest = async ({ platform }) => {
+  platform.log('Vite env read from .dev file', import.meta.env.VITE_DEV)
+  platform.log('netlify serverless env read from Netlify UI or CLI', Deno.env.toObject())
+  return {}
+};
+```
+
+- [Variables d'environnement de Netlify](https://docs.netlify.com/environment-variables/overview/#environment-variable-options)
+- [Source du Middleware de Netlify Edge](https://github.com/BuilderIO/qwik/blob/main/packages/qwik-city/middleware/netlify-edge/index.ts)
+
+
+### Migration
 
 Les versions précédentes de Qwik City utilisaient le plugin `@netlify/vite-plugin-netlify-edge`. Ce plugin fonctionne toujours très bien, mais utilise une approche « attrappe tout », ce qui signifie que toutes les requêtes passeront par les fonctions edge, en incluant les fichiers statiques.
 
@@ -95,45 +165,3 @@ Supprimez la configuration `edge_functions` (« attrappe tout ») de `netlify.
 -path = "/*"
 -function = "entry.netlify-edge"
 ```
-
-## Utilisation
-
-Utilisez le CLI de Netlify pour prévisualiser ou déployer. [Lisez le guide complet ici](https://github.com/BuilderIO/qwik/blob/main/starters/servers/netlify-edge/README.md)
-
-```bash
-vite build --ssr src/entry.netlify-edge.tsx
-netlify dev
-```
-
-### Contexte
-
-Le [contexte Netlify](https://docs.netlify.com/edge-functions/api/#netlify-specific-context-object) est disponible dans le paramètre `platform` de la méthode du endpoint :
-
-```javascript
-export const onRequest = async ({ platform }) => {
-  platform.log('requested ip:', platform.ip)
-};
-```
-
-De plus, vous pouvez importer le type `RequestHandlerNetlify` pour avoir des compléments de type dans votre éditeur.
-
-```typescript
-import {type RequestHandlerNetlify} from '@builder.io/qwik-city/middleware/netlify-edge';
-export const onGet: RequestHandlerNetlify = (({platform}) => {
- //...
-})
-```
-
-
-### Variables d'environnement
-
-```javascript
-export const onRequest = async ({ platform }) => {
-  platform.log('Vite env read from .dev file', import.meta.env.VITE_DEV)
-  platform.log('netlify serverless env read from Netlify UI or CLI', Deno.env.toObject())
-  return {}
-};
-```
-
-- [Variables d'environnement de Netlify](https://docs.netlify.com/environment-variables/overview/#environment-variable-options)
-- [Source du Middleware de Netlify Edge](https://github.com/BuilderIO/qwik/blob/main/packages/qwik-city/middleware/netlify-edge/index.ts)
