@@ -4,6 +4,8 @@ contributors:
   - manucorporat
 ---
 
+# Styles
+
 ## Styles globaux
 De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront chargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
 
@@ -22,7 +24,7 @@ import from './my-component.css?inline'
 
 Une façon naïve de s'assurer que les styles sont chargés correctement dans un composant est d'intégrer les informations de style dans le composant comme suit.
 
-```typescript
+```tsx
 export const MyComponent = () => {
   return (
     <>
@@ -38,7 +40,7 @@ Le problème avec cette approche est que nous allons charger les styles deux foi
 1. Les styles sont insérés dans le HTML en tant que partie du SSR.
 2. Ensuite, lorsque le composant est invalidé et doit être re-rendu, les styles sont rechargés car ils sont intégrés.
 
-Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert `useStyles$()`. Il y a deux scénarios :
+Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert [`useStyles$()`](/docs/components/styles/index.mdx#usestyles). Il y a deux scénarios :
 
 1. Le composant est rendu sur le serveur et les styles sont insérés dans le `<head>` en tant que partie du SSR.
    - L'ajout d'une nouvelle instance d'un composant à l'application ne nécessite pas de charger les styles car ils sont déjà inclus dans le SSR.
@@ -69,7 +71,7 @@ export const CmpStyles = component$(() => {
 ```
 
 ## `useStylesScope$`
-Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook `useStyles$()`.
+Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/components/styles/index.mdx#usestyles).
 Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. 
 Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style. Veuillez noter que vous devez ajouter `?inline` à votre importation de styles.
 

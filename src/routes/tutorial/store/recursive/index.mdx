@@ -11,10 +11,10 @@ L'exemple ne fonctionne pas tel quel, car par défaut la fonction `useStore` ne 
 
 Pour que l'exemple fonctionne, vous devez faire l'une des deux choses suivantes :
 
-1. Envelopper `{count:0}` dans un autre appel `useStore()` (ce qui est un peu lourd).
+1. Envelopper `{count:0}` dans un autre appel [`useStore()`](/docs/components/state/index.mdx#usestore) (ce qui est un peu lourd).
 
 2. Permettre à `useStore` d'appliquer récursivement la réactivité à toutes les propriétés en passant l'argument supplémentaire : `{recursive:true}`.
 
-> **Votre tâche :** Mettre à jour l'exemple avec la fonction `useStore()`.
+> **Votre tâche :** Mettre à jour l'exemple avec la fonction [`useStore()`](/docs/components/state/index.mdx#usestore).
 
 Notez que les stores ne sont pas liés à un seul composant. En fait, vous pouvez passer les stores d'un composant à un autre.

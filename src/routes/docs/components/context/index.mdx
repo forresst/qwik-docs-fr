@@ -80,9 +80,9 @@ Parce qu'elle ne contient aucun état, il est possible de l'appeler et d'en fair
 
 ### `useContextProvider()`
 
-Comme toutes les méthodes use-, elle ne peut être appelée qu'à la racine de `component$()` (pas à l'intérieur des branches). Cette méthode est appelée par un composant de niveau supérieur et c'est ce qui assigne (fournit) une valeur au contexte. La valeur fournie ne sera pas globalement disponible dans toute l'arborescence du rendu, mais seulement pour les composants descendants dans l'arborescence.
+Comme toutes les méthodes use-, elle ne peut être appelée qu'à la racine de [`component$()`](/docs/components/overview/index.mdx#component) (pas à l'intérieur des branches). Cette méthode est appelée par un composant de niveau supérieur et c'est ce qui assigne (fournit) une valeur au contexte. La valeur fournie ne sera pas globalement disponible dans toute l'arborescence du rendu, mais seulement pour les composants descendants dans l'arborescence.
 
-La valeur passée à `useContextProvider()` peut être n'importe quelle primitive, objet (inclus dans useStore), ou tableau qui contient des valeurs sérialisables.
+La valeur passée à [`useContextProvider()`](/docs/components/context/index.mdx#usecontextprovider) peut être n'importe quelle primitive, objet (inclus dans useStore), ou tableau qui contient des valeurs sérialisables.
 
 ```tsx
 export const Parent = component$(() => {
@@ -136,7 +136,7 @@ export interface SharedState {
 export const MyContext = createContext<SharedState>('my-context');
 ```
 
-De cette façon, lorsque vous utilisez `MyContext` dans `useContextProvider()` et `useContext()`, la valeur fournie aura le type `SharedState`.
+De cette façon, lorsque vous utilisez `MyContext` dans [`useContextProvider()`](/docs/components/context/index.mdx#usecontextprovider) et `useContext()`, la valeur fournie aura le type `SharedState`.
 
 Voyons un exemple concret :
 

@@ -7,7 +7,7 @@ contributors:
 
 Pour que l'application puisse être résumable, elle doit avoir de nombreux points d'entrée. Par exemple, cliquer sur le bouton `A` est un point d'entrée différent de celui du bouton `B`. Lorsque nous implémentons une application, nous ne pensons généralement pas aux points d'entrée et nous nous retrouvons donc généralement avec un seul point d'entrée ou la fonction `main()`.
 
-L'Optimiseur fait son travail en recherchant les fonctions qui se terminent par le caractère `$`. Par exemple, l'Optimiseur transformera un appel à `component$()` en un point d'entrée. Remarquez que le nom de la fonction n'a pas d'importance, mais seulement le fait qu'elle se termine par le caractère `$`.
+L'Optimiseur fait son travail en recherchant les fonctions qui se terminent par le caractère `$`. Par exemple, l'Optimiseur transformera un appel à [`component$()`](/docs/components/overview/index.mdx#component) en un point d'entrée. Remarquez que le nom de la fonction n'a pas d'importance, mais seulement le fait qu'elle se termine par le caractère `$`.
 
 Chaque fois que vous voyez `$`, vous devez penser, il y a une zone de chargement différé ici. L'implication est que le contenu chargé de manière différée peut nécessiter un chargement différé et ne peut donc pas être accédé de manière synchrone.
 

@@ -1,0 +1,240 @@
+---
+title: Qwik City - API ref
+contributors:
+  - manucorporat
+  - adamdbradley
+  - the-r3aper7
+  - nnelgxorz
+---
+
+# API reference
+
+# `useContent()`
+
+La fonction [`useContent()`](/qwikcity/api/index.mdx#usecontent) récupère les informations de contenu les plus proches pour la route actuelle. L'objet retourné comprend :
+
+```ts
+headings: ContentHeading[] | undefined;
+menu: ContentMenu | undefined;
+```
+
+Le tableau `headings` contient des données sur les éléments de titre html `<h1>` à `<h6>` d'un fichier markdown (https://developer.mozilla.org/fr/docs/Web/HTML/Element/Heading_Elements).
+
+Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Voir [définition du fichier menu](/qwikcity/content/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
+
+
+# `useDocumentHead()`
+
+Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du head du document.
+
+`useDocumentHead()` récupère un objet `DocumentHead` qui vous permettra de :
+
+- modifier le `title` dans `<head>`.
+- modifier la balise `meta` dans `<head>`.
+- modifier la balise `link` dans `<head>`.
+- modifier la balise `style` dans `<head>`.
+
+La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<Head>`, pour créer les éléments internes dans `document.head`.
+
+
+# `useLocation()`
+
+Utilisez la fonction [`useLocation()`](/qwikcity/api/index.mdx#uselocation) pour récupérer un objet `RouteLocation` pour l'emplacement actuel.
+
+```tsx
+export interface RouteLocation {
+  readonly params: RouteParams; // Record<string,string>
+  readonly href: string;
+  readonly pathname: string;
+  readonly query: Record<string, string>;
+}
+```
+
+La valeur de retour de [`useLocation()`](/qwikcity/api/index.mdx#uselocation) est similaire à celle de `document.location`, mais elle est sécurisée pour être utilisée sur le serveur où il n'y a pas d'objet global `location`.
+
+## Paramètres de route
+
+`useLocation()` encode les [Paramètres de route](../../../qwikcity/routing/route-parameters/index.mdx) comme paramètres.
+
+Supposez que vous ayez fait :
+
+- Route : `https://example.com/sku/[skuId]`
+- L'utilisateur navigue vers : `https://example.com/sku/1234`
+- Ensuite, le `skuId` peut être récupéré via `useLocation().params.skuId`.
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
+
+export default component$(() => {
+  const loc = useLocation();
+
+  return (
+    <>
+      <h1>SKU</h1>
+      <p>pathname: {loc.pathname}</p>
+      <p>skuId: {loc.params.skuId}</p>
+    </>
+  );
+});
+```
+
+Le code ci-dessus génère :
+
+```html
+<h1>SKU</h1>
+<p>pathname: /sku/1234</p>
+<p>skuId: 1234</p>
+```
+
+> Notez que `useLocation` est une API en lecture seule, vous ne devriez jamais essayer de modifier les valeurs de l'objet `loc` retourné. Consultez plutôt l'API `useNavigate()`.
+
+
+## `useNavigate()`
+
+La fonction `useNavigate()` permet de naviguer de manière programmée vers la page suivante sans impliquer un clic de l'utilisateur ou provoquer un rechargement complet de la page. Il s'agit de l'API utilisée par le composant `<Link>` en interne pour prendre en charge la navigation SPA.
+
+Bien qu'elle ressemble beaucoup à `useLocation`, cette API est **en écriture seule**, vous ne devez jamais lire la valeur, mais vous pouvez l'utiliser pour écrire où vous souhaitez naviguer en premier.
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { useNavigate } from '@builder.io/qwik-city';
+
+export default component$(() => {
+  const nav = useNavigate();
+
+  return (
+    <>
+      <button
+        onClick$={() => {
+          // cette affectation entraîne une navigation SPA
+          nav.path = '/dashboard';
+        }}
+      >
+        Aller au tableau de bord
+      </button>
+    </>
+  );
+});
+```
+
+Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/dashboard` sans causer un rechargement de la page.
+
+
+## `useEndpoint()`
+
+Il s'agit de la principale API permettant de récupérer des données sur le serveur ! Elle fonctionne comme un RPC, en appelant le serveur et en renvoyant une [ressource](/docs/components/resource/index.mdx), qui sera résolue avec les données réelles.
+
+Veuillez consulter les docs de [Récupération de données](../data/overview/index.mdx) pour plus de détails, en particulier la section [retrieve](../data/retrieve/index.mdx).
+
+```tsx
+import { Resource, component$, useStore } from '@builder.io/qwik';
+import type { RequestHandler } from '@builder.io/qwik-city';
+import { useEndpoint } from "@builder.io/qwik-city";
+
+
+export const onGet: RequestHandler<number> = async ({ params }) => {
+  // Ce code s'exécute sur le serveur
+  const PI = computePIinServer();
+  return PI;
+};
+
+export default component$(() => {
+  const piResource = useEndpoint<ProductData>();
+  return (
+    <Resource
+      value={piResource}
+      onResolved={(pi) => (
+        <>
+          <p>Le nombre PI est : {pi}</h1>
+        </>
+      )}
+    />
+  );
+});
+```
+
+Ce qui donne le HTML suivant :
+
+```html
+<p>Le nombre PI est : 3.14159</p>
+```
+
+> `useEndpoint()` fait abstraction de la nécessité d'exécuter une logique sur le serveur et de récupérer ces données sur le client, d'une manière conviviale pour le SSR !
+
+## `<QwikCityProvider>`
+
+Le composant `QwikCityProvider` initialise QwikCity dans le document existant, fournissant le contexte nécessaire pour que QwikCity fonctionne, tel que [`useContent()`](/qwikcity/api/index.mdx#usecontent) et `useLocation()`.
+
+Ce composant est généralement situé à la racine de votre application, dans la plupart des starter, vous le trouverez dans le fichier `src/root.tsx` :
+
+```tsx
+import { QwikCityProvider, RouterOutlet } from '@builder.io/qwik-city';
+
+export default function Root() {
+  return (
+    <QwikCityProvider>
+      <head>
+        <meta charSet="utf-8" />
+      </head>
+      <body>
+        <RouterOutlet />
+      </body>
+    </QwikCityProvider>
+  );
+}
+```
+
+> `QwikCityProvider` ne rend aucun élément DOM, pas même la route correspondante, il initialise simplement la logique de base de QwikCity, pour cette raison, il ne devrait pas être utilisé plus d'une fois dans la même appli.
+
+## `<RouterOutlet>`
+
+Ce composant est responsable du rendu de la route correspondante à un moment donné, il utilise en interne le [`useContent()`](/qwikcity/api/index.mdx#usecontent) et rend la page actuelle, ainsi que toutes les mises en page imbriquées.
+
+Ce composant est généralement situé comme un enfant de `<body>`, dans la plupart des starter vous le trouverez dans le fichier `src/root.tsx`.
+
+## `<Link>`
+
+Le composant `Link` fonctionne comme l'élément d'ancrage `<a>`, mais au lieu de provoquer un rechargement complet de la page, il navigue comme un SPA (Single Page Navigation). C'est utile si vous avez besoin de naviguer sans perdre l'état actuel.
+
+> Notez que les rechargements de page complète dans Qwik sont extrêmement bon marché, d'autres frameworks abusent des liens SPA parce que, un rechargement de page complète nécessite que le JS s'hydrate et ré-exécute tout. Ce n'est pas le cas pour Qwik. Nous avons trouvé dans nos tests internes que l'utilisation de `<a>` conduit généralement aux interactions les plus rapides.
+
+Sous le capot, le composant `<Link>` utilise l'API [`useNavigate()`](/qwikcity/api/index.mdx#usenavigate) et empêche le comportement par défaut du `<a>` natif :
+
+```tsx
+export const Link = component$<LinkProps>((props) => {
+  const nav = useNavigate();
+
+  return (
+    <a
+      preventdefault:click
+      onClick$={() => {
+        nav.path = props.href;
+      }}
+      {...props}
+    >
+      <Slot />
+    </a>
+  );
+});
+```
+
+### Utilisation
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
+
+export default component$(() => {
+  return (
+    <div>
+      <a href="/docs" class="my-link">rechargement complet de la page</a>
+      <Link href="/docs" class="my-link">navigation spa</Link>
+    </div>
+  )
+});
+```
+
+
+
+

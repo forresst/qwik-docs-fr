@@ -1,5 +1,6 @@
 ---
 title: Qwik City et Partytown
+keywords: third party scripts, google analytics, 3rd party, scripts, performance
 contributors:
   - manucorporat
   - leifermendez
@@ -25,14 +26,13 @@ La commande précédente met à jour votre appli et définit la configuration co
 
 Elle ajoute également de nouveaux fichiers dans votre dossier `components`.
 
-```typescript
-// ficjier root.tsx
-
+**/src/root.tsx**
+```tsx
 import { QwikPartytown } from './components/partytown/partytown';
 
 export default component$(() => {
   return (
-    <QwikCity>
+    <QwikCityProvider>
       <head>
         <meta charSet="utf-8" />
         <QwikPartytown forward={["dataLayer.push"]} />;
@@ -46,7 +46,7 @@ export default component$(() => {
       </head>
       <body lang="en">
       </body>
-    </QwikCity>
+    </QwikCityProvider>
   );
 });
 ```

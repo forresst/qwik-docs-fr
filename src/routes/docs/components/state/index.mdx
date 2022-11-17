@@ -1,4 +1,6 @@
 ---
+title: État
+keywords: useState, state management, reactivity, reactive
 contributors:
   - nnelgxorz
   - the-r3aper7
@@ -53,7 +55,7 @@ Fonctionne de manière très similaire à `useSignal()`, mais prend un objet com
 
 `const reactive = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial comme paramètre, et retourne un objet réactif.
 
-L'objet réactif renvoyé par `useStore()` est comme n'importe quel autre objet, mais il est réactif. Si vous changez une propriété de l'objet, tout composant qui en dépend sera mis à jour.
+L'objet réactif renvoyé par [`useStore()`](/docs/components/state/index.mdx#usestore) est comme n'importe quel autre objet, mais il est réactif. Si vous changez une propriété de l'objet, tout composant qui en dépend sera mis à jour.
 
 > **REMARQUE**
 > Pour que la réactivité fonctionne, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faites `let { count } = useStore({ count : 0 })` et ensuite la mutation de `count` ne déclenchera pas la mise à jour des composants qui en dépendent.
@@ -76,13 +78,13 @@ export default component$(() => {
 
 ```
 
-Dans l'exemple ci-dessus, le composant App utilise `useStore()` pour créer un objet réactif. Cet objet est ensuite utilisé pour garder le suivi du compteur. Le compteur est ensuite affiché dans le composant.
+Dans l'exemple ci-dessus, le composant App utilise [`useStore()`](/docs/components/state/index.mdx#usestore) pour créer un objet réactif. Cet objet est ensuite utilisé pour garder le suivi du compteur. Le compteur est ensuite affiché dans le composant.
 
 En accédant simplement à la propriété `state.count`, le composant sera mis à jour si le compteur change, lorsque la propriété est modifiée dans le gestionnaire du clic.
 
 ### Valeurs récursives
 
-Par défaut, `useStore()` ne traque que les champs de premier niveau de votre store, ce qui signifie que pour que toute mise à jour soit enregistrée, vous devez mettre à jour les valeurs du champ de premier niveau.
+Par défaut, [`useStore()`](/docs/components/state/index.mdx#usestore) ne traque que les champs de premier niveau de votre store, ce qui signifie que pour que toute mise à jour soit enregistrée, vous devez mettre à jour les valeurs du champ de premier niveau.
 
 Par exemple, ceci ne fonctionnera pas :
 
@@ -217,14 +219,14 @@ export const Child = component$(() => {
 
 Les valeurs calculées sont des valeurs qui sont dérivées d'autres valeurs. Elles sont utiles lorsque vous avez une valeur qui est dérivée d'autres valeurs, et que vous voulez la maintenir en synchronisation avec les autres valeurs.
 
-Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant `useWatch$()` ou `useResource$()`.
+Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) ou [`useResource$()`](/docs/components/resource/index.mdx).
 
-La principale différence entre les deux est que `useWatch$()` permet les effets de bord et l'exécution est sérialisée, tandis que `useResource$()` est asynchrone et plusieurs appels useResource peuvent se produire en parallèle.
+La principale différence entre les deux est que [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/components/resource/index.mdx) est asynchrone et plusieurs appels useResource peuvent se produire en parallèle.
 
-`useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que `useResource$()` a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
+`useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
 
 
-### Exemple de `useWatch$()`
+### Exemple de [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch)
 
 ```tsx
 export default component$(() => {
@@ -248,7 +250,7 @@ export default component$(() => {
 });
 ```
 
-### Exemple de `useResource$()`
+### Exemple de [`useResource$()`](/docs/components/resource/index.mdx)
 
 ```tsx
 export default component$(() => {

@@ -78,7 +78,7 @@ Le fichier `other_component.tsx` peut être importé et utilisé à l'intérieur
 
 Pour renvoyer du HTML pour une route spécifique, vous devez implémenter un composant. Pour les fichiers `.tsx`, le composant doit être exporté comme `default`. Sinon, vous pouvez utiliser l'extension `.mdx` décrite [plus tard](../../../qwikcity/content/mdx/index.mdx).
 
-```typescript
+```tsx
 export default component$(() => {
   return <H1>Hello World!</H1>;
 });
@@ -88,7 +88,7 @@ export default component$(() => {
 
 Qwik City stocke les informations des routes dans des fichiers sur le disque. C'est très bien pour l'ergonomie du développeur mais pas utile pour créer des bundles et des morceaux. De plus, dans certains environnements - comme les fonctions périphériques - il n'y a pas de système de fichier accessible. Pour cette raison, il est nécessaire de sérialiser les informations de route dans un seul fichier. Ceci est fait à travers l'import de `@qwik-city-plan`.
 
-```typescript
+```tsx
 import cityPlan from '@qwik-city-plan';
 ```
 
@@ -98,8 +98,8 @@ L'importation de `@qwik-city-plan` est synthétique, ce qui signifie qu'elle est
 
 Qwik City prend également en charge :
 
-- [Paramètres de route](../../../qwikcity/routing/route-parameters/index.mdx)
-- [Les mises en page imbriquées](../../../qwikcity/layout/overview/index.mdx)
-- [Menus](../../../qwikcity/content/menu/index.mdx)
+- [Paramètres de route](/qwikcity/routing/route-parameters/index.mdx)
+- [Les mises en page imbriquées](/qwikcity/layout/overview/index.mdx)
+- [Menus](/qwikcity/content/menu/index.mdx)
 
 Nous y reviendrons plus tard.

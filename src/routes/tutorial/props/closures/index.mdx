@@ -28,7 +28,7 @@ Un composant peut déclarer un callback dans ses props par :
 - Une propriété qui se termine par `$` (comme dans `goodbye$`).
 - Le type de la propriété est `PropFunction<T>` où `T` est le type de référence différée sur lequel la QRL pointe (signature de fonction)
 
-```typescript
+```tsx
 interface MyComponentProps {
   goodbye$: PropFunction<() => void>;
   hello$: PropFunction<() => void>;

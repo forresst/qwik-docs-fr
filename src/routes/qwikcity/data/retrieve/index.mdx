@@ -26,7 +26,7 @@ Dans une « page », une fonction `onGet` récupère des données (généralemen
 
 Dans cet exemple, la fonction `onGet` renvoie les données du produit qui sont utilisées dans notre composant avec la fonction `useEndpoint()`.
 
-```typescript
+```tsx
 // Fichier : src/routes/product/[skuId]/details/index.tsx
 import type { RequestHandler } from '@builder.io/qwik-city';
 
@@ -50,7 +50,7 @@ export const onGet: RequestHandler<ProductData> = async ({ params }) => {
 
 La fonction `onGet` récupère des données et les met à la disposition du composant en utilisant `useEndpoint()`.
 
-```typescript
+```tsx
 import { Resource, component$, useStore } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
 import { useEndpoint } from "@builder.io/qwik-city";

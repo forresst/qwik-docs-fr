@@ -5,14 +5,14 @@ contributors:
   - adamdbradley
 ---
 
-Utilisez `useWatch$()` pour exécuter une fonction avant le rendu initial et à chaque fois que les valeurs traquées changent. La fonction s'exécute avant le rendu, mais elle ne peut pas retarder le rendu, donc si `useWatch$()` est asynchrone, le rendu aura lieu avant que `useWatch$()` soit complètement exécuté.
+Utilisez [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) pour exécuter une fonction avant le rendu initial et à chaque fois que les valeurs traquées changent. La fonction s'exécute avant le rendu, mais elle ne peut pas retarder le rendu, donc si [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) est asynchrone, le rendu aura lieu avant que [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) soit complètement exécuté.
 
 ## Suivi des modifications apportées aux stores
 
-Le hook `useWatch$()` reçoit une fonction `track()` utilisée pour configurer les abonnements qui relanceront automatiquement le hook `useWatch$()`. L'ensemble des propriétés de `track()` se réinitialise à chaque exécution de `useWatch$()`, il est donc important de toujours utiliser `track()` pour re-configurer les abonnements. Pour cette raison, il est possible que le `useWatch$()` s'abonne à différentes propriétés au fil du temps.
+Le hook [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) reçoit une fonction `track()` utilisée pour configurer les abonnements qui relanceront automatiquement le hook [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch). L'ensemble des propriétés de `track()` se réinitialise à chaque exécution de [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch), il est donc important de toujours utiliser `track()` pour re-configurer les abonnements. Pour cette raison, il est possible que le [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) s'abonne à différentes propriétés au fil du temps.
 
 ## Nettoyage
 
-Le hook `useWatch$()` peut retourner un callback cleanup (NdT « nettoyage »). Ceci est utile pour nettoyer les ressources avant une nouvelle exécution.
+Le hook [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) peut retourner un callback cleanup (NdT « nettoyage »). Ceci est utile pour nettoyer les ressources avant une nouvelle exécution.
 
 ### Exemple

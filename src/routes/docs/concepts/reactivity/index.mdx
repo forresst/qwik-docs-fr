@@ -29,7 +29,7 @@ Qwik utilise les proxies pour quelques raisons :
 
 A cause des contraintes ci-dessus, Qwik utilise des proxies pour garder la trace du graphe de réactivité.
 
-- Utilisez `useStore()` pour créer un proxy de store.
+- Utilisez [`useStore()`](/docs/components/state/index.mdx#usestore) pour créer un proxy de store.
 - Le proxy détecte les lectures et crée des abonnements qui sont sérialisables.
 - Le proxy détecte les écritures et utilise les informations d'abonnement pour invalider les composants concernés.
 

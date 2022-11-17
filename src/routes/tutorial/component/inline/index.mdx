@@ -14,7 +14,7 @@ Qwik charge de manière différée :
 - **Basé sur l'interaction** : Le chargement du code est différé jusqu'à ce qu'un utilisateur interagisse avec un composant.
 - **Bien plus que des composants** : Qwik charge de manière différée n'importe quelle closure, y compris les composants, les écouteurs d'événements, les effets et les comportements.
 
-Le `$` marque une closure comme pouvant être chargée de manière différée. Par exemple, la méthode `component$()` permet de rendre le composant chargeable de manière différée. Quand vous voyez un `$` dans le code de Qwik, vous traversez une zone de chargement différé et vous devez être attentif aux règles spéciales :
+Le `$` marque une closure comme pouvant être chargée de manière différée. Par exemple, la méthode [`component$()`](/docs/components/overview/index.mdx#component) permet de rendre le composant chargeable de manière différée. Quand vous voyez un `$` dans le code de Qwik, vous traversez une zone de chargement différé et vous devez être attentif aux règles spéciales :
 
 - toute variable à portée lexicale doit être déclarée avec `const`.
 - une variable/symbole capturée doit être soit :
@@ -23,6 +23,6 @@ Le `$` marque une closure comme pouvant être chargée de manière différée. P
 
 Si vous voulez vous assurer qu'un composant se charge avec un autre composant, vous devez créer un composant en ligne. Les composants en ligne se chargent comme une partie du composant parent et sont équivalents à la façon dont la plupart des autres frameworks traitent les composants.
 
-Dans cet exemple, les composants `<App>` et `<Greeter>` sont préparés pour vous. Le composant `<Greeter>` est déclaré à l'aide de la méthode `component$()` et est un composant Qwik. Retirez la méthode `component$()` pour convertir `<Greeter>` en un composant en ligne.
+Dans cet exemple, les composants `<App>` et `<Greeter>` sont préparés pour vous. Le composant `<Greeter>` est déclaré à l'aide de la méthode [`component$()`](/docs/components/overview/index.mdx#component)  et est un composant Qwik. Retirez la méthode [`component$()`](/docs/components/overview/index.mdx#component)  pour convertir `<Greeter>` en un composant en ligne.
 
 Ouvrez l'onglet `Symbols` et remarquez que le composant `<Greeter />` n'est plus une exportation indépendante, mais qu'il est plutôt fourni avec le composant `<App>`.

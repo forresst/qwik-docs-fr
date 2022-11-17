@@ -65,7 +65,7 @@ Veuillez vous référer à la documentation de Netlify pour plus d'informations 
 
 Lorsque l'adaptateur `netlify-edge` est ajouté, un nouveau fichier d'entrée sera créé `src/entry.netlify-edge.tsx`. Vous trouverez ci-dessous un exemple d'utilisation du middleware intégré dans le fichier d'entrée.
 
-```typescript
+```tsx
 // src/entry.netlify-edge.tsx
 import { createQwikCity } from '@builder.io/qwik-city/middleware/netlify-edge';
 import qwikCityPlan from '@qwik-city-plan';
@@ -105,7 +105,7 @@ export const onRequest = async ({ platform }) => {
 
 De plus, vous pouvez importer le type `RequestHandlerNetlify` pour avoir des compléments de type dans votre éditeur.
 
-```typescript
+```tsx
 import {type RequestHandlerNetlify} from '@builder.io/qwik-city/middleware/netlify-edge';
 
 export const onGet: RequestHandlerNetlify = (({platform}) => {

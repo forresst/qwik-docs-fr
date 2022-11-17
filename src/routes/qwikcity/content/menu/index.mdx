@@ -14,7 +14,7 @@ contributors:
 Les menus vous permettent de décrire la structure de navigation du site d'une manière simple et déclarative. Les menus se composent de deux étapes :
 
 1. Définition d'un fichier `menu.md` qui contient la structure du menu pour le répertoire dans lequel il se trouve.
-2. Utilisation de la fonction `useContent()` pour récupérer la structure du menu dans un modèle pour le rendu. [Lire la suite ici](../../../qwikcity/api/use-content/index.mdx)
+2. Utilisation de la fonction [`useContent()`](/qwikcity/api/index.mdx#usecontent) pour récupérer la structure du menu dans un modèle pour le rendu. [Lire la suite ici](/qwikcity/api/index.mdx#usecontent)
 
 ## Structure des fichiers
 
@@ -59,7 +59,7 @@ Utilisez `menu.md` pour déclarer la structure du menu.
 
 ## Récupération de la structure du menu
 
-Au moment de l'exécution, tout composant peut récupérer le menu avec le hook `useContent()`. Le type retourné est `ContentMenu`.
+Au moment de l'exécution, tout composant peut récupérer le menu avec le hook [`useContent()`](/qwikcity/api/index.mdx#usecontent). Le type retourné est `ContentMenu`.
 
 L'exemple ci-dessus renverra :
 
@@ -91,9 +91,9 @@ L'exemple ci-dessus renverra :
 
 ## Utilisation de `ContentMenu` dans une mise en page
 
-Bien que `useContent()` peut être invoqué à partir de n'importe quel composant faisant partie de la route actuelle. Il est généralement utilisé dans un composant de mise en page (ou un composant utilisé par la mise en page) pour rendre le menu. Un exemple d'utilisation est présenté ici :
+Bien que [`useContent()`](/qwikcity/api/index.mdx#usecontent) peut être invoqué à partir de n'importe quel composant faisant partie de la route actuelle. Il est généralement utilisé dans un composant de mise en page (ou un composant utilisé par la mise en page) pour rendre le menu. Un exemple d'utilisation est présenté ici :
 
-```typescript
+```tsx
 export default component$(() => {
   const { menu } = useContent();
   const { pathname } = useLocation();
