@@ -27,6 +27,7 @@ La commande précédente met à jour votre appli et définit la configuration co
 Elle ajoute également de nouveaux fichiers dans votre dossier `components`.
 
 **/src/root.tsx**
+
 ```tsx
 import { QwikPartytown } from './components/partytown/partytown';
 
@@ -36,16 +37,14 @@ export default component$(() => {
       <head>
         <meta charSet="utf-8" />
         <QwikPartytown forward={["dataLayer.push"]} />;
-
         <script
-        async
-        type="text/partytown"
-        src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
-        />;
-
+          async
+          type="text/partytown"
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
+        />
+        ;
       </head>
-      <body lang="en">
-      </body>
+      <body lang="en"></body>
     </QwikCityProvider>
   );
 });

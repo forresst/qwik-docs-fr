@@ -24,6 +24,7 @@ Qwik est résumable. La résumabilité signifie que l'application démarre sur l
 ## Quand est-ce que `useClientEffect$()` est exécuté ?
 
 Le code de l'effet client est exécuté après que le composant a été résumé. La méthode `useClientEffect$()` prend un argument supplémentaire (`{eagerness:'visible|load|idle'}`) qui contrôle quand l'effet est exécuté. Il existe trois options :
+
 - `visible` (par défaut) : Exécute l'effet lorsque le composant devient visible. Cette option est préférable car elle retarde l'exécution de l'effet jusqu'à ce que le composant soit visible plutôt que de l'exécuter par avance au démarrage de l'application (nous essayons de minimiser la quantité de code que l'application exécute au démarrage).
 - `load` : Exécute le code dès que possible. C'est généralement juste après l'événement `DOMContentLoaded`.
 - `idle` : Exécuter le code lorsque le prochain callback de l'idle est déclenché.

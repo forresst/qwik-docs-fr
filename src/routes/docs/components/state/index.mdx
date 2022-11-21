@@ -10,6 +10,7 @@ contributors:
   - RATIU5
   - manucorporat
 ---
+
 # État
 
 La gestion de l'état est une partie importante de toute appli. Dans Qwik, nous pouvons différencier deux types d'état, réactif et statique.
@@ -23,7 +24,6 @@ Il est important de noter que l'état dans Qwik n'est pas un état de composant,
 `const signal = useSignal(initialState)` est un hook qui crée un signal réactif. Il prend une valeur initiale et renvoie un signal réactif.
 
 Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété `signal.value`. Si vous modifiez une propriété de valeur de l'objet, tout composant qui en dépend sera mis à jour.
-
 
 ### Exemple
 
@@ -40,18 +40,15 @@ export default component$(() => {
     </>
   );
 });
-
 ```
 
 Dans l'exemple ci-dessus, le composant App utilise `useSignal()` pour créer un signal. Le signal est ensuite utilisé pour suivre le compteur.
 
 En accédant simplement à la propriété `count.value`, le composant sera mis à jour si la valeur du signal change, lorsque la propriété est modifiée dans le gestionnaire de clic.
 
-
 ## `useStore()`
 
 Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale, pensez à un store comme un signal à valeurs multiples, ou un objet composé de plusieurs signaux.
-
 
 `const reactive = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial comme paramètre, et retourne un objet réactif.
 
@@ -75,7 +72,6 @@ export default component$(() => {
     </>
   );
 });
-
 ```
 
 Dans l'exemple ci-dessus, le composant App utilise [`useStore()`](/docs/components/state/index.mdx#usestore) pour créer un objet réactif. Cet objet est ensuite utilisé pour garder le suivi du compteur. Le compteur est ensuite affiché dans le composant.
@@ -93,13 +89,13 @@ import { component$, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
   const store = useStore({
-    nested: { fields: { are: "not tracked" }}
-  })
+    nested: { fields: { are: 'not tracked' } },
+  });
 
   return (
     <>
       <p>{store.nested.fields.are}</p>
-      <button onClick$={() => store.nested.fields.are = "tracked"}>Click me</button>
+      <button onClick$={() => (store.nested.fields.are = 'tracked')}>Click me</button>
     </>
   );
 });
@@ -115,14 +111,17 @@ Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argumen
 
 ```tsx
 export default component$(() => {
-  const store = useStore({
-    nested: { fields: { are: "not tracked" }}
-  }, { recursive: true })
+  const store = useStore(
+    {
+      nested: { fields: { are: 'not tracked' } },
+    },
+    { recursive: true }
+  );
 
   return (
     <>
       <p>{store.nested.fields.are}</p>
-      <button onClick$={() => store.nested.fields.are = "tracked"}>Click me</button>
+      <button onClick$={() => (store.nested.fields.are = 'tracked')}>Click me</button>
     </>
   );
 });
@@ -134,19 +133,29 @@ Maintenant, le composant sera mis à jour comme prévu. Cela permettra égalemen
 import { component$, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
-  const store = useStore({
-    letters: ["A", "B", "C"]
-  }, { recursive: true })
+  const store = useStore(
+    {
+      letters: ['A', 'B', 'C'],
+    },
+    { recursive: true }
+  );
 
   return (
     <>
-      {store.letters.map(letter => <p>{letter}</p>)}
-      <button onClick$={() => { store.letters[2] = "Z"}}>Click me</button>
+      {store.letters.map((letter) => (
+        <p>{letter}</p>
+      ))}
+      <button
+        onClick$={() => {
+          store.letters[2] = 'Z';
+        }}
+      >
+        Click me
+      </button>
     </>
   );
 });
 ```
-
 
 ## Transmission d'un store à d'autres composants
 
@@ -225,14 +234,13 @@ La principale différence entre les deux est que [`useWatch$()`](/docs/component
 
 `useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
 
-
 ### Exemple de [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch)
 
 ```tsx
 export default component$(() => {
   const state = useStore({
     count: 0,
-    doubleCount: 0
+    doubleCount: 0,
   });
 
   useWatch$(({ track }) => {
@@ -279,26 +287,22 @@ Les notions de [useWatch](../lifecycle/index.mdx#usewatch) et de [useResource](.
 
 Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l'état seront mis à jour. C'est un énorme gain de performance, car seuls les composants qui ont besoin d'être mis à jour le seront.
 
-
 ## `noSerialize()`
 
 Parfois, vous souhaitez stocker une valeur dans l'état, mais vous ne voulez pas qu'elle soit sérialisée. Ceci est utile pour stocker des valeurs qui ne sont pas sérialisables, comme les fonctions ou les classes.
 
 ```tsx
-import {component$, useStore, noSerialize} from '@builder.io/qwik';
+import { component$, useStore, noSerialize } from '@builder.io/qwik';
 
 export const App = component$(() => {
   const state = useStore({
-    monacoInstance: null
+    monacoInstance: null,
   });
 
   useClientEffect$(() => {
     // Monaco n'est pas sérialisable, donc nous ne pouvons pas le stocker dans l'état en utilisant `noSerialize()`
     state.monacoInstance = noSerialize(new Monaco());
   });
-  return (
-    <>
-    </>
-  );
+  return <></>;
 });
 ```

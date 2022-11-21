@@ -22,7 +22,6 @@ Le tableau `headings` contient des données sur les éléments de titre html `<h
 
 Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Voir [définition du fichier menu](/qwikcity/content/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
 
-
 # `useDocumentHead()`
 
 Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du head du document.
@@ -35,7 +34,6 @@ Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du h
 - modifier la balise `style` dans `<head>`.
 
 La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<Head>`, pour créer les éléments internes dans `document.head`.
-
 
 # `useLocation()`
 
@@ -89,7 +87,6 @@ Le code ci-dessus génère :
 
 > Notez que `useLocation` est une API en lecture seule, vous ne devriez jamais essayer de modifier les valeurs de l'objet `loc` retourné. Consultez plutôt l'API `useNavigate()`.
 
-
 ## `useNavigate()`
 
 La fonction `useNavigate()` permet de naviguer de manière programmée vers la page suivante sans impliquer un clic de l'utilisateur ou provoquer un rechargement complet de la page. Il s'agit de l'API utilisée par le composant `<Link>` en interne pour prendre en charge la navigation SPA.
@@ -119,7 +116,6 @@ export default component$(() => {
 ```
 
 Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/dashboard` sans causer un rechargement de la page.
-
 
 ## `useEndpoint()`
 
@@ -228,13 +224,13 @@ import { Link } from '@builder.io/qwik-city';
 export default component$(() => {
   return (
     <div>
-      <a href="/docs" class="my-link">rechargement complet de la page</a>
-      <Link href="/docs" class="my-link">navigation spa</Link>
+      <a href="/docs" class="my-link">
+        rechargement complet de la page
+      </a>
+      <Link href="/docs" class="my-link">
+        navigation spa
+      </Link>
     </div>
-  )
+  );
 });
 ```
-
-
-
-

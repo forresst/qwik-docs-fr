@@ -115,14 +115,9 @@ export const Cmp = component$(() => {
     // Ce code ne sera exécuté qu'une seule fois UNIQUEMENT dans le navigateur, lorsque le composant sera monté.
     store.option = localStorage.getItem('option');
   });
-  return (
-    <>
-      Localstore: {store.option}
-    </>
-  );
+  return <>Localstore: {store.option}</>;
 });
 ```
-
 
 ## `useWatch$()`
 
@@ -169,13 +164,11 @@ L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements 
 
 > Voir aussi le hook `useClientEffect$()` qui partage une sémantique similaire mais qui ne s'exécute sur le client qu'après le rendu.
 
-
 ### Quand utiliser `useWatch$()`
 
 Vous voulez faire muter un état, ou effectuer une action quand un état change. En d'autres termes, vous devez avoir des effets secondaires.
 
 > Veuillez noter que si vous voulez charger des données (par exemple un fetch()), pour les utiliser plus tard dans votre composant, consultez [`useResource$()`](/docs/components/resource/index.mdx). Cette API sera encore plus efficace en utilisant le streaming SSR et le parallélisme.
-
 
 ## `useClientEffect$()`
 
@@ -190,7 +183,7 @@ Pour tous les composants qui ont été montés pendant le SSR (dans le serveur),
 
 ```tsx
 useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
-  eagerness: 'visible' // 'load' | 'visible' | 'idle'
+  eagerness: 'visible', // 'load' | 'visible' | 'idle'
 });
 ```
 
@@ -235,32 +228,31 @@ Vous devez exécuter le JS au moment du chargement de la page, même si l'utilis
 - Lire des `localStorage`
 - Exécuter du code sans interaction de l'utilisateur
 
-
 ## Diagramme de flux
 
-<img src={diagram}/>
+<img src={diagram} />
 
 ## Règles de la méthode d'utilisation
 
 Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règles suivantes :
 
-  - Ils ne peuvent être appelés que dans `component$`
-  - Ils ne peuvent être appelés qu'au niveau de la racine d'une fonction / du contexte de la fonction fléchée, et non à l'intérieur de branches ou de blocs conditionnels.
-  - Ils ne peuvent être appelés qu'à partir d'une autre méthode `use*$`, ce qui permet de faire des compositions.
+- Ils ne peuvent être appelés que dans `component$`
+- Ils ne peuvent être appelés qu'au niveau de la racine d'une fonction / du contexte de la fonction fléchée, et non à l'intérieur de branches ou de blocs conditionnels.
+- Ils ne peuvent être appelés qu'à partir d'une autre méthode `use*$`, ce qui permet de faire des compositions.
 
 ```tsx
-useHook() // <-- ❌ ne fonctionne pas
+useHook(); // <-- ❌ ne fonctionne pas
 
 export default component$(() => {
-  useCustomHook() // <-- ✅ fonctionne
+  useCustomHook(); // <-- ✅ fonctionne
   if (condition) {
-    useHook() // <-- ❌ ne fonctionne pas
+    useHook(); // <-- ❌ ne fonctionne pas
   }
-  const myQrl = $(() => useHook()) // <-- ❌ ne fonctionne pas
-  return <button onClick$={() => useHook()}></button> // <-- ❌ ne fonctionne pas
-})
+  const myQrl = $(() => useHook()); // <-- ❌ ne fonctionne pas
+  return <button onClick$={() => useHook()}></button>; // <-- ❌ ne fonctionne pas
+});
 
 const useCustomHook = () => {
-  useHook() // <-- ✅ fonctionne
-}
+  useHook(); // <-- ✅ fonctionne
+};
 ```

@@ -30,11 +30,11 @@ Dans l'exemple ci-dessus, l'implémentation de l'écouteur `click` est simple. M
 Vous pouvez également transmettre des QRL comme valeurs pour les écouteurs d'événements. Par exemple, l'exemple ci-dessus pourrait également être écrit de la manière suivante :
 
 ```tsx
-import { component$, useStore, $ } from "@builder.io/qwik";
+import { component$, useStore, $ } from '@builder.io/qwik';
 
 export const Counter = component$(() => {
   const store = useStore({ count: 0 });
-  const incrementCount = $(() => store.count++)
+  const incrementCount = $(() => store.count++);
 
   return <button onClick$={incrementCount}>{store.count}</button>;
 });
@@ -153,6 +153,7 @@ export const CmpButton = component$((props: CmpButtonProps) => {
 Remarquez que nous pouvons passer la méthode `props.onClick$` directement à l'attribut `onDblclick$` tel que nous le voyons sur l'élément `<button>` (voir l'attribut `onDblclick$={props.onClick$}`). Cela s'explique par le fait que l'attribut de saisie `onClick$` ainsi que l'attribut JSX `onDblclick` sont tous deux de type `PropFunction<?>` (et ont tous deux le suffixe `$`).
 
 Cependant, il n'est pas possible de passer `props.onClick$` à `onClick$` car les types ne correspondent pas. (Il en résulterait l'erreur de type : `onClick$={props.onClick$}`). Au lieu de cela, le `$` est réservé aux closures en ligne. Dans notre exemple, nous aimerions faire `console.log("clicked")` après avoir traité le callback `props.onClick`. Nous pouvons le faire avec la méthode `props.onClick$()`. Cette méthode permettra :
+
   1. de charger le code de manière différée
   2. de restaurer l'état de la closure
   3. d'appeller la closure

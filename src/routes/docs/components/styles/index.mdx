@@ -7,13 +7,15 @@ contributors:
 # Styles
 
 ## Styles globaux
+
 De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront chargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
 
 ```tsx
-import './global.css'
+import './global.css';
 ```
 
 ## Styles critiques en ligne
+
 Pour réduire le temps de blocage de la première représentation, Vite peut [mettre en ligne les styles critiques](https://vitejs.dev/guide/features.html#disabling-css-injection-into-the-page) pour la vue courante. Cela signifie que le navigateur n'aura pas besoin de charger séparément les fichiers `*.css` référencés. Pour dire à Vite de mettre les styles en ligne, il suffit d'ajouter le paramètre de requête `?inline` à l'importation.
 
 ```tsx
@@ -47,14 +49,14 @@ Ce qui est nécessaire, c'est de charger les styles indépendamment du composant
 2. Le composant est rendu sur le client pour la première fois. Dans ce cas, le nouveau composant n'a pas de styles dans le `<head>` car le composant ne faisait pas partie du SSR.
    - L'ajout d'un nouveau composant qui ne faisait pas partie du SSR nécessite que les styles soient chargés et insérés dans le `<head>`.
 
-
 ## `useStyles$()`
+
 Une référence chargée de manière différée pour les styles du composant.
 
 Les styles de composants permettent à Qwik de charger de manière différée les informations de style pour le composant seulement quand cela est nécessaire. (Et d'éviter de les charger deux fois en cas d'hydratation du SSR).
 
 ```tsx
-import {useStyles$} from '@builder.io/qwik';
+import { useStyles$ } from '@builder.io/qwik';
 import styles from './code-block.css?inline';
 
 export const CmpStyles = component$(() => {
@@ -71,12 +73,13 @@ export const CmpStyles = component$(() => {
 ```
 
 ## `useStylesScope$`
+
 Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/components/styles/index.mdx#usestyles).
 Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. 
 Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style. Veuillez noter que vous devez ajouter `?inline` à votre importation de styles.
 
 ```tsx
-import {useStylesScoped$} from '@builder.io/qwik';
+import { useStylesScoped$ } from '@builder.io/qwik';
 import styles from './code-block.css?inline';
 
 export const CmpStyles = component$(() => {
@@ -93,8 +96,11 @@ export const CmpStyles = component$(() => {
 ```
 
 ## Préprocesseurs
+
 ### `.scss`, `.sass`, `.less`, `.styl`, `.stylus`
+
 Vite fonctionne bien avec de nombreux préprocesseurs. Assurez-vous simplement que vous installez les [plugins](https://vitejs.dev/guide/features.html#css-pre-processors) requis.
 
 ### Tailwind
+
 Pour utiliser Tailwind dans votre appli, suivez ces [instructions](../../../qwikcity/integrations/tailwind).

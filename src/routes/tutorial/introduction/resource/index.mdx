@@ -45,12 +45,12 @@ Utilisez `<Resource>` pour afficher les données de la fonction [`useResource$()
 Sur le serveur, `<Resource>` ne rend pas l'état `loading`, au lieu de cela, il met en pause le rendu jusqu'à ce que la ressource soit résolue et rendra toujours soit `resolved` soit `rejected`. (Sur le client, `<Resource>` rend tous les états, y compris `pending`).
 
 ```jsx
-  <Resource
-     value={resourceToRender}
-     onPending={() => <div>Chargement...</div>}
-     onRejected={(reason) => <div>Erreur : {reason}</div>}
-     onResolved={(data) => <div>{data}</div>}
-  />
+<Resource
+  value={resourceToRender}
+  onPending={() => <div>Chargement...</div>}
+  onRejected={(reason) => <div>Erreur : {reason}</div>}
+  onResolved={(data) => <div>{data}</div>}
+/>
 ```
 
 ## SSR vs Client

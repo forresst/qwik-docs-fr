@@ -14,9 +14,9 @@ Les slots permettent à un composant de traiter les enfants JSX du composant com
 
 Ce concept porte des noms différents selon les frameworks :
 
- - Dans Angular, on l'appelle la projection de contenu.
- - Dans React, c'est le `children` des props
- - Dans Vue, et les composants web, il est aussi appelé slots.
+- Dans Angular, on l'appelle la projection de contenu.
+- Dans React, c'est le `children` des props
+- Dans Vue, et les composants web, il est aussi appelé slots.
 
 Les slots dans Qwik sont symboliques, permettant à Qwik de rendre les parents et les enfants avec une isolation parfaite, permettant de rendre le composant parent sans jamais rendre les enfants et vice versa.
 
@@ -41,14 +41,14 @@ export const Button = component$(() => {
 Le composant `<Slot>` est un espace réservé pour les enfants du composant. Le composant `<Slot>` sera remplacé par les enfants du composant, lors du rendu de l'appli.
 
 Voyons l'utilisation de ce composant :
+
 ```tsx
 <Button>
   {... il sera placé là où le <Slot> est utilisé à l'intérieur du composant Button ...}
 </Button>
 ```
 
-
-### Slots nommés
++### Slots nommés
 
 Le composant `Slot` peut être utilisé plusieurs fois dans le même composant, à condition qu'il ait une propriété `name` différente :
 
@@ -59,11 +59,11 @@ export const Button = component$(() => {
   return (
     <button>
       <div>
-        <Slot name="start"/>  {/* slot "start" */}
+        <Slot name="start" />  {/* slot "start" */}
       </div>
       <Slot /> {/* slot par défaut */}
       <div>
-        <Slot name="end"/> {/* slot "end" */}
+        <Slot name="end" /> {/* slot "end" */}
       </div>
     </button>
   );
@@ -78,7 +78,6 @@ Maintenant, lorsque nous consommons le composant `<Button>`, nous pouvons passer
   <div>Par défaut</div>
   <div q:slot="end">Fin</div>
   <icon q:slot="end"></icon>
-
 </Button>
 ```
 
@@ -105,7 +104,6 @@ Notez que :
 - Si `q:slot` n'est pas spécifié ou si c'est une chaîne vide, le contenu sera projeté dans le `<Slot>` par défaut, c'est-à-dire le `<Slot>` sans la propriété `name`.
 - Les attributs multiples `q:slot="end"` permettent de fusionner des éléments dans la projection du contenu.
 
-
 ### Ne pas projeter le contenu
 
 Qwik conserve tout le contenu autour, même s'il n'est pas projeté. C'est parce que le contenu pourrait être projeté plus tard.
@@ -131,7 +129,6 @@ Cela donne :
 ```
 
 Remarquez que le contenu non projeté est déplacé dans un `<q:template>` inerte. Ceci est fait juste au cas où le composant `Project` effectue un nouveau rendu et insère un `<Slot>`. Dans ce cas, nous ne voulons pas avoir à refaire le rendu du composant parent juste pour générer le contenu projeté. En persistant le contenu non projeté lorsque le parent est initialement rendu, le rendu des deux composants peut rester indépendant.
-
 
 ### Projection non valide
 
@@ -172,9 +169,8 @@ Pour que les deux composants aient un cycle de vie indépendant, la projection d
 
 Avec l'approche `children`, le composant peut impérativement modifier les `children` de manière infinie. Cela rendrait extrêmement difficile la construction d'un framework qui ne forcerait pas à la fois le re-rendu du parent et des enfants.
 
-
-
 ## Exemple avancé
+
 Un exemple de composant pliable qui projette son contenu de manière conditionnelle.
 
 ```tsx

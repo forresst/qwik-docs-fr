@@ -40,7 +40,6 @@ npm run build
 
 [Lisez le guide complet ici](https://github.com/BuilderIO/qwik/blob/main/starters/adaptors/netlify-edge/README.md)
 
-
 ## Déploiement pour le dev
 
 Pour déployer l'application pour le développement :
@@ -51,13 +50,11 @@ npm run deploy
 
 Notez que vous pouvez avoir besoin d'un [compte Netlify](https://docs.netlify.com/get-started/) afin de compléter cette étape !
 
-
 ## Déploiement de la production
 
 Après avoir installé l'intégration en utilisant `npm run qwik add`. Le projet est prêt à être déployé sur Netlify. Cependant, vous devrez créer un dépôt git et y pousser le code.
 
 Veuillez vous référer à la documentation de Netlify pour plus d'informations sur la façon de déployer votre site : [docs de Netlify](https://docs.netlify.com/site-deploys/create-deploys/)
-
 
 ## Avancé
 
@@ -92,40 +89,38 @@ Pour remplacer le manifeste généré, vous pouvez [ajouter une déclaration](ht
   function = "auth"
 ```
 
-
 ### Contexte
 
 Le [contexte Netlify](https://docs.netlify.com/edge-functions/api/#netlify-specific-context-object) est disponible dans le paramètre `platform` :
 
 ```javascript
 export const onRequest = async ({ platform }) => {
-  platform.log('requested ip:', platform.ip)
+  platform.log('requested ip:', platform.ip);
 };
 ```
 
 De plus, vous pouvez importer le type `RequestHandlerNetlify` pour avoir des compléments de type dans votre éditeur.
 
 ```tsx
-import {type RequestHandlerNetlify} from '@builder.io/qwik-city/middleware/netlify-edge';
+import { type RequestHandlerNetlify } from '@builder.io/qwik-city/middleware/netlify-edge';
 
-export const onGet: RequestHandlerNetlify = (({platform}) => {
- //...
-})
+export const onGet: RequestHandlerNetlify = ({ platform }) => {
+  //...
+};
 ```
 
 ### Variables d'environnement
 
 ```javascript
 export const onRequest = async ({ platform }) => {
-  platform.log('Vite env read from .dev file', import.meta.env.VITE_DEV)
-  platform.log('netlify serverless env read from Netlify UI or CLI', Deno.env.toObject())
-  return {}
+  platform.log('Vite env read from .dev file', import.meta.env.VITE_DEV);
+  platform.log('netlify serverless env read from Netlify UI or CLI', Deno.env.toObject());
+  return {};
 };
 ```
 
 - [Variables d'environnement de Netlify](https://docs.netlify.com/environment-variables/overview/#environment-variable-options)
 - [Source du Middleware de Netlify Edge](https://github.com/BuilderIO/qwik/blob/main/packages/qwik-city/middleware/netlify-edge/index.ts)
-
 
 ### Migration
 

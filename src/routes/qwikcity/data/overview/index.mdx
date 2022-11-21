@@ -45,15 +45,14 @@ Les fonctions de traitement des requêtes reçoivent un argument `RequestEvent` 
 | `cookie`   | Obtenir et définir des cookies.                                                                    |
 | `platform` | Objet de données de plateforme (utile pour Cloudflare, Netlify, etc.)                              |
 
-
 ### Cookie
 
 ```tsx
 interface Cookie {
-  get: (key: string) => CookieValue | null,
-  set: (key: string, value: string | number | Record<string, any>, options?: CookieOptions) => void,
-  delete: (key: string) => void,
-  has: (key: string) => boolean
+  get: (key: string) => CookieValue | null;
+  set: (key: string, value: string | number | Record<string, any>, options?: CookieOptions) => void;
+  delete: (key: string) => void;
+  has: (key: string) => boolean;
 }
 ```
 
@@ -72,9 +71,10 @@ interface CookieValue {
 ```
 
 Une valeur de cookie est un enregistrement simple comportant trois champs :
-  1. `value` : Contient la valeur du cookie sous forme de chaîne
-  2. `json()` : Exécute `JSON.parse()` sur la valeur et renvoie le résultat
-  3. `number()` : Exécute `Number()` sur la valeur et renvoie le résultat
+
+1. `value` : Contient la valeur du cookie sous forme de chaîne
+2. `json()` : Exécute `JSON.parse()` sur la valeur et renvoie le résultat
+3. `number()` : Exécute `Number()` sur la valeur et renvoie le résultat
 
 **set**
 
@@ -101,19 +101,19 @@ Pour plus d'informations sur ces attributs et leurs valeurs, veuillez consulter 
 Ajoute une entête avec la clé fournie au cookie. La nouvelle entête aura une date d'expiration dans le champ `expires`, indiquant aux navigateurs de la supprimer.
 
 ```tsx
-cookie.delete('my-cookie')
+cookie.delete('my-cookie');
 ```
 
 Équivalent à un appel :
 
 ```tsx
-cookie.set('my-cookie', 'deleted', new Date(0))
+cookie.set('my-cookie', 'deleted', new Date(0));
 ```
 
 En option, vous pouvez définir le chemin et/ou le domaine lors de la suppression du cookie. Si votre cookie a été créé avec un chemin/domaine, vous devez définir ces champs pour que la suppression prenne effet.
 
 ```tsx
-cookie.delete('my-cookie', { domain: 'https://qwik.builder.io', path: '/docs/'})
+cookie.delete('my-cookie', { domain: 'https://qwik.builder.io', path: '/docs/' });
 ```
 
 **has**
@@ -123,5 +123,5 @@ Une méthode pratique qui renvoie true ou false en fonction de la présence de l
 Équivalent à l'appel :
 
 ```tsx
-!!cookie.get('my-cookie')
+!!cookie.get('my-cookie');
 ```

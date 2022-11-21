@@ -11,15 +11,18 @@ L'internationalisation est un problème complexe. Qwik ne résout pas directemen
 ## Traduction à l'exécution vs à la compilation
 
 À un niveau élevé, il existe deux façons de résoudre le problème de la traduction :
+
 - Au moment de l'exécution : charger une map de traduction et rechercher les traductions au moment de l'exécution.
 - Au moment de la compilation : faire en sorte qu'une étape de compilation intègre les traductions dans la chaîne de sortie.
 
 Ces deux approches présentent des inconvénients qu'il convient de prendre en considération.
 
 Les avantages de l'approche à l'exécution sont les suivants :
+
 - Simplicité. Ne nécessite pas d'étape de construction supplémentaire.
 
 Les inconvénients de l'approche à l'exécution sont les suivants :
+
 - Chaque chaîne est présente en triple exemplaire :
   1. Une fois comme chaîne originale dans le code.
   2. Une fois en tant que clé dans une map de traduction.
@@ -28,10 +31,12 @@ Les inconvénients de l'approche à l'exécution sont les suivants :
 - Il y a un coût d'exécution pour les recherches de traduction.
 
 Les avantages de l'approche à la compilation sont :
+
 - Le chargement différé du code de Qwik s'étend maintenant au chargement différé des chaînes de traduction. (Aucun texte de traduction inutile n'est chargé)
 - Pas de map de traduction à l'exécution signifie que les chaînes ne sont pas en triple exemplaire.
 
 Les inconvénients de l'approche à la compilation sont :
+
 - Étape de construction supplémentaire.
 - Le changement de langue nécessite un rechargement de la page.
 

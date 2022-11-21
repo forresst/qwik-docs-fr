@@ -45,7 +45,6 @@ Vous trouverez ci-dessous un HTML simple avec Qwikloader et un bouton avec le co
 4. Le Qwikloader utilise les attributs `on:click` et `q:base` ainsi que le `document.baseURI` pour construire une URL complète permettant de récupérer le gestionnaire chargé de manière différée. En supposant que la page originale a été servie à partir de `http://localhost/`, l'URL de récupération devient `http://localhost/build/myHandler.js`.
 5. Qwikloader récupère le symbole `clickHandler`, exporté de `http://localhost/build/myHandler.js` et l'invoque.
 
-
 ## Événements et qwikloader
 
 L'enregistrement de l'écouteur crée deux problèmes dans le contexte du SSR/SSG que Qwik doit résoudre. (Pour le contexte, rappelez-vous que Qwik est résumable, c'est à dire qu'il peut continuer à exécuter l'application à partir de l'endroit où le serveur a fait une pause sans être forcé de charger et d'exécuter du code par avance).
@@ -64,4 +63,3 @@ Qwik sérialise les écouteurs d'événements dans le DOM sous la forme de [QRL]
 ```
 
 La chose critique à remarquer est que Qwik a généré un attribut `on:click`, contenant la valeur `./chunk-a.js#Counter_button_onClick[0]`. Dans l'exemple ci-dessus, l'attribut `on:click` résout le problème de localisation de l'écouteur, et la valeur de l'attribut résout le problème de localisation du code de l'écouteur. En sérialisant les écouteurs dans le HTML, les applications Qwik n'ont pas besoin d'effectuer l'hydratation au démarrage.
-
