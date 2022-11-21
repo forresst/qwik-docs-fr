@@ -1,13 +1,13 @@
 ---
-title: useSignal() Hook
+title: Hook useSignal()
 contributors:
   - manucorporat
   - adamdbradley
 ---
 
-Use `useSignal()` to store any single value similar to `useStore()`. `useSignal` is heavely optimized when it comes to re-rendering components. It is able to skip re-renderings of parent components even when the signal itself is defined in the parent. `useSignal` works with all [primitve types](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) as well as with not nested / flat objects. If you need to store arrays or complex objects use [useStore](../../../docs/components/state/index.mdx) instead with the `{recursive: true}` option.
+Utilisez `useSignal()` pour stocker une valeur unique, de la même manière que `useStore()`. `useSignal` est extrêmement optimisé lorsqu'il s'agit de re-rendre les composants. Il est capable d'ignorer le rendu des composants parents même si le signal lui-même est défini dans le parent. `useSignal` fonctionne avec tous les [types de primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) ainsi qu'avec les objets non imbriqués / plats. Si vous avez besoin de stocker des tableaux ou des objets complexes, utilisez [useStore](../../../docs/components/state/index.mdx) à la place avec l'option `{recursive : true}`.
 
-Some examples would be:
+Voici quelques exemples :
 
 ```
 const intStore = useSignal(0);
@@ -15,7 +15,7 @@ const stringStore = useSignal('foo');
 const booleanStore = useSignal(true);
 const objectStore = useSignal({fruite: 'apple', color: 'green'});
 
-// DON'T DO THIS!
+// NE FAITES PAS CELA !
 const arrayStore = useSignal(['banana','oranges']);
 const nestedObjectStore = useSignal({
   fruits: {
@@ -29,22 +29,22 @@ const nestedObjectStore = useSignal({
 );
 ```
 
-To read or update the values you can simple access the `value` property:
+Pour lire ou mettre à jour les valeurs, vous pouvez simplement accéder à la propriété `value` :
 
 ```
 <>
-  <button onClick$={() => intStore.value++}>Click me</button>
+  <button onClick$={() => intStore.value++}>Cliquez-moi</button>
   <div>{intStore.value}</div>
 </>
 ```
 
-It is also able to hold a reference of a DOM element created by the component.
+Il est également capable de contenir une référence sur un élément DOM créé par le composant.
 
-There are two parts to retrieving a DOM element reference:
+La récupération d'une référence d'élément DOM se fait en deux temps :
 
-1. `useSignal()` returns a store object that contains a `value` property which will eventually contain the reference.
-2. `ref={_ref_variable_}` is a prop binding that will set the `value` property of the `ref` object to the DOM element.
+1. `useSignal()` retourne un objet store qui contient une propriété `value` qui contiendra éventuellement la référence.
+2. `ref={_ref_variable_}` est une liaison prop qui va définir la propriété `value` de l'objet `ref` sur l'élément DOM.
 
-### Example
+### Exemple
 
-The example on the right uses `useSignal()` to get a reference to the `input` element. However, it is missing the `ref` prop binding. Add the `ref` prop binding to make the example work as expected.
+L'exemple ci-contre utilise `useSignal()` pour obtenir une référence à l'élément `input`. Cependant, il lui manque la liaison prop `ref`. Ajoutez la liaison prop `ref` pour que l'exemple fonctionne comme prévu.

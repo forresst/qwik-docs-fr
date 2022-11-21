@@ -4,7 +4,7 @@ export default component$(() => {
   const store = useStore({ name: '' });
   return (
     <>
-      Enter your name followed by the enter key:{' '}
+      Entrez votre nom, puis appuyez sur la touche Entrée :{' '}
       <input
         onInput$={$(async (event: KeyboardEvent) => {
           const input = event.target as HTMLInputElement;
