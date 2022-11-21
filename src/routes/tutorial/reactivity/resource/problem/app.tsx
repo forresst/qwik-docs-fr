@@ -6,6 +6,8 @@ export default component$(() => {
     org: 'BuilderIO',
   });
 
+  // Utilisez la fonction useResource$() pour définir la manière dont les données sont récupérées sur le serveur.
+  // Voir l'exemple de récupération des données dans le texte de gauche.
   const reposResource = useResource$<string[]>(({ track, cleanup }) => {
     // Nous avons besoin d'un moyen de relancer la recherche de données chaque fois que `github.org` change.
     // Utilisez `track` pour déclencher la ré-exécution de cette fonction de récupération de données.
@@ -32,11 +34,9 @@ export default component$(() => {
         />
       </span>
       <div>
-        <Resource
-          value={reposResource}
-          onPending={() => <>Chargement...</>}
-          onRejected={(error) => <>Erreur : {error.message}</>}
-          onResolved={(repos) => (
+        {/* Utilisez <Resource> pour afficher les données de la fonction useResource$(). */}
+        {/* Pour vous aider, voici une fonction callback pour afficher les données lors de la résolution. */}
+        {/* (repos) => (
             <ul>
               {repos.map((repo) => (
                 <li>
@@ -44,8 +44,7 @@ export default component$(() => {
                 </li>
               ))}
             </ul>
-          )}
-        />
+          ) */}
       </div>
     </div>
   );

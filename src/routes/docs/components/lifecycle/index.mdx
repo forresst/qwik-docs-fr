@@ -95,6 +95,35 @@ export function User(props: { user: User }) {
 }
 ```
 
+## `useClientMount$()`
+
+- **Déclencheur :** montage du composant
+- **Quand :** avant le rendu et les ressources
+- **Nombre de fois :** une seule fois par instance de composant
+- **Platforme :** navigateur uniquement
+
+`useClientMount$()` enregistre un hook monté sur le client qui s'exécute uniquement sur le navigateur lorsque le composant est monté pour la première fois.
+
+### Exemple
+
+```tsx
+export const Cmp = component$(() => {
+  const store = useStore({
+    option: string,
+  });
+  useClientMount$(() => {
+    // Ce code ne sera exécuté qu'une seule fois UNIQUEMENT dans le navigateur, lorsque le composant sera monté.
+    store.option = localStorage.getItem('option');
+  });
+  return (
+    <>
+      Localstore: {store.option}
+    </>
+  );
+});
+```
+
+
 ## `useWatch$()`
 
 - **Déclencheur :** montage du composant et sur les changements d'état traqués
@@ -157,11 +186,11 @@ Vous voulez faire muter un état, ou effectuer une action quand un état change.
 
 Similaire à `useWatch$()` ou `useMount$()`, ce hook sera également exécuté au moins une fois, mais il ne sera jamais exécuté sur le serveur, c'est-à-dire qu'il ne sera exécuté que dans le navigateur.
 
-Pour tous les composants qui ont été montés pendant le SSR (dans le serveur), la fonction `useClientEffect$()` s'exécutera par avance, c'est-à-dire sans interaction de l'utilisateur, mais cette exécution par avance (eagarness) peut être configurée !
+Pour tous les composants qui ont été montés pendant le SSR (dans le serveur), la fonction `useClientEffect$()` s'exécutera par avance, c'est-à-dire sans interaction de l'utilisateur, mais cette exécution par avance (eagerness) peut être configurée !
 
 ```tsx
 useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
-  eagarness: 'visible' // 'load' | 'visible' | 'idle'
+  eagerness: 'visible' // 'load' | 'visible' | 'idle'
 });
 ```
 
