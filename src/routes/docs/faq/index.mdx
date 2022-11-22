@@ -141,7 +141,7 @@ Cela dépend. Pour le SPA, la plupart des coûts sont réglés en amont, en char
 
 Cela dépend, le MPA est extrêmement rapide à charger, car il n'a pas besoin de charger beaucoup de JS, mais lorsque l'utilisateur navigue, cela signifie généralement un rechargement complet de la page.
 
-Un rechargement complet de la page est généralement super rapide, car les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche SPA ne convient pas à tout le monde, car il est parfois idéal de conserver l'état entre les navigations, et SPA le fait très bien.
+Un rechargement complet de la page est généralement super rapide, car les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche MPA ne convient pas à tout le monde, car il est parfois idéal de conserver l'état entre les navigations, et SPA le fait très bien.
 
 Qwik est le seul framework qui est à la fois MPA et SPA.
 
@@ -158,7 +158,7 @@ Oui ! Cela fait partie de tous les starters de Qwik City, apprenez comment faire
 
 ## Mais... avec d'autres frameworks, je peux aussi faire du MPA et du SPA
 
-Pas tout à fait, d'autres frameworks suggèrent de supprimer tous les `<Scripts>` à la racine pour générer un MPA, effectivement toute l'interactivité ainsi que la navigation dans la SPA.
+Pas tout à fait, d'autres frameworks suggèrent de supprimer tous les `<Scripts>` à la racine pour générer un MPA, ce qui supprime effectivement toute l'interactivité ainsi que la navigation du SPA.
 
 Et si les scripts _ne sont pas_ supprimés, alors chaque rechargement de page entière devient très coûteux, parce que chaque rechargement de page signifie que le framework a besoin d'hydrater la page entière. Qwik, cependant, n'a pas de [coût d'hydratation](https://www.builder.io/blog/hydration-is-pure-overhead) pour chaque chargement de page.
 
@@ -176,7 +176,7 @@ Vous serez étonnés !
 
 Non, l'hydratation partielle (ou architecture en îles) popularisée par [Astro](https://astro.build/) vise à empêcher l'[hydratation complète de la page](https://www.builder.io/blog/hydration-is-pure-overhead), dans laquelle tous les composants existants de la page doivent être chargés et exécutés, et à fractionner l'appli en îles d'interactivité.
 
-Les îles que les développeurs doivent définir manuellement, puis décrire manuellement dans quelles situations elles doivent être hydratées. Des îles qui ne peuvent pas communiquer entre elles.
+Des îles que les développeurs doivent définir manuellement, puis décrire manuellement dans quelles situations elles doivent être hydratées. Des îles qui ne peuvent pas communiquer entre elles.
 
 Au lieu de cela, les composants Qwik ne s'hydratent pas du tout. Qwik y parvient grâce à un puissant système de sérialisation, qui ne sérialise que l'état nécessaire du graphe de réactivité, de sorte que l'appli peut reprendre sans avoir à exécuter un quelconque JS.
 
@@ -194,13 +194,13 @@ OUI ! Mais cela dépend. Qwik est en développement depuis 2 ans maintenant, et 
 
 ## Les rechargements de pages complètes sont-ils plus lents que ceux du SPA ?
 
-Cela dépend, les rechargements de pages complètes sont extrêmement rapides, parce que les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche SPA n'est pas pour tout le monde, car il est parfois nécessaire de conserver un état entre les pages, et le SPA le fait très bien.
+Cela dépend, les rechargements de pages complètes sont extrêmement rapides, parce que les navigateurs sont extrêmement rapides pour charger et analyser le HTML, mais l'approche MPA n'est pas pour tout le monde, car il est parfois nécessaire de conserver un état entre les pages, et le SPA le fait très bien.
 
 Le MPA peut être lent dans les frameworks existants lorsqu'on essaie de faire du MPA avec de l'interactivité parce que les frameworks existants devront exécuter [l'hydratation au moment du chargement, ce qui peut être très lent](https://www.builder.io/blog/hydration-is-pure-overhead).
 
 ## Qwik sérialise trop de données dans le HTML
 
-Faux, Qwik sérialise seulement les données qui sont nécessaires pour la page courante, et seulement les données qui sont nécessaires pour la page courante. Si une page a 1000 composants mais qu'un seul est interactif, la quantité de données sérialisées est proportionnelle à la quantité d'interactivité, pas à la quantité de composants.
+Faux, Qwik sérialise seulement les données qui sont nécessaires pour la page courante. Si une page a 1000 composants mais qu'un seul est interactif, la quantité de données sérialisées est proportionnelle à la quantité d'interactivité, pas à la quantité de composants.
 
 ## Qui fabrique Qwik ?
 

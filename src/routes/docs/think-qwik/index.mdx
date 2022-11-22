@@ -29,7 +29,7 @@ Qwik est rapide non pas parce qu'il utilise des algorithmes intelligents mais pa
 
 ## Résumabilité & sérialisation
 
-La résumabilité est abordée en détail [ici](../concepts/resumable/index.mdx). La résumabilité permet aux applications Qwik de continuer l'exécution là où le serveur s'est arrêté. Tous les frameworks ont besoin de garder la trace des structures de données internes concernant l'état de l'application. La génération actuelle de frameworks ne préserve pas ces informations de la transition entre le serveur et le navigateur. Par conséquent, les structures de données du framework doivent être reconstruites dans le navigateur. La reconstruction des structures de données et l'attachement des écouteurs sont appelés hydratation.
+La résumabilité est abordée en détail [ici](../concepts/resumable/index.mdx). La résumabilité permet aux applications Qwik de continuer l'exécution là où le serveur s'est arrêté. Tous les frameworks ont besoin de garder la trace des structures de données internes concernant l'état de l'application. La génération actuelle de frameworks ne préserve pas ces informations lors de la transition entre le serveur et le navigateur. Par conséquent, les structures de données du framework doivent être reconstruites dans le navigateur. La reconstruction des structures de données et l'attachement des écouteurs sont appelés hydratation.
 
 Qwik sérialise les écouteurs, les structures de données internes, et l'état de l'application dans le HTML lors du transfert du serveur au navigateur. Puisque toute l'information est sérialisée dans le HTML, le client peut simplement reprendre l'exécution là où le serveur s'est arrêté.
 

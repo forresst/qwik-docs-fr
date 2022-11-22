@@ -9,13 +9,13 @@ contributors:
 
 # Prélecture et mise en cache avec un service worker
 
-Traditionnellement, un worker de service est utilisé pour précharger la plupart, voire la totalité, des bundles qu'une application utilise. Les [Service Workers] (https://developer.mozilla.org/fr/docs/Web/API/Service_Worker_API/Using_Service_Workers) sont généralement vus comme un moyen de faire fonctionner une application hors ligne.
+Traditionnellement, un worker de service est utilisé pour précharger la plupart, voire la totalité, des bundles qu'une application utilise. Les [Service Workers](https://developer.mozilla.org/fr/docs/Web/API/Service_Worker_API/Using_Service_Workers) sont généralement vus comme un moyen de faire fonctionner une application hors ligne.
 
 Qwik City, cependant, utilise les service workers très différemment pour fournir une stratégie puissante de préchargement et de mise en cache. Au contraire, le but n'est pas de charger l'application entière, mais plutôt d'utiliser le service worker pour précharger dynamiquement ce qui est _possible_ d'exécuter. En _ne préchargeant pas_ toute l'application, cela libère des ressources pour ne demander que les petites parties de l'appli qu'un utilisateur _pourrait_ utiliser en fonction de ce qu'il a sur son écran à ce moment-là.
 
 ## Tâche en arrière-plan
 
-Un avantage de l'utilisation d'un service worker est qu'il s'agit également d'une extension d'un [worker] (https://developer.mozilla.org/fr/docs/Web/API/Web_Workers_API), qui s'exécute dans un thread d'arrière-plan.
+Un avantage de l'utilisation d'un service worker est qu'il s'agit également d'une extension d'un [worker](https://developer.mozilla.org/fr/docs/Web/API/Web_Workers_API), qui s'exécute dans un thread d'arrière-plan.
 
 > Les Web Workers permettent d'exécuter une opération de script dans un thread d'arrière-plan distinct du thread d'exécution principal d'une application Web. L'avantage est que les traitements coûteux peuvent être exécutés dans un thread séparé, ce qui permet au thread principal (généralement l'interface utilisateur) de fonctionner sans être bloqué ou ralenti.
 

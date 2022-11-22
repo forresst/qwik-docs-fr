@@ -43,7 +43,7 @@ Considérez le HTML simplifié suivant de l'application ci-dessous.
 - Le `$` vous indique que la « magie » du chargement différé se déroule à cet endroit.
 - Les règles TypeScript vous empêchent de manquer les endroits où le `$` devrait apparaître.
 
-2. L'Optimiseur recherche le `$` et extrait la fonction enveloppée par le `$` dans un morceau séparé [chargeable de manière différée] (../../../docs/advanced/optimizer/index.mdx).
+2. L'Optimiseur recherche le `$` et extrait la fonction enveloppée par le `$` dans un morceau séparé [chargeable de manière différée](../../../docs/advanced/optimizer/index.mdx).
 3. Lorsque le serveur rend la page, le JSX est exécuté et remarque qu'il y a un écouteur sur le clic. L'écouteur du clic est sérialisé dans l'élément `<button>` comme attribut `on:click`. Qwik sait alors comment connecter cet évènement sur le client.
 4. Le script Qwikloader est intégré dans le HTML. Le script Qwikloader met en place un écouteur global pour tous les événements dans le navigateur. Qwikloader fait environ 1kb et s'exécute en 1ms environ.
 5. Lorsqu'un utilisateur clique sur le bouton, le Qwikloader intercepte l'événement et recherche un élément avec l'attribut `on:click`.
