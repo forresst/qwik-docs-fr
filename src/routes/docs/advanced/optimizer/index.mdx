@@ -10,7 +10,7 @@ contributors:
 
 La philosophie de Qwik est de retarder le chargement du code aussi longtemps que possible. Pour ce faire, Qwik s'appuie sur un Optimiseur pour réorganiser le code pour un chargement différé. L'Optimiseur est une transformation au niveau du code qui s'exécute pour synthétiser. (L'Optimiseur est écrit en Rust (et il est disponible comme WASM) pour une performance instantanée).
 
-L'Optimizer recherche les `$` et applique une transformation qui extrait l'expression suivant le `$` et la transforme en un symbole importable et chargeable de manière différée.
+L'Optimiseur recherche les `$` et applique une transformation qui extrait l'expression suivant le `$` et la transforme en un symbole importable et chargeable de manière différée.
 
 Commençons par examiner un exemple simple de `Counter` :
 
