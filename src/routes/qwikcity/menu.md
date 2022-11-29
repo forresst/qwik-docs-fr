@@ -21,11 +21,11 @@
 - [Nommée](layout/named/index.mdx)
 - [Top](layout/top/index.mdx)
 
-## Récupération de données
+## Gestion des données
 
 - [Vue d'ensemble](data/overview/index.mdx)
-- [Récupération des données](data/retrieve/index.mdx)
-- [Modification des données](data/modify/index.mdx)
+- [Récupérer](data/retrieve/index.mdx)
+- [Modifier](data/modify/index.mdx)
 - [Endpoints](data/endpoints/index.mdx)
 - [Redirections](data/redirects/index.mdx)
 

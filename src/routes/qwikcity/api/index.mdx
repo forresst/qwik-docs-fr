@@ -7,9 +7,9 @@ contributors:
   - nnelgxorz
 ---
 
-# API reference
+# Référence de l'API
 
-# `useContent()`
+## `useContent()`
 
 La fonction [`useContent()`](/qwikcity/api/index.mdx#usecontent) récupère les informations de contenu les plus proches pour la route actuelle. L'objet retourné comprend :
 
@@ -18,11 +18,11 @@ headings: ContentHeading[] | undefined;
 menu: ContentMenu | undefined;
 ```
 
-Le tableau `headings` contient des données sur les éléments de titre html `<h1>` à `<h6>` d'un fichier markdown (https://developer.mozilla.org/fr/docs/Web/HTML/Element/Heading_Elements).
+Le tableau `headings` contient des données sur [les éléments de titre html](https://developer.mozilla.org/fr/docs/Web/HTML/Element/Heading_Elements) de `<h1>` à `<h6>` d'un fichier markdown.
 
-Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Voir [définition du fichier menu](/qwikcity/content/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
+Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Consultez la [définition du fichier menu](/qwikcity/content/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
 
-# `useDocumentHead()`
+## `useDocumentHead()`
 
 Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du head du document.
 
@@ -35,7 +35,7 @@ Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du h
 
 La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<Head>`, pour créer les éléments internes dans `document.head`.
 
-# `useLocation()`
+## `useLocation()`
 
 Utilisez la fonction [`useLocation()`](/qwikcity/api/index.mdx#uselocation) pour récupérer un objet `RouteLocation` pour l'emplacement actuel.
 
@@ -48,17 +48,17 @@ export interface RouteLocation {
 }
 ```
 
-La valeur de retour de [`useLocation()`](/qwikcity/api/index.mdx#uselocation) est similaire à celle de `document.location`, mais elle est sécurisée pour être utilisée sur le serveur où il n'y a pas d'objet global `location`.
+La valeur de retour de [`useLocation()`](/qwikcity/api/index.mdx#uselocation) est similaire à celle de `document.location`, mais elle peut être utilisée en toute sécurité sur le serveur où il n'y a pas d'objet global `location`.
 
-## Paramètres de route
+### Paramètres de route
 
-`useLocation()` encode les [Paramètres de route](../../../qwikcity/routing/route-parameters/index.mdx) comme paramètres.
+`useLocation()` encode les [Paramètres de la route](/qwikcity/routing/route-parameters/index.mdx) en tant que paramètres.
 
 Supposez que vous ayez fait :
 
-- Route : `https://example.com/sku/[skuId]`
+- La route : `https://example.com/sku/[skuId]`
 - L'utilisateur navigue vers : `https://example.com/sku/1234`
-- Ensuite, le `skuId` peut être récupéré via `useLocation().params.skuId`.
+- Ensuite, vous pouvez récupérez le `skuId` via `useLocation().params.skuId`.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -70,8 +70,8 @@ export default component$(() => {
   return (
     <>
       <h1>SKU</h1>
-      <p>pathname: {loc.pathname}</p>
-      <p>skuId: {loc.params.skuId}</p>
+      <p>nom du chemin : {loc.pathname}</p>
+      <p>skuId : {loc.params.skuId}</p>
     </>
   );
 });
@@ -81,11 +81,11 @@ Le code ci-dessus génère :
 
 ```html
 <h1>SKU</h1>
-<p>pathname: /sku/1234</p>
-<p>skuId: 1234</p>
+<p>nom du chemin : /sku/1234</p>
+<p>skuId : 1234</p>
 ```
 
-> Notez que `useLocation` est une API en lecture seule, vous ne devriez jamais essayer de modifier les valeurs de l'objet `loc` retourné. Consultez plutôt l'API `useNavigate()`.
+> Notez que `useLocation` est une API en lecture seule, vous ne devez jamais tenter de muter les valeurs de l'objet `loc` retourné. Consultez l'API `useNavigate()` pour cela.
 
 ## `useNavigate()`
 
@@ -115,13 +115,13 @@ export default component$(() => {
 });
 ```
 
-Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/dashboard` sans causer un rechargement de la page.
+Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/dashboard` sans provoquer un rechargement de la page.
 
 ## `useEndpoint()`
 
 Il s'agit de la principale API permettant de récupérer des données sur le serveur ! Elle fonctionne comme un RPC, en appelant le serveur et en renvoyant une [ressource](/docs/components/resource/index.mdx), qui sera résolue avec les données réelles.
 
-Veuillez consulter les docs de [Récupération de données](../data/overview/index.mdx) pour plus de détails, en particulier la section [retrieve](../data/retrieve/index.mdx).
+Veuillez consulter les docs de [Gestion des données](../data/overview/index.mdx) pour plus de détails, en particulier la section [Récupérer](../data/retrieve/index.mdx) les données.
 
 ```tsx
 import { Resource, component$, useStore } from '@builder.io/qwik';
@@ -156,7 +156,7 @@ Ce qui donne le HTML suivant :
 <p>Le nombre PI est : 3.14159</p>
 ```
 
-> `useEndpoint()` fait abstraction de la nécessité d'exécuter une logique sur le serveur et de récupérer ces données sur le client, d'une manière conviviale pour le SSR !
+> Pour être compatible avec le SSR, `useEndpoint()` élimine la nécessité d'exécuter une logique sur le serveur et de récupérer ces données sur le client !
 
 ## `<QwikCityProvider>`
 
