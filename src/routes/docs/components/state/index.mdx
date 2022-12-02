@@ -15,19 +15,19 @@ contributors:
 
 La gestion de l'état est une partie importante de toute appli. Dans Qwik, nous pouvons différencier deux types d'état, réactif et statique.
 
-L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombre, un objet, un tableau... n'importe quoi. L'état réactif, quant à lui, est créé avec `useStore()`.
+L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombre, un objet, un tableau... n'importe quoi. L'état réactif, quant à lui, est créé avec `useSignal()` ou `useStore()`.
 
-Il est important de noter que l'état dans Qwik n'est pas un état de composant, mais plutôt un état d'appli qui peut être instancié par n'importe quel composant.
+Il est important de noter que l'état dans Qwik n'est pas nécessairement l'état du composant local, mais plutôt l'état de l'appli qui peut être instancié par n'importe quel composant.
 
 ## `useSignal()`
 
 `const signal = useSignal(initialState)` est un hook qui crée un signal réactif. Il prend une valeur initiale et renvoie un signal réactif.
 
-Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété `signal.value`. Si vous modifiez une propriété de valeur de l'objet, tout composant qui en dépend sera mis à jour.
+Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété (`signal.value`). Si vous modifiez la propriété `value` de l'objet, tout composant qui en dépend sera mis à jour.
 
 ### Exemple
 
-Un exemple montrant comment `useSignal` est utilisé dans l'exemple Counter pour garder la trace du compteur.
+Cet exemple montre comment `useSignal()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
 
 ```tsx
 export default component$(() => {
@@ -42,24 +42,22 @@ export default component$(() => {
 });
 ```
 
-Dans l'exemple ci-dessus, le composant App utilise `useSignal()` pour créer un signal. Le signal est ensuite utilisé pour suivre le compteur.
-
-En accédant simplement à la propriété `count.value`, le composant sera mis à jour si la valeur du signal change, lorsque la propriété est modifiée dans le gestionnaire de clic.
+Le simple fait d'accéder à la propriété `count.value` entraînera la mise à jour du composant si count change. Par exemple, lorsque la propriété est modifiée dans le gestionnaire de clic du bouton.
 
 ## `useStore()`
 
-Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale, pensez à un store comme un signal à valeurs multiples, ou un objet composé de plusieurs signaux.
+Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale. On peut se représenter un store comme un signal à valeurs multiples, ou à un objet constitué de plusieurs signaux.
 
-`const reactive = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial comme paramètre, et retourne un objet réactif.
+`const store = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial, et retourne un objet réactif.
 
-L'objet réactif renvoyé par [`useStore()`](/docs/components/state/index.mdx#usestore) est comme n'importe quel autre objet, mais il est réactif. Si vous changez une propriété de l'objet, tout composant qui en dépend sera mis à jour.
+L'objet réactif renvoyé par [`useStore()`](/docs/components/state/index.mdx#usestore) est comme n'importe quel autre objet, mais il est réactif. Si vous modifiez une propriété de l'objet, tout composant qui dépend de cette propriété sera mis à jour.
 
 > **REMARQUE**
-> Pour que la réactivité fonctionne, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faites `let { count } = useStore({ count : 0 })` et ensuite la mutation de `count` ne déclenchera pas la mise à jour des composants qui en dépendent.
+> Pour que la réactivité fonctionne comme prévu, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faire `let { count } = useStore({ count : 0 })` et ensuite muter `count` ne déclenchera pas la mise à jour des composants qui dépendent de la propriété.
 
 ### Exemple
 
-Un exemple montrant comment `useStore` est utilisé dans l'exemple Counter pour garder le suivi du compteur.
+Cet exemple montre comment `useStore()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
 
 ```tsx
 export default component$(() => {
@@ -74,15 +72,13 @@ export default component$(() => {
 });
 ```
 
-Dans l'exemple ci-dessus, le composant App utilise [`useStore()`](/docs/components/state/index.mdx#usestore) pour créer un objet réactif. Cet objet est ensuite utilisé pour garder le suivi du compteur. Le compteur est ensuite affiché dans le composant.
-
-En accédant simplement à la propriété `state.count`, le composant sera mis à jour si le compteur change, lorsque la propriété est modifiée dans le gestionnaire du clic.
+Le simple fait d'accéder à la propriété `state.count` entraînera la mise à jour du composant si count change. Par exemple, lorsque la propriété est modifiée dans le gestionnaire de clic du bouton.
 
 ### Valeurs récursives
 
 Par défaut, [`useStore()`](/docs/components/state/index.mdx#usestore) ne traque que les champs de premier niveau de votre store, ce qui signifie que pour que toute mise à jour soit enregistrée, vous devez mettre à jour les valeurs du champ de premier niveau.
 
-Par exemple, ceci ne fonctionnera pas :
+CET EXEMPLE NE FONCTIONNERA PAS :
 
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
@@ -101,13 +97,13 @@ export default component$(() => {
 });
 ```
 
-Pour mettre à jour le suivi par défaut, nous devons mettre à jour le champ "nested" de niveau supérieur :
+Pour que les mises à jour soient enregistrées avec la stratégie de traçage par défaut, nous devons mettre à jour le champ "nested" de premier niveau comme suit :
 
 ```ts
 store.nested = { fields: { are: { "tracked" } } }
 ```
 
-Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à notre useStore, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
+Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à `useStore()`, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
 
 ```tsx
 export default component$(() => {
@@ -165,7 +161,7 @@ Il y a trois façons de passer l'état à d'autres composants.
 
 ### Utilisation des props
 
-La façon la plus naïve de passer l'état à d'autres composants est de le passer comme props. C'est la façon dont vous le feriez dans React, et cela fonctionne aussi dans Qwik.
+La façon la plus simple de passer l'état à d'autres composants est de le passer comme props. C'est la façon dont vous le feriez dans React, et cela fonctionne aussi dans Qwik.
 
 ```tsx
 export const Parent = component$(() => {
@@ -190,9 +186,9 @@ export const Child = component$(({ userData }) => {
 });
 ```
 
-### Utilisation de l'API de contexte
+### Utilisation du contexte
 
-L'API de contexte est un moyen pour transmettre un état aux composants sans avoir à le transmettre à travers les props. Automatiquement, tous les composants descendants de l'arborescence peuvent obtenir une référence à l'état, et avoir l'accès en lecture/écriture.
+L'API du contexte est un moyen pour transmettre l'état aux composants sans avoir à le transmettre à travers les props (c'est-à-dire qu'elle évite les problèmes de drilling de prop). Automatiquement, tous les composants descendants de l'arborescence peuvent obtenir une référence à l'état avec un accès en lecture/écriture.
 
 Consultez l'[API de contexte](../context/index.mdx) pour plus d'informations.
 
@@ -230,7 +226,7 @@ Les valeurs calculées sont des valeurs qui sont dérivées d'autres valeurs. El
 
 Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) ou [`useResource$()`](/docs/components/resource/index.mdx).
 
-La principale différence entre les deux est que [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/components/resource/index.mdx) est asynchrone et plusieurs appels useResource peuvent se produire en parallèle.
+La principale différence entre les deux est que [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/components/resource/index.mdx) est asynchrone et plusieurs appels `useResource$()` peuvent se produire en parallèle.
 
 `useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
 
@@ -281,7 +277,7 @@ export default component$(() => {
 });
 ```
 
-Les notions de [useWatch](../lifecycle/index.mdx#usewatch) et de [useResource](../resource/index.mdx) sont expliquées en détail dans leurs sections respectives.
+Les notions de [`useWatch()`](../lifecycle/index.mdx#usewatch) et de [`useResource()`](../resource/index.mdx) sont expliquées en détail dans leurs sections respectives.
 
 ## Réactivité
 
