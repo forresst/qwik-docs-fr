@@ -224,13 +224,13 @@ export const Child = component$(() => {
 
 Les valeurs calculées sont des valeurs qui sont dérivées d'autres valeurs. Elles sont utiles lorsque vous avez une valeur qui est dérivée d'autres valeurs, et que vous voulez la maintenir en synchronisation avec les autres valeurs.
 
-Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) ou [`useResource$()`](/docs/components/resource/index.mdx).
+Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask) ou [`useResource$()`](/docs/components/resource/index.mdx).
 
-La principale différence entre les deux est que [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/components/resource/index.mdx) est asynchrone et plusieurs appels `useResource$()` peuvent se produire en parallèle.
+La principale différence entre les deux est que [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/components/resource/index.mdx) est asynchrone et plusieurs appels `useResource$()` peuvent se produire en parallèle.
 
-`useWatch$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
+`useTask$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
 
-### Exemple de [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch)
+### Exemple de [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask)
 
 ```tsx
 export default component$(() => {
@@ -239,7 +239,7 @@ export default component$(() => {
     doubleCount: 0,
   });
 
-  useWatch$(({ track }) => {
+  useTask$(({ track }) => {
     track(() => store.count);
     state.doubleCount = state.count * 2;
   });

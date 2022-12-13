@@ -40,7 +40,7 @@ Nous avons également mis en place un [tutoriel](../../tutorial/welcome/overview
 
 ## Qu'est-ce que c'est que tous ces `$` ?
 
-Vous avez peut-être remarqué qu'il y a plus de [`$`](../advanced/dollar/index.mdx) que d'habitude dans les applis Qwik : [`component$()`](/docs/components/overview/index.mdx#component), [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch), `<div onClick$={() => console.log('click')} />`. Ce n'est pas pour rien. Qwik découpe votre application en petits morceaux; ces morceaux sont plus petits que le composant lui-même. Pour les gestionnaires d'évènements, les hooks, etc... le `$` signale à la fois à l'[Optimiseur](../advanced/optimizer/index.mdx) et au développeur quand cela se passe.
+Vous avez peut-être remarqué qu'il y a plus de [`$`](../advanced/dollar/index.mdx) que d'habitude dans les applis Qwik : [`component$()`](/docs/components/overview/index.mdx#component), [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask), `<div onClick$={() => console.log('click')} />`. Ce n'est pas pour rien. Qwik découpe votre application en petits morceaux; ces morceaux sont plus petits que le composant lui-même. Pour les gestionnaires d'évènements, les hooks, etc... le `$` signale à la fois à l'[Optimiseur](../advanced/optimizer/index.mdx) et au développeur quand cela se passe.
 
 **Exemple :**
 

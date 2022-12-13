@@ -11,131 +11,69 @@ import diagram from './diagram2.svg';
 
 # Cycles de vie
 
-## `useMount$()`
+Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des composants et leur cycle de vie se prolongent entre le serveur et le navigateur. Parfois, le composant sera d'abord rendu sur le serveur, parfois dans le navigateur, mais dans les deux cas, le cycle de vie sera le même, seule son exécution se déroule dans des environnements différents.
 
-- **Déclencheur :** montage du composant
-- **Quand :** avant le rendu et les ressources
-- **Nombre de fois :** une seule fois par instance de composant
+Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, les hooks se présenteront comme ceci :
+
+```
+  useTask$ --> RENDU --> useClientEffect$
+                         |
+| ------ SERVEURR ------ | ---- NAVIGATEUR ---- |
+                         |
+                    pause|reprise
+```
+
+> **Notez** que parce que le composant a été monté sur le serveur, **seulement useClientEffect$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
+
+Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
+
+```
+  useTask$ --> RENDU --> useClientEffect$
+
+| --------------- NAVIGATEUR --------------- |
+```
+
+> **Notez** que le cycle de vie est exactement le même, mais cette fois-ci, tous les hooks sont exécutés dans le navigateur, et non sur le serveur.
+
+
+## `useTask$()`
+
+- **Quand :** AVANT le premier rendu du composant, et lorsque l'état traqué change
+- **Nombre de fois :** une seule fois
 - **Plateforme :** serveur et navigateur
 
-`useMount$()` enregistre un hook à exécuter à la création du composant. `useMount$()` bloquera le rendu du composant jusqu'à ce que le callback `useMount$()` soit résolu. (Ceci est utile pour récupérer des données asynchrones et retarder le rendu jusqu'à ce que les données soient reçues, ce qui garantit que le composant rendu contienne les données).
+`useTask$()` enregistre un hook à exécuter lors de la création du composant, il sera exécuté au moins une fois soit sur le serveur soit dans le navigateur, selon l'endroit où le composant est initialement rendu.
 
-Alors que `useMount$()` peut être exécuté sur le serveur ou le client, il ne s'exécute qu'une seule fois. (Soit sur le serveur, soit sur le client, selon l'endroit où le composant a été rendu pour la première fois).
-
-Consultez également le hook `useServerMount$()` qui a la même sémantique mais ne fonctionne que sur le serveur.
-
-### Exemple
+En outre, cette tâche peut être réactive et être réexécutée lorsqu'un [signal ou un store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
 
 ```tsx
-export const Cmp = component$(() => {
-  const store = useStore({
-    users: [],
-  });
-  useMount$(async () => {
-    // Ce code sera exécuté à la création du composant pour récupérer les données.
-    store.users = await db.requestUsers();
-  });
-  return (
-    <>
-      {store.users.map((user) => (
-        <User user={user} />
-      ))}
-    </>
-  );
-});
-
-interface User {
-  name: string;
-}
-
-export function User(props: { user: User }) {
-  return <div>Name: {props.user.name}</div>;
-}
+useTask$(({track}) => {
+  track(() => store.count));
+  // s'exécutera lors du montage du composant et à chaque fois que "store.count" change
+})
 ```
 
-### Quand utiliser `useMount$()`
+**Notez que toute exécution ultérieure se produira toujours dans le navigateur**, car la réactivité est une chose réservée au client.
 
-Vous voulez exécuter un code une seule fois, UNIQUEMENT lorsque le composant se monte.
-
-## `useServerMount$()`
-
-- **Déclencheur :** montage du composant
-- **Quand :** avant le rendu et les ressources
-- **Nombre de fois :** une seule fois par instance de composant
-- **Plateforme :** serveur uniquement
-
-`useServerMount$()` enregistre un hook monté sur le serveur qui s'exécute uniquement sur le serveur lorsque le composant est monté pour la première fois.
-
-### Exemple
-
-```tsx
-export const Cmp = component$(() => {
-  const store = useStore({
-    users: [],
-  });
-  useServerMount$(async () => {
-    // Ce code sera exécuté QU'UNE SEULE FOIS dans le serveur, lorsque le composant sera monté.
-    store.users = await db.requestUsers();
-  });
-  return (
-    <>
-      {store.users.map((user) => (
-        <User user={user} />
-      ))}
-    </>
-  );
-});
-
-interface User {
-  name: string;
-}
-
-export function User(props: { user: User }) {
-  return <div>Name: {props.user.name}</div>;
-}
+```
+  useTask$(track state) -> RENDU -> CLIC (changement de l'état) -> RE-EXECUTION useTask$(état traqué)
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔            |                          ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+| --------- SERVEUR --------- | --------------- NAVIGATEUR --------------- |
+                              |
+                         pause|reprise
 ```
 
-## `useClientMount$()`
+> Si `useTask$()` ne traque aucun état, il sera exécuté **exactement une fois**, soit sur le serveur **soit** dans le navigateur (**pas les deux**), selon l'endroit où le composant est initialement rendu. Il se comporte effectivement comme un hook « au montage ».
 
-- **Déclencheur :** montage du composant
-- **Quand :** avant le rendu et les ressources
-- **Nombre de fois :** une seule fois par instance de composant
-- **Platforme :** navigateur uniquement
+`useTask$()` bloquera le rendu du composant jusqu'à ce que son callback asynchrone soit résolu, en d'autres termes, les tâches s'exécutent séquentiellement même si elles sont asynchrones. (Une seule tâche s'exécute à la fois / Les tâches bloquent le rendu).
 
-`useClientMount$()` enregistre un hook monté sur le client qui s'exécute uniquement sur le navigateur lorsque le composant est monté pour la première fois.
 
 ### Exemple
 
-```tsx
-export const Cmp = component$(() => {
-  const store = useStore({
-    option: string,
-  });
-  useClientMount$(() => {
-    // Ce code ne sera exécuté qu'une seule fois UNIQUEMENT dans le navigateur, lorsque le composant sera monté.
-    store.option = localStorage.getItem('option');
-  });
-  return <>Localstore: {store.option}</>;
-});
-```
-
-## `useWatch$()`
-
-- **Déclencheur :** montage du composant et sur les changements d'état traqués
-- **Quand :** avant le rendu et les ressources
-- **Nombre de fois :** au moins une fois
-- **Plateforme :** serveur et navigateur
-
-Tout comme `useMount$()`, le hook est appelé la première fois que le composant se monte, mais il peut être appelé plusieurs fois si (et seulement si) il traque [un signal et un store](/docs/components/state/index.mdx) pour les changements.
-
-> `useWatch$()` est différent de useEffect de React car `useWatch` s'exécute aussi pendant le SSR et avant le rendu.
-
-### Exemple
-
-La fonction `useWatch$()` est utilisée pour observer la propriété `state.count`. Toute modification de la propriété `state.count` entraîne l'exécution de la fonction `watchFn` qui, à son tour, met à jour la propriété `state.doubleCount` pour obtenir le double de `state.count`.
+La fonction `useTask$()` est utilisée pour observer la propriété `state.count`. Toute modification de `state.count` entraîne l'exécution de la fonction fléchée qui, à son tour, met à jour `state.doubleCount` avec le double de `state.count`.
 
 ```tsx
-import { component$, useStore, useWatch$ } from '@builder.io/qwik';
+import { component$, useStore, useTask$ } from '@builder.io/qwik';
 
 export const Cmp = component$(() => {
   const store = useStore({
@@ -143,43 +81,79 @@ export const Cmp = component$(() => {
     doubleCount: 0,
   });
 
-  useWatch$(({ track }) => {
+  // Cette tâche sera appelée exactement une fois, soit sur le serveur, soit sur le navigateur.
+  useTask$(() => {
+    console.log('composant monté');
+  });
+
+  // cette tâche sera appelée au montage et chaque fois que `store.count` change
+  useTask$(({ track }) => {
     const count = track(() => store.count);
     store.doubleCount = 2 * count;
   });
 
   return (
-    <>
-      <div>
-        {store.count} / {store.doubleCount}
-      </div>
-    </>
+    <div>
+      {store.count} / {store.doubleCount}
+    </div>
   );
 });
 ```
 
 L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements dans `() => store.count`. Le callback sera exécuté une fois dans le SSR lorsque le composant est monté et à chaque fois que `store.count` change.
 
-> Veuillez noter que `useWatch$()` s'exécute AVANT le rendu réel et dans le serveur, donc la manipulation manuelle du DOM doit être faite avec précaution.
+> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useClientEffect$()` à la place, qui s'exécute sur le client après le rendu.
 
-> Voir aussi le hook `useClientEffect$()` qui partage une sémantique similaire mais qui ne s'exécute sur le client qu'après le rendu.
+### Utilisez `useTask$()` lorsque vous avez besoin de
 
-### Quand utiliser `useWatch$()`
+- Exécuter des tâches asynchrones avant le rendu
+- Exécuter le code une seule fois avant le premier rendu du composant
+- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useClientEffect$`)
+- Exécuter le code de manière programmée lorsque l'état change
 
-Vous voulez faire muter un état, ou effectuer une action quand un état change. En d'autres termes, vous devez avoir des effets secondaires.
+> Remarque : si vous envisagez de charger des données (en utilisant `fetch()`) à l'intérieur de `useTask$`, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place. Cette API est plus efficace en termes d'exploitation du streaming SSR et de récupération en parallèle des données.
 
-> Veuillez noter que si vous voulez charger des données (par exemple un fetch()), pour les utiliser plus tard dans votre composant, consultez [`useResource$()`](/docs/components/resource/index.mdx). Cette API sera encore plus efficace en utilisant le streaming SSR et le parallélisme.
+### Tâche serveur/navigateur uniquement
+
+Parfois, il est nécessaire de n'exécuter du code que sur le serveur ou sur le client. Ceci peut être réalisé en utilisant les booléens `isServer` et `isBrowser` exportés depuis `@builder.io/qwik/build`.
+
+```tsx
+import { isServer, isBrowser } from '@builder.io/qwik/build';import { isServer, isBrowser } from '@builder.io/qwik/build';
+
+export const Cmp = component$(() => {
+  const store = useStore({
+    users: [],
+  });
+  useTask$(async () => {
+    if (isServer) {
+      // Si le composant est monté sur le serveur, appelez la base de données directement.
+      store.users = await db.requestUsers();
+    }
+    if (isBrowser) {
+      // Si le composant est monté sur le navigateur, récupérer les utilisateurs via l'API.
+      store.users = await fetchGetUsers();
+    }
+  });
+
+  return (
+    <>
+      {store.users.map((user) => (
+        <User user={user} />
+      ))}
+    </>
+  );
+});
+```
+
+> Mais comme mentionné ci-dessus - pour la récupération des données, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place.
 
 ## `useClientEffect$()`
 
-- **Déclencheur :** montage du composant et sur les changements d'état traqués
-- **Quand :** après le rendu
+- **Quand :** APRÈS le premier rendu du composant et sur les changements d'état traqués
 - **Nombre de fois :** au moins une fois
 - **Plateforme :** navigateur uniquement
 
-Similaire à `useWatch$()` ou `useMount$()`, ce hook sera également exécuté au moins une fois, mais il ne sera jamais exécuté sur le serveur, c'est-à-dire qu'il ne sera exécuté que dans le navigateur.
-
-Pour tous les composants qui ont été montés pendant le SSR (dans le serveur), la fonction `useClientEffect$()` s'exécutera par avance, c'est-à-dire sans interaction de l'utilisateur, mais cette exécution par avance (eagerness) peut être configurée !
+Pour tous les composants qui ont été montés pendant le SSR ( sur le serveur), la fonction `useClientEffect$()` s'exécutera par avance, c'est-à-dire sans interaction de l'utilisateur, mais cette avance peut être configurée !
 
 ```tsx
 useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
@@ -187,13 +161,12 @@ useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
 });
 ```
 
-C'est une caractéristique unique de Qwik, n'importe quel autre framework exécuterait ce code et d'autres dans le cadre de l'hydratation, mais dans Qwik, nous pouvons même spécifier quand cela se produit :
+C'est une caractéristique unique de Qwik, n'importe quel autre framework exécuterait ce code et d'autres dans le cadre de l'hydratation, mais dans Qwik, vous pouvons en fait le spécifier quand cela se produit :
 
-- `"visible"` : lorsque le composant devient visible dans la zone d'affichage (utilise sous le capot [l'observateur d'intersection](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API)). Il s'agit de la valeur par défaut.
+- `"visible"` : (il s'agit de la valeur par défaut) lorsque le composant devient visible dans la zone d'affichage (utilise sous le capot [l'observateur d'intersection](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API)).
 - `"load"` : à la fin du chargement des documents (événement « load » du document)
 - `"idle"` : après le chargement au premier moment où le site devient inactif. Il utilise sous le capot [`requestIdleCallback()`](https://developer.mozilla.org/fr/docs/Web/API/Window/requestIdleCallback).
 
-Comme `useWatch`
 
 ### Exemple
 
@@ -215,22 +188,26 @@ export const Timer = component$(() => {
 });
 ```
 
-> **REMARQUE :** N'abusez pas de `useClientEffect$()` lorsque la même logique peut être réalisée en utilisant `useWatch$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useClientEffect$()` n'est probablement pas la bonne solution.
+> **REMARQUE :** N'abusez pas de `useClientEffect$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useClientEffect$()` n'est probablement pas la bonne solution.
 
-> Comment se compare-t-elle à la fonction `useEffect()` de React ? Les deux API partagent beaucoup de sémantique, mais alors que les deux s'exécutent APRÈS le rendu, `useClientEffect$()` peut aussi s'exécuter indépendamment du rendu.
 
 ### Quand utiliser `useClientEffect$()`
 
-Vous devez exécuter le JS au moment du chargement de la page, même si l'utilisateur n'interagit jamais avec la page.
+Utilisez ce hook lorsque vous avez besoin d'exécuter du JS au moment du chargement de la page, même si l'utilisateur n'interagit jamais avec la page.
 
+Par exemple :
+
+- Lecture du DOM après le rendu
 - Initialiser quelques animations
 - logique WebGL
-- Lire des `localStorage`
-- Exécuter du code sans interaction de l'utilisateur
+- Utiliser les API DOM comme `localStorage`.
+- Exécuter du code sans interaction avec l'utilisateur, comme un setInterval()
 
-## Diagramme de flux
 
-<img src={diagram} />
+#### Comment se compare-t-il à la fonction `useEffect()` de React ?
+
+Les deux API partagent beaucoup de sémantique, mais bien qu'elles soient toutes deux exécutées APRÈS le rendu, `useClientEffect$()` peut aussi être exécuté indépendamment du rendu.
+
 
 ## Règles de la méthode d'utilisation
 

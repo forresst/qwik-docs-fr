@@ -16,8 +16,8 @@ Le passage de fonctions à travers des zones sérialisables doit se faire par le
 
 Qwik a des API de commodité qui se terminent par `$` qui sont équivalentes à appeler directement `$()`. Ces deux lignes sont équivalentes :
 
-- en ligne : `useWatch$(() => {...}/>`
-- explicite : `const callbackQrl = $(() => {...}); useWatchQrl(callbackQrl)`
+- en ligne : `useTask$(() => {...}/>`
+- explicite : `const callbackQrl = $(() => {...}); useTaskQrl(callbackQrl)`
 
 La plupart du temps, nous utilisons la première forme car elle nous permet d'intégrer nos callbacks directement dans l'API. Mais il est parfois nécessaire d'utiliser la deuxième forme afin de pouvoir séparer l'endroit où la fonction est déclarée et celui où elle est utilisée.
 

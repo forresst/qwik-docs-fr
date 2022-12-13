@@ -24,8 +24,7 @@ Dans Qwik, ils sont déclarés en utilisant la méthode `component$` :
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
-// Les composants Qwik peuvent être asynchrones
-export const MyCmp = component$(async (props: MyCmpProps) => {
+export const MyCmp = component$((props: MyCmpProps) => {
   // Déclare l'état local
   const state = useStore({
     count: 0,
@@ -196,10 +195,9 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 ### Cycles de vie
 
 - [`useMount$()`](../lifecycle/index.mdx) - définit un callback qui sera exécuté au moment du montage
-- [`useServerMount$()`](../lifecycle/index.mdx) - définit un callback qui sera exécuté au moment du montage uniquement sur le serveur
-- [`useWatch$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé avant le rendu et/ou lors des changements d'un store surveillé
-- [`useClientEffect$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
+- [`useTask$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
 - [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
+- [`useClientEffect$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
 
 ### Autre
 

@@ -11,7 +11,7 @@ Utilisez `useClientEffect$()` pour exécuter du code après que le composant soi
 
 ## `track()` et `useClientEffect$()`
 
-`useClientEffect$()` reçoit une fonction `track()` tout comme `useWatch$()`. Utilisez la fonction `track()` pour déclencher l'effet lorsque le store est mis à jour. Consultez la section [réactivité](../../../tutorial/reactivity/explicit/index.mdx) pour plus d'informations.
+`useClientEffect$()` reçoit une fonction `track()` tout comme `useTask$()`. Utilisez la fonction `track()` pour déclencher l'effet lorsque le store est mis à jour. Consultez la section [réactivité](../../../tutorial/reactivity/explicit/index.mdx) pour plus d'informations.
 
 ## Cycle de vie des composants et SSR
 
@@ -19,7 +19,7 @@ Qwik est résumable. La résumabilité signifie que l'application démarre sur l
 
 `useClientEffect$()` est une méthode réservée au client. (Il n'y a pas d'équivalent sur le serveur).
 
-> **REMARQUE** Consultez [`useWatch$()`](/docs/components/lifecycle/index.mdx#usewatch) pour les comportements qui doivent être exécutés à la fois sur le client et le serveur.
+> **REMARQUE** Consultez [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask) pour les comportements qui doivent être exécutés à la fois sur le client et le serveur.
 
 ## Quand est-ce que `useClientEffect$()` est exécuté ?
 

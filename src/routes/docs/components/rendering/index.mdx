@@ -73,9 +73,29 @@ Dans l'exemple ci-dessus, il y a deux boutons :
 1. Cliquer sur le premier bouton change la direction du compteur (`store.step` bascule entre `+1` et `-1`.). Le changement du `store` nécessite l'exécution de la fonction `OnRender` du composant. Le JSX résultant met à jour le DOM pour afficher `+1` ou `-1`. Cependant, changer la direction ne changera pas les props sur `<Greeter name={'World_' + store.count}/>`. Pour cette raison, Qwik ne descendra pas dans le composant `<Greeter>`, et donc le template de `Greeter` n'a pas besoin d'être chargé ou exécuté. Un tel élagage agressif permet à Qwik de minimiser la quantité de code qui doit être présent pour rendre un composant.
 2. Cliquer sur le second bouton incrémente (ou décrémente) `store.count`. Cela provoque à son tour le changement des props sur `<Greeter name={'World_' + store.count}/>`. Un changement dans les props signifie que Qwik va aussi descendre et rendre `<Greeter>`. Cependant, il est possible que Qwik n'ait pas de référence au composant enfant. Dans ce cas, Qwik va charger de manière différée le composant et continuer le rendu une fois que la fonction de rendu du composant sera disponible.
 
+### Rendu avec `.map()`
+
+Dans de nombreux cas, vous voudrez rendre des composants en mappant un tableau dans la fonction de rendu avec `data.map()`. Dans ces cas, il est nécessaire de fournir une clé au premier enfant de la fonction de mappage.
+
+```tsx
+export const Parent = component$(() => {
+  return (
+    <>
+      {data.map(({ content, uniqueKey }) => (
+        <div key={uniqueKey}>
+          <p>{content}</p>
+        </div>
+      ))}
+    </>
+  );
+});
+```
+
+> note: it is not recommended to use the array's index as the key unless you can guarantee that the data for a given key will always be the same. It is always preferred to use some unique identifier from the data as the key.
+
 ## `render()` est asynchrone
 
-L'exemple ci-dessus montre pourquoi le processus de rendu doit être asynchrone. Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.
+Les exemples ci-dessus montrent pourquoi le processus de rendu doit être asynchrone. Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.
 
 La plupart des frameworks de la génération actuelle ont un processus `render()` synchrone. Le rendu synchrone ne peut pas facilement gérer le chargement asynchrone du code, donc le rendu synchrone nécessite que tous les composants dépendants soient par avance présents avant que le rendu puisse commencer.
 

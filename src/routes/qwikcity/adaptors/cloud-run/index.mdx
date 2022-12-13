@@ -1,0 +1,40 @@
+---
+title: Qwik City - Middleware Cloud Run
+contributors:
+  - DustinJSilk
+---
+
+# Middleware Cloud Run
+
+Le middleware Qwik City Cloud Run vous permet d'exécuter une appli Qwik City [Google Cloud Run](https://cloud.google.com/run).
+
+## Installation
+
+Pour intégrer l'adaptateur `Cloud Run`, utilisez la commande `add` :
+
+```shell
+npm run qwik add cloud-run
+```
+
+## Construction de la production
+
+Pour construire l'application pour la production, utilisez la commande `build`, cette commande lancera automatiquement `npm run build.server` et `npm run build.client` :
+
+```shell
+npm run build
+```
+
+## Déploiement de la production
+
+Après avoir exécuté `npm run build` vous aurez 2 dossiers de construction.
+
+- Le dossier `dist` sera créé avec tous les fichiers statiques.
+- Le dossier `server` sera créé avec tous les fichiers du serveur de node.
+
+Pour déployer le serveur, assurez-vous d'avoir créé un compte et de vous être authentifié avec le CLI gcloud.
+
+Vous devrez également mettre à jour le nom de votre appli Cloud Run dans le script `deploy` de votre package.json.
+
+Vous pouvez ensuite exécuter cette commande pour déployer votre appli :
+
+`npm run deploy`

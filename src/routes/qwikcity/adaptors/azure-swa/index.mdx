@@ -1,0 +1,70 @@
+---
+title: Qwik City - Azure Static Web Apps
+contributors:
+  - derkoe
+---
+
+# Middleware Azure Static Web Apps
+
+Le middleware Qwik City Azure Static Web Apps vous permet de connecter Qwik City à [Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/).
+
+## Installation
+
+Pour intégrer l'adaptateur `azure-swa`, utilisez la commande `add` :
+
+```shell
+npm run qwik add azure-swa
+```
+
+L'adaptateur ajoutera un nouveau `vite.config.ts` dans le répertoire `adaptors/`, et un nouveau fichier d'entrée sera créé, tel que :
+
+```
+└── adaptors/
+    └── azure-swa/
+        └── vite.config.ts
+└── src/
+    └── entry.azure-swa.tsx
+```
+
+De plus, dans le `package.json`, le script `build.server` sera mis à jour avec le build de Azure Static Web Apps.
+
+## Construction de la production
+
+Pour construire l'application pour la production, utilisez la commande `build`, cette commande lancera automatiquement `npm run build.server` et `npm run build.client` :
+
+```shell
+npm run build
+```
+
+## Déploiement du développement en local
+
+Pour déployer l'application pour le développement en local :
+
+```shell
+npm run build
+npm run serve
+```
+
+## Déployer sur Azure
+
+Après avoir installé l'intégration en utilisant `npm run qwik add`. Le projet est prêt à être déployé sur Azure Static Web Apps.
+
+Il y a deux façons de déployer :
+
+1. Déployez avec le [CLI de Static Web Apps](https://azure.github.io/static-web-apps-cli/)  
+   
+   Vous pouvez déployer votre application à partir de votre environnement local avec :
+
+    ```shell
+    npx swa deploy
+    ```
+
+    Cela lancera un assistant qui vous guidera dans la connexion et le déploiement vers Azure.
+
+2. Déployez depuis GitHub
+
+   Vous pouvez déployer votre application via GitHub. Créez un dépôt Git, livrez tout votre code et publiez ensuite votre branche sur GitHub. 
+   Lors de la configuration d'une Azure Static Webapp via le portail Azure, vous pouvez choisir le dépôt GitHub à déployer.
+   Cela configurera un flux de travail GitHub qui déploiera votre application automatiquement. Pour plus d'informations, consultez le [Démarrage rapide de Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/get-started-portal?pivots=github).
+
+Notez que vous aurez besoin d'un [compte Azure] (https://signup.azure.com/) pour effectuer cette étape !
