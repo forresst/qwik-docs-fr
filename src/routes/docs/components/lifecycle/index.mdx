@@ -17,10 +17,10 @@ Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR
 
 ```
   useTask$ --> RENDU --> useClientEffect$
-                         |
-| ------ SERVEURR ------ | ---- NAVIGATEUR ---- |
-                         |
-                    pause|reprise
+                        |
+| ------ SERVEUR ------ | ---- NAVIGATEUR ---- |
+                        |
+                   pause|reprise
 ```
 
 > **Notez** que parce que le composant a été monté sur le serveur, **seulement useClientEffect$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
