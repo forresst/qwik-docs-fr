@@ -107,6 +107,40 @@ Lorsque les composants sont invalidés, ils sont ajoutés à la file d'attente d
 
 Pour une description détaillée de la réactivité, voir la section correspondante.
 
+## Stockage d'une référence
+
+Qwik fournit la possibilité de stocker une référence pour tout composant. Pour ce faire, vous devez créer un signal et passer le signal comme attribut `ref` au composant. Après que le composant ait été monté, la référence a été stockée sur le signal. Regardez l'exemple ci-dessous :
+
+```tsx
+import { component$, useClientEffect$, useSignal, useStore } from '@builder.io/qwik';
+
+export default component$(() => {
+  const store = useStore({
+    width: 0,
+    height: 0,
+  });
+  const outputRef = useSignal<Element>();
+  useClientEffect$(() => {
+    if (outputRef.value) {
+      const rect = outputRef.value.getBoundingClientRect();
+      store.width = Math.round(rect.width);
+      store.height = Math.round(rect.height);
+    }
+  });
+
+  return (
+    <div>
+      <div style={{ border: '1px solid red', width: '100px' }} ref={outputRef}>
+        Changez la valeur du texte ici pour étirer la boîte.
+      </div>
+      <div>
+        La boîte rouge ci-dessus a une hauteur de {store.height} pixels et une largeur de {store.width} pixels.
+      </div>
+    </div>
+  );
+});
+```
+
 ## Chargement différé
 
 Ce composant joue également un rôle important lorsqu'il s'agit de rompre les relations parent-enfant en vue d'un bundle.
@@ -194,7 +228,6 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 ### Cycles de vie
 
-- [`useMount$()`](../lifecycle/index.mdx) - définit un callback qui sera exécuté au moment du montage
 - [`useTask$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
 - [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
 - [`useClientEffect$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)

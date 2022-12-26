@@ -110,7 +110,7 @@ Vous pouvez accéder aux variables d'environnement de la page Cloudflare dans le
 
 ```javascript
 export const onRequest = async ({ platform }) => {
-  const secret = platform.env['SUPER_SECRET_TOKEN'];
+  const secret = platform['SUPER_SECRET_TOKEN'];
 };
 ```
 

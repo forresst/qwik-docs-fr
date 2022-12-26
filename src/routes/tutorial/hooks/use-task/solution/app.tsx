@@ -1,11 +1,11 @@
-import { component$, useWatch$, useStore } from '@builder.io/qwik';
+import { component$, useTask$, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
   const store = useStore({
     value: '',
     debouncedValue: '',
   });
-  useWatch$(({ track }) => {
+  useTask$(({ track }) => {
     // réexécute cette fonction lorsque la propriété `value` change.
     track(() => store.value);
     // Configure un délai d'attente pour la valeur retardée.

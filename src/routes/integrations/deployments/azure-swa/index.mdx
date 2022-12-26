@@ -42,19 +42,27 @@ Après avoir installé l'intégration en utilisant `npm run qwik add azure-swa`.
 
 Il y a deux façons de déployer :
 
-1. Déployez avec le [CLI de Static Web Apps](https://azure.github.io/static-web-apps-cli/)  
-   
+1. Déployez avec le [CLI de Static Web Apps](https://azure.github.io/static-web-apps-cli/)
+
    Vous pouvez déployer votre application à partir de votre environnement local avec :
 
-    ```shell
-    npx swa deploy
-    ```
+   ```shell
+   npx swa deploy
+   ```
 
-    Cela lancera un assistant qui vous guidera dans la connexion et le déploiement vers Azure.
+   Cela lancera un assistant qui vous guidera dans la connexion et le déploiement vers Azure.
 
 2. Déployez depuis GitHub
 
-   Vous pouvez déployer votre application via GitHub. Créez un dépôt Git, livrez tout votre code et publiez ensuite votre branche sur GitHub. 
+   Vous pouvez déployer votre application via GitHub. Créez un dépôt Git, livrez tout votre code et publiez ensuite votre branche sur GitHub.
+
+   Créez une Azure Static Webapp via le portail Azure et choisissez le dépôt GitHub dans les détails du déploiement. Lorsque vous êtes invité à fournir les détails de construction, choisissez « Custom » et définissez les valeurs suivantes :
+
+   - Emplacement de l'appli : "."
+   - Emplacement de l'Api : "./azure-functions"
+   - Emplacement de sortie : "./dist"
+
+
    Lors de la configuration d'une Azure Static Webapp via le portail Azure, vous pouvez choisir le dépôt GitHub à déployer.
    Cela configurera un flux de travail GitHub qui déploiera votre application automatiquement. Pour plus d'informations, consultez le [Démarrage rapide de Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/get-started-portal?pivots=github).
 

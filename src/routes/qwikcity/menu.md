@@ -19,7 +19,6 @@
 - [Imbriquée](layout/nested/index.mdx)
 - [Groupée](layout/grouped/index.mdx)
 - [Nommée](layout/named/index.mdx)
-- [Top](layout/top/index.mdx)
 
 ## Gestion des données
 
@@ -35,25 +34,6 @@
 - [MDX](content/mdx/index.mdx)
 - [Menu](content/menu/index.mdx)
 - [<head>](content/head/index.mdx)
-
-## Déploiements
-
-- [Vue d'ensemble](adaptors/overview/index.mdx)
-- [Azure Static Web Apps](adaptors/azure-swa/index.mdx)
-- [Netlify Edge](adaptors/netlify-edge/index.mdx)
-- [Cloudflare Pages](adaptors/cloudflare-pages/index.mdx)
-- [Vercel Edge](adaptors/vercel-edge/index.mdx)
-- [NodeJs](adaptors/node/index.mdx)
-- [Google Cloud Run](adaptors/cloud-run/index.mdx)
-
-## Intégrations
-
-- [Vue d'ensemble](integrations/overview/index.mdx)
-- [React](integrations/react/index.mdx)
-- [Partytown](integrations/partytown/index.mdx)
-- [Tailwind](integrations/tailwind/index.mdx)
-- [Vitest](integrations/vitest/index.mdx)
-- [Serveurs](adaptors/overview/index.mdx)
 
 ## Génération de sites statiques
 

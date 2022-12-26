@@ -21,33 +21,44 @@ Qwik est un nouveau type de framework qui est [résumable](../concepts/resumable
 
 ## Création d'une appli à l'aide du CLI
 
-La première étape est de créer une application. Qwik est livré avec un CLI qui vous permet de créer un squelette de base d'une application. Nous allons utiliser le CLI pour créer un _starter_ vierge afin que vous puissiez vous familiariser rapidement avec lui.
+La première étape est de créer une application. Qwik est livré avec un CLI qui vous permet de créer un squelette de base d'une application. Nous allons utiliser le CLI pour créer un _starter_ vierge afin que vous puissiez vous familiariser rapidement avec lui. Qwik prend en charge NPM, yarn et pnpm.
 
 ### Exécuter le CLI de Qwik dans votre shell
+Choisissez le gestionnaire de paquets que vous préférez et exécutez la commande suivante :
 
 ```shell
 npm create qwik@latest
+pnpm create qwik@latest
+yarn create qwik
 ```
 
-Le CLI vous guidera à travers un menu interactif pour définir le nom du projet et sélectionner l'un des _starters_ :
+Le CLI vous guidera à travers un menu interactif pour définir le nom du projet, sélectionner l'un des _starters_ et vous demandera si vous voulez installer les dépendances.
 
 Après la création de votre nouvelle appli, vous verrez un affichage comme le suivant dans votre terminal :
 
 ```shell
-💫 Let's create a Qwik app 💫
+🐰 Let's create a Qwik app 🐇   v0.16.1
 
-✔ Project name … qwik-app
-✔ Select a starter › Basic
+✔ Where would you like to create your new project? … qwik-app
 
-🦄  Success!  Project created in portfolio directory
+✔ Select a starter › Basic App (QwikCity)
+
+✔ Would you like to install pnpm dependencies? … yes
+
+✔ Installing pnpm dependencies...
+
+
+🦄  Success!  Project created in qwik-app directory
 
 🐰 Next steps:
    cd qwik-app
-   npm install
-   npm start
+   pnpm start
 
-💬 Integration? Add Netlify, Cloudflare, Tailwind...:
-   npm run qwik add
+🔌 Integrations? Add Netlify, Cloudflare, Tailwind...
+   pnpm qwik add
+
+📚 Relevant docs:
+   https://qwik.builder.io/docs/getting-started/
 
 💬 Questions? Start the conversation at:
    https://qwik.builder.io/chat
@@ -57,13 +68,13 @@ Après la création de votre nouvelle appli, vous verrez un affichage comme le s
    https://qwik.builder.io/media/
 ```
 
-À ce stade, vous aurez le répertoire `qwik-app`, qui contient l'appli de démarrage.
+À ce stade, vous aurez un répertoire `qwik-app`, qui contient l'appli de démarrage.
 
 ## Exécution en mode développement
 
 Une fois que l'application est chargée.
 
-1. Allez dans le répertoire créé par `npm create qwik`.
+1. Allez dans le répertoire créé.
 
 ```shell
 cd qwik-app
@@ -73,20 +84,23 @@ cd qwik-app
 
 ```shell
 npm start
+pnpm start
+yarn start
 ```
 
-4. Vous devriez voir un serveur fonctionner avec votre application To-do.
+4. Vous devriez voir un serveur fonctionner avec votre application starter.
 
 ```shell
 
-  VITE v3.1.1  ready in 140 ms
+  VITE v4.0.1  ready in 515 ms
 
-  ➜  Local:   http://localhost:5174/
+  ➜  Local:   http://127.0.0.1:5173/
   ➜  Network: use --host to expose
+  ➜  press h to show help
 
 ```
 
-5. Visitez http://localhost:5174/ pour découvrir l'appli.
+5. Visitez http://localhost:5173/ pour découvrir l'appli.
 
 ## Exécution en production
 
@@ -102,7 +116,7 @@ Il construira votre application et le [serveur de prévisualisation Vite](https:
 
 Il est très facile de déployer votre application Qwik vers le cloud, en tant que fichiers statiques, ou sur votre propre serveur.
 
-Veuillez consulter la section [déploiement](/qwikcity/adaptors/overview/index.mdx) pour plus de détails.
+Veuillez consulter la section [déploiement](/integrations/deployments/overview/index.mdx) pour plus de détails.
 
 ## Autres intégrations
 
@@ -112,4 +126,4 @@ Qwik est conçu pour être intégré avec d'autres outils. Comme `vitest`, `tail
 npm run qwik add
 ```
 
-Et n'oubliez pas de consulter la section [intégrations](/qwikcity/integrations/overview/index.mdx) pour plus de détails.
+Et n'oubliez pas de consulter la section [intégrations](/integrations/integration/overview/index.mdx) pour plus de détails.

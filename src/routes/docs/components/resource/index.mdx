@@ -43,7 +43,7 @@ L'état `resource.state` peut être l'une des chaînes suivantes :
 - `'resolved'` - les données sont disponibles.
 - `'rejected'` - les données ne sont pas disponibles en raison d'une erreur ou d'un dépassement de délai.
 
-Le callback passé à [`useResource$()`](/docs/components/resource/index.mdx) s'exécute juste après que les callbacks `useMount$()` et [`useTask$()`](/docs/components/lifecycle/index.mdx#usewatch) se soient terminés. Veuillez vous référer à la section [Cycle de vie](../lifecycle/index.mdx) pour plus de détails.
+Le callback passé à [`useResource$()`](/docs/components/resource/index.mdx) s'exécute juste après que le callback [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask) se soit terminé. Veuillez vous référer à la section [Cycle de vie](../lifecycle/index.mdx) pour plus de détails.
 
 ## `<Resource />`
 

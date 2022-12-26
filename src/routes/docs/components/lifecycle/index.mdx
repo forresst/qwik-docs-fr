@@ -35,7 +35,6 @@ Parfois, un composant sera monté/rendu pour la première fois dans le navigateu
 
 > **Notez** que le cycle de vie est exactement le même, mais cette fois-ci, tous les hooks sont exécutés dans le navigateur, et non sur le serveur.
 
-
 ## `useTask$()`
 
 - **Quand :** AVANT le premier rendu du composant, et lorsque l'état traqué change
@@ -48,7 +47,7 @@ En outre, cette tâche peut être réactive et être réexécutée lorsqu'un [si
 
 ```tsx
 useTask$(({track}) => {
-  track(() => store.count));
+  track(() => store.count);
   // s'exécutera lors du montage du composant et à chaque fois que "store.count" change
 })
 ```
@@ -66,7 +65,6 @@ useTask$(({track}) => {
 > Si `useTask$()` ne traque aucun état, il sera exécuté **exactement une fois**, soit sur le serveur **soit** dans le navigateur (**pas les deux**), selon l'endroit où le composant est initialement rendu. Il se comporte effectivement comme un hook « au montage ».
 
 `useTask$()` bloquera le rendu du composant jusqu'à ce que son callback asynchrone soit résolu, en d'autres termes, les tâches s'exécutent séquentiellement même si elles sont asynchrones. (Une seule tâche s'exécute à la fois / Les tâches bloquent le rendu).
-
 
 ### Exemple
 
@@ -167,7 +165,6 @@ C'est une caractéristique unique de Qwik, n'importe quel autre framework exécu
 - `"load"` : à la fin du chargement des documents (événement « load » du document)
 - `"idle"` : après le chargement au premier moment où le site devient inactif. Il utilise sous le capot [`requestIdleCallback()`](https://developer.mozilla.org/fr/docs/Web/API/Window/requestIdleCallback).
 
-
 ### Exemple
 
 ```tsx
@@ -190,7 +187,6 @@ export const Timer = component$(() => {
 
 > **REMARQUE :** N'abusez pas de `useClientEffect$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useClientEffect$()` n'est probablement pas la bonne solution.
 
-
 ### Quand utiliser `useClientEffect$()`
 
 Utilisez ce hook lorsque vous avez besoin d'exécuter du JS au moment du chargement de la page, même si l'utilisateur n'interagit jamais avec la page.
@@ -203,11 +199,9 @@ Par exemple :
 - Utiliser les API DOM comme `localStorage`.
 - Exécuter du code sans interaction avec l'utilisateur, comme un setInterval()
 
-
 #### Comment se compare-t-il à la fonction `useEffect()` de React ?
 
 Les deux API partagent beaucoup de sémantique, mais bien qu'elles soient toutes deux exécutées APRÈS le rendu, `useClientEffect$()` peut aussi être exécuté indépendamment du rendu.
-
 
 ## Règles de la méthode d'utilisation
 
