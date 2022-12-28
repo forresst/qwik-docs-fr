@@ -60,7 +60,7 @@ export const head: DocumentHead<EndpointData> = ({ data }) => {
 
 Le deuxième cas est un peu plus compliqué mais il montre comment nous pouvons définir le titre de la page avec la valeur qui est récupérée à partir du endpoint `onGet`. (Voir [documentation des données](../../data/overview/index.mdx) pour récupérer les données). Qwik City invoque `onGet` pour récupérer les données pour la route et ensuite passe les données à la fonction `head` lui permettant de créer un titre personnalisé.
 
-## Resolved Document Head
+## Head de document résolu
 
 Un cas avancé est celui où une [mise en page](../../layout/overview/index.mdx) peut vouloir modifier le titre d'un document déjà résolu. Dans l'exemple ci-dessous, le composant page renvoie le titre `Foo`. Ensuite, le composant de mise en page qui le contient peut lire la valeur de l'en-tête de document de la page et la modifier. Dans cet exemple, le composant de mise en page ajoute `Bar` au titre, de sorte qu'au moment du rendu, le titre sera `Foo Bar`. Chaque composant de la pile a la possibilité de renvoyer une nouvelle valeur.
 

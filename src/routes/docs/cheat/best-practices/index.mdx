@@ -1,18 +1,18 @@
 ---
-title: Best Practices
+title: Bonnes pratiques
 contributors:
   - mhevery
 ---
 
-# No-Hydration Tips
-## Don't register events eagerly with `useClientEffect$()`
-> ⚠ Use `useClientEffect$()` with caution ⚠
+# Conseils pour éviter l'hydratation
+## N'enregistrez pas les événements en avance avec `useClientEffect$()`
+> ⚠ Utilisez `useClientEffect$()` avec précaution ⚠
 
-Instead => `useOn()` methods
+Au lieu de cela => méthodes `useOn()`
 
-**Best Practice**:
+**Bonnes pratiques** :
 
-```typescript!
+```tsx
 useClientEffect$(()=> { 
     const listener = (event)=> { 
         const mouseEvent = event as MouseEvent
@@ -24,50 +24,50 @@ useClientEffect$(()=> {
 })
 ```
 
-**Why is above a problem**:
-This forces more javascript to eagerly load, rather than be surgically reactive to user events. More upfront javascript => slower app performance. 
+**Pourquoi est-ce un problème** :
+Cela oblige plus de javascript à se charger de manière anticipée, plutôt que d'être chirurgicalement réactif aux événements de l'utilisateur. Plus de javascript en amont => performance de l'application plus lente. 
 
-It also requires you, the developer, to stay more aware of the server/client relationship (there's a reason you reached for `use >Client< Effect` after all). 
+Cela exige également que vous, le développeur, restiez plus attentif à la relation entre le serveur et le client (il y a une raison pour laquelle vous avez obtenu `use >Client< Effect` après tout). 
 
-While that's sometimes necessary, it should be the job of the framework to keep you from having to worry about it as much as possible.
+Bien que cela soit parfois nécessaire, le framework devrait avoir pour mission de vous éviter d'avoir à vous en soucier autant que possible.
 
-Not to mention it requires the extra effort for you to manually clean up the listener. 
+Sans parler du fait que cela demande un effort supplémentaire de votre part pour nettoyer manuellement l'écouteur. 
 
-**Do this instead**:
+**Faites plutôt cela** :
 
-```typescript!
+```tsx
 useOnDocument('mousemove', $((event)=> { 
     const mouseEvent = event as MouseEvent;
     console.log(mouseEvent.x, mouseEvent.y)
-    // No manual clean up required!
+    // Aucun nettoyage manuel n'est nécessaire !
 }))
 ```
 
-> NOTE: Similar hooks exist for window and individual components.  
-> `window` -> `useOnWindow` , component -> `useOn` 
-> * [useOn / useDocument / useWindow docs](https://qwik.builder.io/tutorial/hooks/use-on/)
-> * [Example](https://qwik.builder.io/tutorial/hooks/use-on/#example)
-> * [Tutorial](https://qwik.builder.io/tutorial/events/programmatic/)
+> REMARQUE : Des hooks similaires existent pour window et les composants individuels.
+> `window` -> `useOnWindow` , composant -> `useOn` 
+> * [docs useOn / useDocument / useWindow](https://qwik.builder.io/tutorial/hooks/use-on/)
+> * [Exemple](https://qwik.builder.io/tutorial/hooks/use-on/#example)
+> * [Tutoriel](https://qwik.builder.io/tutorial/events/programmatic/)
 ----
 
 
 
-## Don't rely on `window` to get the location
+## Ne comptez pas sur `window` pour obtenir l'emplacement.
 
-Instead => `useLocation()`
+Au lieu de cela => `useLocation()`
 
-**Best Practice**:
+**Bonnes pratiques** :
 
-```typescript!
+```tsx
 useClientEffect$(()=> { 
     if (window.location.href).includes('foo') { 
-        //... do the thing
+        //... faire quelque chose
     }
 })
 
-//OR 
+//OU 
 
-//(in the root of a component)
+//(à la racine du composant)
 if (typeof window !== "undefined") { 
     const queryParams = new URLSearchParams(window.location.search);
     const query: Record<string, string> = {};
@@ -78,30 +78,30 @@ if (typeof window !== "undefined") {
 }
 ```
 
-**Why is above a problem**:
-Many, many things you'll do in response to location information can easily be done on the initial render on the server, and will result in pure HTML with no JS overhead. 
+**Pourquoi est-ce un problème** :
+De très nombreuses choses que vous ferez en réponse aux informations de location peuvent facilement être faites lors du rendu initial sur le serveur, et donneront un pur HTML sans surcharge JS. 
 
-If you force that logic to instead run on the client side, it introduces more upfront JS & causes an eager load. 
+Si vous forcez cette logique à s'exécuter du côté client, cela introduit plus de JS en amont et provoque un chargement anticipé. 
 
 
-When using the `if typeof window !== "undefined"` pattern you'll soon find it will simply skip that code. It will run one time on the server and skip the code block because window will always be undefined on the server. You're used to code running twice. Qwik doesn't need to! 😎
+Si vous utilisez le modèle `if typeof window !== "undefined"`, vous constaterez rapidement que ce code est simplement ignoré. Il s'exécutera une fois sur le serveur et sautera le bloc de code parce que window sera toujours indéfini sur le serveur. Vous êtes habitué à ce que le code soit exécuté deux fois. Qwik n'a pas besoin de le faire ! 😎
 
-**Do this instead**:
-```typescript!
+**Faites plutôt cela** :
+```tsx
 const location = useLocation();
 
 if (location.href.includes('foo')) { 
-    // Do the thing
+    // faire quelque chose
 }
-//OR 
+//OU 
 doTheThing(location.query);
     
 ```
 
 
 ## EXCEPTION
-When doing SSG for pure static files, this is a necessary evil. The server won't have current location information when the server generates the files at build time. 
+Lorsque vous utilisez SSG pour des fichiers purement statiques, c'est un mal nécessaire. Le serveur ne disposera pas d'informations sur l'emplacement actuel lorsqu'il générera les fichiers au moment de la construction.
 
-But be mindful! If the information you need (e.g., query parameters) won't be necessary until some sort of user event, include the check in your event handling code instead to avoid the eager loading of JS. 
+Mais attention ! Si les informations dont vous avez besoin (par exemple, les paramètres de requête) ne sont pas nécessaires avant un événement utilisateur, incluez plutôt la vérification dans votre code de gestion des événements pour éviter le chargement anticipé de JS.
 
-> See: [useLocation() Docs](https://qwik.builder.io/qwikcity/api/#uselocation)
+> Voir : les [docs de useLocation()](https://qwik.builder.io/qwikcity/api/#uselocation)
