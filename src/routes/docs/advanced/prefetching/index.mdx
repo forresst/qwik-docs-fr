@@ -4,11 +4,12 @@ contributors:
   - adamdbradley
   - RATIU5
   - manucorporat
+  - literalpie
 ---
 
 # Prélecture
 
-La prélecture est un moyen pour les applications de commencer à charger des modules en tâche de fond, avant que l'utilisateur n'ait réellement besoin de ces modules. La solution idéale est de ne précharger que la plus petite quantité de code qui est hautement susceptible d'être exécutée à partir de l'interaction de l'utilisateur, tout en omettant tout JavaScript qui ne pourrait pas être utilisé.
+La prélecture est un moyen pour les applications de commencer à charger des modules en tâche de fond, avant que l'utilisateur n'ait réellement besoin de ces modules. La solution idéale est de ne précharger que la plus petite quantité de code qui est hautement susceptible d'être exécutée à partir de l'interaction de l'utilisateur, tout en omettant tout JavaScript qui _ne pourrait pas_ être utilisé.
 
 Qwik excelle dans le chargement et l'exécution d'une quantité minimale de JavaScript. Et puisque Qwik est capable de comprendre comment les composants individuels sont utilisés (et ce qui n'est pas utilisé), il peut aussi mieux décider quels bundles doivent être préchargés.
 
@@ -18,11 +19,11 @@ Rappelez-vous, la [différence entre la résumabilité et l'hydratation](/docs/c
 
 Lorsque Qwik fait le rendu d'une appli, il est capable de collecter les « symboles » qui ont été utilisés pendant le rendu. Un symbole comprend diverses parties d'un composant, qui sont [extraites par l'Optimiseur](../optimizer/index.mdx) afin de décomposer l'application. Les écouteurs d'événements individuels, l'état du composant et le moteur de rendu du composant lui-même sont des exemples de symboles différents qui peuvent être extraits.
 
-Par exemple, une page de produit peut avoir un écouteur de clic sur le bouton « Ajouter au panier », et quand ce bouton est cliqué, l'utilisateur devrait immédiatement avoir un retour pour montrer le produit ajouté au panier. Dans cet exemple, l'optimiseur de Qwik serait capable de comprendre que le seul symbole avec lequel un utilisateur pourrait interagir est l'écouteur d'événement de clic sur le bouton « Ajouter au panier ».
+Prenons l'exemple d'une page de produit essentiellement statique, à l'exception d'un bouton « Ajouter au panier ». Lorsque ce bouton est cliqué, l'utilisateur devrait immédiatement obtenir un retour d'information pour montrer le produit ajouté au panier. Dans cet exemple, l'optimiseur de Qwik serait capable de comprendre que le seul symbole avec lequel un utilisateur pourrait interagir est l'écouteur d'événement sur le bouton « Ajouter au panier ».
 
-Pour notre exemple « Ajouter au panier », l'Optimiseur ne collectera uniquement que les symboles pour l'écouteur d'événement du clic et le moteur de rendu du widget d'ajout au panier. Il n'aura cependant pas à charger, hydrater et re-rendre les autres parties de l'application, puisqu'il n'est même pas possible de re-rendre les autres sections de la page.
+Pour notre exemple « Ajouter au panier », l'Optimiseur ne collectera uniquement que les symboles pour l'écouteur d'événement du clic et le moteur de rendu du widget d'ajout au panier. Il n'aura cependant pas à charger, hydrater et re-rendre les autres parties de l'application puisqu'il n'est même pas possible de re-rendre les autres sections de la page.
 
-Puisque Qwik comprend ce qui est possible, il est capable de précharger le code seulement pour l'écouteur d'événement plutôt que tout le JavaScript pour l'application ou la route entière. Ceci est en contraste avec l'approche traditionnelle, où la prélecture est utilisée pour charger l'application ou la route entière, et le code du framework, juste pour que l'application ajoute l'écouteur d'événement du clic.
+Puisque Qwik comprend ce qui est possible, il est capable de précharger le code seulement pour l'écouteur d'événement plutôt que tout le JavaScript pour l'application ou la route entière. Ceci est en contraste avec l'approche traditionnelle où l'ensemble de l'application ou de la route, et le code du framework, doivent être préchargés juste pour ajouter l'écouteur d'événement de clic.
 
 ## Stratégie de prélecture
 
@@ -69,7 +70,7 @@ export default function (opts: RenderToStreamOptions) {
 
 La stratégie de mise en cache préférée de prélecture utilisée par [Qwik City](../../../qwikcity/prefetching/overview/index.mdx), est d'utiliser un Service Worker pour remplir le [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) du navigateur. Qwik lui-même doit être configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un évènement `qprefetch`. Ensuite, Qwik City écoutera cet événement et communiquera avec son service worker pour persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire à longue durée de vie.
 
-En utilisant un service worker pour intercepter les requêtes de récupération du navigateur, cette approche permet un contrôle minutieux de la mise en cache, tout en empêchant les requêtes multiples pour la ressource.
+En utilisant un service worker pour intercepter les requêtes de récupération du navigateur, cette approche permet un contrôle minutieux de la mise en cache, tout en empêchant les requêtes multiples pour la même ressource.
 
 ### Lien `rel`
 
@@ -85,9 +86,9 @@ De plus, il peut être possible de lancer plusieurs requêtes pour la même ress
 
 ### Web Worker Fetch
 
-Une approche de prélecture qui peut fonctionner est l'utilisation d'un worker web pour faire un `fetch()` d'un fichier JavaScript, dans le but d'amorcer le cache du navigateur avec le module. En utilisant un worker web, la récupération et la logique vivent sur un autre thread. Ensuite, la réponse à la récupération doit comporter une entête `immutable` ou un entête de contrôle de cache long, afin que le navigateur ne fasse pas une deuxième requête réseau.
+`workerFetchInsert` peut être utilisé pour que Qwik utilise un worker web pour faire un `fetch()` d'un fichier JavaScript, dans le but d'amorcer le cache du navigateur avec le module. En utilisant un worker web, la récupération et la logique de mise en cache vivent sur un autre thread. La réponse à la récupération sera également dotée d'une entête `immutable` ou d'une entête de contrôle de cache long, afin que le navigateur ne fasse pas une deuxième requête réseau.
 
-L'inconvénient, c'est que la réponse récupérée est rejetée et que ce n'est qu'au niveau du navigateur que l'on peut espérer mettre le fichier en cache.
+L'inconvénient de ce paramètre est que la réponse extraite est rejetée et que ce n'est qu'au niveau du navigateur que l'on peut espérer que le fichier soit mis en cache.
 
 ## Questions fréquemment posées sur la prélecture
 
@@ -110,4 +111,4 @@ Non, pour plusieurs raisons :
 
 **QUESTION** : _Qui est responsable de la détermination de la prélecture du code ?_
 
-Qwik peut générer automatiquement les instructions de la prélecture dans le cadre du rendu SSR. En exécutant l'application, Qwik a une connaissance d'exécution des composants visibles, des événements que les utilisateurs peuvent déclencher et du code qui devra être chargé. La conséquence est que la prélecture est un ensemble idéal de fichiers pour cette page. Aucune action de la part des développeurs n'est requise autre que de configurer le `renderToStream()` avec la stratégie de la prélecture.
+Qwik peut générer automatiquement les instructions de la prélecture dans le cadre du rendu SSR. En exécutant l'application, Qwik a une connaissance d'exécution des composants visibles, des événements que les utilisateurs peuvent déclencher et du code qui devra être chargé. La conséquence est que la prélecture est un ensemble idéal de fichiers pour cette page. Aucune action de la part des développeurs n'est requise, si ce n'est l'ajout de la stratégie de préchargement à `renderToStream()`.

@@ -4,6 +4,7 @@ contributors:
   - manucorporat
   - hayley
   - adamdbradley
+  - literalpie
 ---
 
 # Pensez Qwik
@@ -17,7 +18,7 @@ La particularité de Qwik ne réside pas dans ce qu'il fait mais dans la manièr
 
 Le but de Qwik est de charger et exécuter que le strict minimum de l'application.
 
-## Principe central
+## Retarder l'exécution
 
 > Retarder l'exécution du JavaScript autant que possible.
 
@@ -29,7 +30,7 @@ Qwik est rapide non pas parce qu'il utilise des algorithmes intelligents mais pa
 
 ## Résumabilité & sérialisation
 
-La résumabilité est abordée en détail [ici](../concepts/resumable/index.mdx). La résumabilité permet aux applications Qwik de continuer l'exécution là où le serveur s'est arrêté. Tous les frameworks ont besoin de garder la trace des structures de données internes concernant l'état de l'application. La génération actuelle de frameworks ne préserve pas ces informations lors de la transition entre le serveur et le navigateur. Par conséquent, les structures de données du framework doivent être reconstruites dans le navigateur. La reconstruction des structures de données et l'attachement des écouteurs sont appelés hydratation.
+La résumabilité est abordée en détail [ici](../concepts/resumable/index.mdx). La résumabilité permet aux applications Qwik de continuer l'exécution là où le serveur s'est arrêté. Tous les frameworks ont besoin de garder une trace des structures de données internes sur l'état de l'application. La génération actuelle de frameworks ne préserve pas ces informations lors de la transition du serveur au navigateur. Par conséquent, les structures de données du framework doivent être reconstruites dans le navigateur, en dupliquant le travail effectué sur le serveur. La reconstruction des structures de données et l'attachement des écouteurs sont appelés hydratation.
 
 Qwik sérialise les écouteurs, les structures de données internes, et l'état de l'application dans le HTML lors du transfert du serveur au navigateur. Puisque toute l'information est sérialisée dans le HTML, le client peut simplement reprendre l'exécution là où le serveur s'est arrêté.
 
@@ -60,13 +61,13 @@ En tant qu'industrie, nous n'avons pas réfléchi à l'implication du poids des 
 
 Qwik est conçu depuis le début pour résoudre le problème du poids. Son objectif initial, c'est un _bundle_ léger et toutes les autres décisions de conception sont soumises à cet objectif.
 
-Qwik ne cherche pas à créer moins de JavaScript. Qwik permet d'éviter l'envoi au client de tout ce JavaScript en une seule fois au démarrage de l'application. La finalité de Qwik, c'est l'idée de retarder le chargement du JavaScript à l'extrême.
+Qwik ne cherche pas à créer moins de JavaScript. Qwik permet d'éviter l'envoi au client de tout ce JavaScript en une seule fois au démarrage de l'application. La finalité de Qwik, c'est l'idée de « retarder le chargement du JavaScript » à l'extrême.
 
 Oui, Qwik nécessite une façon différente de penser et de concevoir votre application, mais la solution, c'est presque zéro JavaScript au départ avec un chargement progressif du JavaScript basé sur les interactions de l'utilisateur.
 
 ### Le poids ne devrait pas être un souci pour les développeurs
 
-Aujourd'hui, le poids est le souci des développeurs. Si vous suivez les meilleures pratiques pour chacun des frameworks, outils, etc., vous aurez un gros bundle. C'est à ce moment-là que les développeurs commencent à atténuer le problème avec une sorte de zones de chargement différé. (Mais comme tous ceux qui ont essayé vous le diront, les options sont limitées).
+Aujourd'hui, le poids est le souci des développeurs. Si vous suivez les meilleures pratiques pour chacun des frameworks, outils, etc., vous aurez un gros bundle. C'est à ce moment-là que les développeurs commencent à atténuer le problème avec une sorte de zones de chargement différé. (Mais comme tous ceux qui l'ont fait vous le diront  les options sont limitées).
 
 Les meilleures pratiques de notre industrie mènent à de gros bundles, et le web est plein d'exemples.
 
@@ -76,7 +77,7 @@ Qwik est conçu depuis le début pour produire beaucoup de zones de chargement d
 
 ### Pourquoi ne pas corriger les frameworks/outils existants ?
 
-Pour faire court, la philosophie du chargement différé se situe à un bas niveau et ne peut être ajoutée rétroactivement aux frameworks/outils existants sans les modifier fondamentalement. Un tel changement fondamental serait incompatible avec les frameworks/outils et leurs écosystèmes respectifs, ce qui les rendrait inutilisables.
+Pour faire court, la philosophie du chargement différé doit être fait à un bas niveau et ne peut être ajoutée rétroactivement aux frameworks/outils existants sans les modifier fondamentalement. Un tel changement fondamental serait incompatible avec les frameworks/outils et leurs écosystèmes respectifs, ce qui les rendrait inutilisables.
 
 Lorsqu'un framework part de certaines hypothèses, comme le fait que tous les rendus sont synchrones, l'ajout du chargement différé asynchrone devient pratiquement impossible. Ou encore, si un framework récupère l'emplacement des écouteurs à partir de templates, le chargement et l'exécution de ces templates sont indispensables pour que le site puisse être interactif. Ce ne sont là que quelques-uns des exemples les plus évidents, mais dans la pratique, il existe une longue liste de raisons infinies pour lesquelles le modèle mental actuel ne répond pas aux exigences de la résumabilité.
 

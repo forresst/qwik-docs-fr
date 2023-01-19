@@ -10,11 +10,11 @@ contributors:
 
 QRL (URL de Qwik) est une forme particulière d'URL que Qwik utilise pour le chargement différé du contenu.
 
-Les QRLs sont :
+Les QRLs :
 
-- Des URLs spécialement formatées qui sont laissées comme attributs dans le HTML pour dire à Qwik où les gestionnaires doivent charger le code.
-- URL qui pointent vers le morceau de JavaScript qui doit être chargé de manière différée.
-- Contiennent le nom du symbole qui doit être récupéré depuis le morceau.
+- sont des URLs spécialement formatées qui sont laissées comme attributs dans le HTML pour dire à Qwik où les gestionnaires doivent charger le code.
+- pointent vers un morceau de JavaScript qui doit être chargé de manière différée.
+- Contiennent un nom du symbole qui doit être récupéré depuis le morceau.
 - Peuvent contenir des références d'objets à portée lexicale. (Variables capturées à partir de closures).
 - Si elles sont relatives, utilisez `q:base` pour la résolution.
 
@@ -24,7 +24,7 @@ Les QRLs sont :
 ./path/to/chunk.js#SymbolName
 ```
 
-Dans sa forme la plus simple, la QRL contient un `./path/to/chunk.js`, une URL que le navigateur peut utiliser pour charger de manière différée une ressource, et un `SymbolName` à récupérer dans le morceau chargé de manière différée.
+Dans sa forme la plus simple, la QRL contient une URL (tel que `./path/to/chunk.js`) que le navigateur peut utiliser pour charger de manière différée une ressource, et un `SymbolName` à récupérer dans le morceau chargé de manière différée.
 
 Qwik utilise `q:base` pour résoudre un QRL en une URL absolue si l'URL est relative. (Si aucun attribut `q:base` n'est présent, alors `document.baseURI` est utilisé comme base).
 
@@ -129,7 +129,7 @@ La principale chose à noter est l'attribut "on:click". Cet attribut est lu par 
    `const [store, props] = useLexicalScope();`
 8. Analyse le JSON `<script type="qwik/json">{...json...}</script>` et distribue les objets désérialisés par l'attribut `q:obj`. Dans notre cas
    - `<div q:id="123" q:obj="456" q:host>` récupère l'objet avec l'id `123`. Ce sera le `store` créé dans la fonction `Counter_onMount`.
-   - `<button q:obj="456, 123"` récupère le `store` ainsi que la référence au `<div q:id="457">`
+   - `<button q:obj="456, 123"` récupère le `store` ainsi qu'une référence au `<div q:id="457">`
 9. Une fois que le `qwik/json` est désérialisé, `useLexicalScope` peut utiliser le tableau `[0,1]` de la QRL pour chercher dans `q:obj="456, 123"` pour récupérer l'objet avec les id `456` et `123`, qui sont des props de `<div q:id="123" q:obj="456" q:host>` ainsi que `store` de la fonction `Counter_onMount`.
 
 REMARQUE : pour des raisons de performance, les attributs `q:obj` et `<script type="qwik/json">` ne sont mis à jour que lorsque l'application est désérialisée en HTML. Lorsque l'application est en cours d'exécution, ces attributs peuvent avoir des valeurs périmées.
@@ -143,12 +143,11 @@ Il y a plusieurs raisons :
 1. Pour que Qwik fonctionne, les QRL doivent être sérialisées en HTML. Ceci est problématique pour les `import()` dynamiques parce qu'il n'y a pas de moyen facile de récupérer l'URL relative de `import('./some-path.js')` pour qu'elle puisse être placée dans le HTML.
 2. Les importations dynamiques traitent des morceaux, mais elles ne disposent d'aucun mécanisme permettant de faire référence à un symbole spécifique dans le morceau.
 3. Les importations dynamiques ont des chemins relatifs par rapport au fichier qui l'a importé. C'est un problème car lorsque le chemin relatif est placé dans le HTML, il perd le contexte à qui le relatif a été défini. Lorsque le framework lit le chemin à partir du HTML et essaie de l'importer comme `import(element.getAttribute('on:click'))`, le framework deviendra le contexte pour la résolution du chemin relatif. C'est une erreur car le contexte original avant la sérialisation vers le HTML était différent.
-4. Enfin, les QRL encodent des informations sur les variables de la portée lexicale capturées dans la closure et qui doivent être restaurées.
-5. Il faut que le développeur écrive `import('./file-a.js')`, ce qui signifie que le développeur est chargé de décider où se trouvent les zones du chargement différé. Cela limite la capacité de l'outil à déplacer le code de manière automatisée.
+4. Les QRL encodent des informations sur les variables de la portée lexicale qui sont capturées dans la closure et qui doivent être restaurées.
+5. L'importation dynamique nécessite que le développeur écrive `import('./file-a.js')`, ce qui signifie que le développeur est chargé de décider où se trouvent les zones du chargement différé. Cela limite la capacité de l'outil à déplacer le code de manière automatisée.
 
 A cause de ces différences, Qwik introduit les QRL comme un mécanisme pour le chargement différé des closures dans une application Qwik.
 
 ## Voir également
 
 - `qrl` : API utilisée pour créer des QRL.
-- `qImport` : API utilisée pour le chargement différé de symboles à partir de QRL.

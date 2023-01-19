@@ -207,9 +207,8 @@ Les deux API partagent beaucoup de sémantique, mais bien qu'elles soient toutes
 
 Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règles suivantes :
 
-- Ils ne peuvent être appelés que dans `component$`
-- Ils ne peuvent être appelés qu'au niveau de la racine d'une fonction / du contexte de la fonction fléchée, et non à l'intérieur de branches ou de blocs conditionnels.
-- Ils ne peuvent être appelés qu'à partir d'une autre méthode `use*$`, ce qui permet de faire des compositions.
+- Ils ne peuvent être appelés qu'à la racine du `component$` (pas à l'intérieur de blocs conditionnels).
+- Ils ne peuvent être appelés qu'à la racine d'une autre méthode `use*`, ce qui permet la composition.
 
 ```tsx
 useHook(); // <-- ❌ ne fonctionne pas
@@ -219,11 +218,17 @@ export default component$(() => {
   if (condition) {
     useHook(); // <-- ❌ ne fonctionne pas
   }
+  useTask$(() => {
+    useNavigate(); // <-- ❌ does not work
+  });
   const myQrl = $(() => useHook()); // <-- ❌ ne fonctionne pas
   return <button onClick$={() => useHook()}></button>; // <-- ❌ ne fonctionne pas
 });
 
-const useCustomHook = () => {
+function useCustomHook() {
   useHook(); // <-- ✅ fonctionne
-};
+  if (condition) {
+    useHook(); // <-- ❌ ne fonctionne pas
+  }
+}
 ```

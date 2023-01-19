@@ -238,7 +238,7 @@ Cela fonctionne mais représente beaucoup de travail. Le développeur doit place
 ```tsx
 function onScroll(fnQrl: QRL<() => void>) {
   document.addEventListener('scroll', async () => {
-    fn = await qImport(document, fnQrl);
+    const fn = await qImport.resolve();
     fn();
   });
 }
@@ -261,12 +261,12 @@ export const onScroll_1 = () => alert('scroll');
 Notice :
 
 1. Tout ce que le développeur a dû faire, c'est envelopper la fonction dans le `$()` pour signaler à l'Optimiseur que la fonction doit être déplacée dans un nouveau fichier et donc chargée de manière différée.
-2. Le `onScroll` a dû être implémenté légèrement différemment car il doit prendre en compte le fait que la `QRL` de la fonction doit être chargée avant de pouvoir être utilisée. En pratique, l'utilisation de `qImport` est rare dans les applications Qwik car le framework Qwik fournit des API de plus haut niveau qui attendent rarement que le développeur travaille directement avec `qImport`.
+2. La fonction `onScroll` a dû être implémentée légèrement différemment car il doit prendre en compte le fait que la `QRL` de la fonction doit être chargée avant de pouvoir être utilisée. En pratique, l'utilisation de `QRL.resolve()` est rare dans les applications Qwik car le framework Qwik fournit des API de plus haut niveau qui attendent rarement que le développeur travaille directement avec `QRL.resolve()`.
 
-Cependant, envelopper le code dans `$()` est un peu contraignant. Pour cette raison, l'Optimiseur encapsule implicitement le premier argument de tout appel de fonction, qui se termine par `$`. (En outre, on peut utiliser `implicit$FirstArg()` pour effectuer automatiquement l'enveloppement et la correspondance de type de la fonction prenant le `QRL`).
+Cependant, envelopper le code dans `$()` est un peu contraignant. Pour cette raison, on peut utiliser `implicit$FirstArg()` pour effectuer automatiquement le wrapping et la correspondance de type de la fonction prenant le `QRL`. La fonction passée dans `implicit$FirstArg()` doit avoir un suffixe `Qrl`, et le résultat de cette fonction doit être défini comme une valeur avec un suffixe `$`.
 
 ```tsx
-const onScroll$ = implicit$FirstArg(onScroll);
+const onScroll$ = implicit$FirstArg(onScrollQrl);
 
 onScroll$(() => alert('scroll'));
 ```

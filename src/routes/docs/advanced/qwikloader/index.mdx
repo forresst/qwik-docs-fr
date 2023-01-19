@@ -3,6 +3,7 @@ title: Qwikloader
 contributors:
   - manucorporat
   - adamdbradley
+  - literalpie
 ---
 
 # Qwikloader
@@ -11,17 +12,17 @@ Qwik est conçu pour le chargement différé de votre application. Pour réalise
 
 Qwikloader est :
 
-- petit : environ 1 kb minifié.
-- rapide : il s'exécute en moins de 5 ms, même sur les appareils mobiles. (Coût initial, pas de coût par événement).
+- Petit : environ 1 kb minifié.
+- Rapide : il s'exécute en moins de 5 ms, même sur les appareils mobiles. (Coût initial, pas de coût par événement).
 
 Comment est-il livré :
 
-- En raison de sa taille, nous recommandons de livrer Qwikloader en tant que balise `<script>` intégrée. De cette façon, le navigateur n'a pas à payer le coût de la création d'une autre connexion au serveur.
+- En raison de sa taille, nous recommandons de livrer Qwikloader dans une balise `<script>` intégrée. De cette façon, le navigateur n'a pas à payer le coût de la création d'une autre connexion au serveur.
 
-Quel est l'objectif de Qwikloader :
+L'objectif de Qwikloader :
 
-- enregistrer les événements globaux du navigateur.
-- si un événement se produit, rechercher dans le DOM l'attribut d'événement correspondant pointant vers le QRL à charger de manière différée.
+- Enregistrer les événements globaux du navigateur.
+- Si un événement se produit, rechercher dans le DOM l'attribut d'événement correspondant pointant vers le QRL à charger de manière différée.
 - Charger de manière différée le gestionnaire d'événement et l'exécuter.
 
 ## Comment fonctionne-t-il ?

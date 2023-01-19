@@ -8,10 +8,10 @@ export default component$(() => {
 
   return (
     <BuilderContentComp
-    html={builder.value.html}
-    apiKey={QWIK_PUBLIC_API_KEY}
-    model={QWIK_MODEL}
-    tag="main"
+      html={builder.value.html}
+      apiKey={QWIK_PUBLIC_API_KEY}
+      model={QWIK_MODEL}
+      tag="main"
     />
   );
 });

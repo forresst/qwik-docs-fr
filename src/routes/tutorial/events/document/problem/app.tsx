@@ -8,6 +8,7 @@ export default component$(() => {
       onMouseMove$={(event) => {
         store.x = event.clientX;
         store.y = event.clientY;
+        console.log(store);
       }}
     >
       La position de votre souris est ({store.x}, {store.y}).

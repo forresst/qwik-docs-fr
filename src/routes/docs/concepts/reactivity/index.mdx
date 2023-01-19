@@ -84,14 +84,14 @@ Remarquez comment l'ensemble des abonnements se met automatiquement à jour lors
 
 ## Objets profonds
 
-Jusqu'à présent, les exemples montrent le store (`useStore()`) comme un objet simple avec des valeurs primitives. Cependant, le même comportement fonctionne sur toutes les propriétés du store de manière récursive en fournissant l'option `recursive`.
+Jusqu'à présent, les exemples montrent le store (`useStore()`) comme un objet simple avec des valeurs primitives. Cependant, le même comportement fonctionne sur toutes les propriétés du store de manière récursive en fournissant l'option `deep`.
 
 ```tsx
 export const MyComp = component$(() => {
   const store = useStore({
     person: { first: null, last: null },
     location: null
-  }, { recursive: true });
+  }, { deep: true });
 
   store.location = {street: 'main st'};
 

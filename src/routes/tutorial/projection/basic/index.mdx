@@ -3,9 +3,10 @@ title: Projection
 contributors:
   - manucorporat
   - adamdbradley
+  - literalpie
 ---
 
-La projection est un moyen de transmettre du contenu à un composant enfant qui, à son tour, contrôle l'endroit où le contenu est rendu. La projection est une collaboration entre le composant parent et le composant enfant. Le composant parent décide quel est le contenu qui doit être rendu, le composant enfant décide où et si le contenu doit être rendu.
+La projection est un moyen de transmettre du contenu à un composant enfant qui, à son tour, contrôle l'endroit où le contenu est rendu. La projection est une collaboration entre le composant parent et le composant enfant. Le composant parent décide quel est le contenu qui doit être rendu, tandis que le composant enfant décide où et si le contenu doit être rendu.
 
 Dans notre exemple, le contenu de l'élément `<Panel>` (à l'intérieur de l'élément `<App>`) est le contenu qui doit être projeté. Le composant `<Panel>` enveloppe le contenu dans une balise `<div>` et doit le projeter en utilisant l'élément `<Slot>`.
 
@@ -13,8 +14,8 @@ Dans notre exemple, le contenu de l'élément `<Panel>` (à l'intérieur de l'é
 
 Pourquoi Qwik choisit-il d'utiliser `<Slot>` plutôt que `children` ? L'utilisation de `<Slot>` est un choix stratégique pour permettre le rendu des composants dans le désordre. (Ce qui signifie qu'un composant doit être capable d'effectuer un re-rendu même si le composant parent n'est pas encore résumé). Il y a deux problèmes avec l'utilisation de `children` dans Qwik.
 
-1. Si Qwik utilisait la propriété `children` pour la projection, la propriété `children` devrait être sérialisable. Car lorsque le composant enfant est rendu, il a besoin de la propriété `children` pour l'insérer quelque part.
-2. Un composant enfant pourrait modifier le contenu de `children` avant de le transmettre et de l'insérer dans l'arborescence du rendu. Cela empêcherait le composant parent d'effectuer un rendu indépendamment du composant enfant. Si un enfant modifie les enfants, alors à chaque fois que le composant parent modifie `children`, Qwik doit ré-exécuter le composant enfant pour voir quel type de modifications il fait à `children` avant de les insérer dans l'arborescence du rendu.
+1. Pour que Qwik puisse utiliser la propriété `children` pour la projection, il faudrait qu'elle soit sérialisable comme toutes les autres valeurs qui sont passées entre les composants de Qwik.
+2. Un composant enfant pourrait modifier le contenu de `children` avant de le transmettre et de l'insérer dans l'arborescence du rendu. Cela empêcherait le composant parent d'effectuer un rendu indépendamment du composant enfant. Si un enfant devait modifier le composant `children`, il devrait le faire à chaque fois que le composant parent met à jour la valeur de `children`.
 
 Pour Qwik, l'approche `<Slot>` est préférable car elle contrôle de manière déclarative le contenu et l'emplacement de la projection. Cela permet au composant parent de modifier le contenu de la projection, sans obliger le composant enfant à effectuer un re-rendu.
 

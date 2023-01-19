@@ -9,6 +9,7 @@ contributors:
   - JaymanW
   - RATIU5
   - manucorporat
+  - literalpie
 ---
 
 # État
@@ -111,7 +112,7 @@ export default component$(() => {
     {
       nested: { fields: { are: 'not tracked' } },
     },
-    { recursive: true }
+    { deep: true }
   );
 
   return (
@@ -133,7 +134,7 @@ export default component$(() => {
     {
       letters: ['A', 'B', 'C'],
     },
-    { recursive: true }
+    { deep: true }
   );
 
   return (
@@ -157,7 +158,7 @@ export default component$(() => {
 
 Une des fonctionnalités intéressantes de Qwik est que l'état peut être passé à d'autres composants, et ils peuvent à la fois lire et écrire dessus, permettant aux données de circuler à travers l'arborescence dans toutes les directions.
 
-Il y a trois façons de passer l'état à d'autres composants.
+Il y a deux façons de passer l'état à d'autres composants : avec des props ou avec le contexte.
 
 ### Utilisation des props
 

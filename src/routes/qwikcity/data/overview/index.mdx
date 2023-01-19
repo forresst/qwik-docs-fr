@@ -76,6 +76,10 @@ Une valeur de cookie est un enregistrement simple comportant trois champs :
 2. `json()` : Exécute `JSON.parse()` sur la valeur et renvoie le résultat
 3. `number()` : Exécute `Number()` sur la valeur et renvoie le résultat
 
+**getAll**
+
+Retourne un objet avec tous les cookies, s'il y en a. *Ceci est parfois nécessaire si les noms des cookies sont inconnus et doivent être analysés.*
+
 **set**
 
 Prend une clé et une valeur et crée une entête qui sera ajoutée à la réponse. La valeur peut être un `string | number | Record<string, any>`
