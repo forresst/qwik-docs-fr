@@ -194,7 +194,7 @@ L'API du contexte est un moyen pour transmettre l'état aux composants sans avoi
 Consultez l'[API de contexte](../context/index.mdx) pour plus d'informations.
 
 ```tsx
-const CTX = createContext('stuff');
+export const CTX = createContext('stuff');
 
 export const Stores = component$(() => {
   const userData = useStore({
