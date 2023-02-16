@@ -1,25 +1,26 @@
 ---
-title: Progressivement
+title: Progressif
 contributors:
   - adamdbradley
   - RATIU5
   - manucorporat
+  - fleish80
 ---
 
-# Progressivement
+# Progressif
 
-Progressivement, il s'agit de charger le code au fur et à mesure des besoins de l'application, sans avoir à charger l'ensemble de la base de code en amont.
+Progressif consiste à charger le code en fonction des besoins de l'application, sans charger par avance toute la base de code.
 
-Ceci est lié au [principe de base](../../think-qwik/index.mdx) de Qwik qui se concentre sur le retardement du **chargement** et de l'exécution du JavaScript aussi longtemps que possible. Qwik a besoin de décomposer l'application en plusieurs morceaux chargeable de manière différée pour atteindre cet objectif.
+Ceci est lié au [principe de base](../../think-qwik/index.mdx) de Qwik qui se concentre sur le retardement du **chargement** et de l'exécution de JavaScript aussi longtemps que possible. Qwik a besoin de décomposer l'application en plusieurs morceaux chargeable de manière différée pour atteindre cet objectif.
 
 ## État de l'art actuel
 
 [Les frameworks existants souffrent de deux problèmes](https://www.builder.io/blog/dont-blame-the-developer-for-what-the-frameworks-did):
 
-- Les zones du chargement différé sont déléguées à 100 % au développeur.
+- Les zones du chargement différé sont entièrement déléguées au développeur.
 - Les frameworks ne peuvent charger de manière différée que les composants qui ne sont pas dans l'arborescence du rendu en cours.
 
-Le problème est que les frameworks doivent récupérer leur état interne avec le DOM. Et cela signifie qu'au moins une fois lors de l'hydratation de l'application, ils doivent être en mesure d'effectuer un rendu complet pour reconstruire l'état interne du framework. Après le premier rendu, les frameworks peuvent être plus chirurgicaux quant à leurs mises à jour, mais le mal a été fait, le code a été chargé. Nous avons donc deux problèmes :
+Le problème est que les frameworks doivent récupérer leur état interne avec le DOM. Et cela signifie qu'au moins une fois dans l'application [l'hydratation](../../concepts/resumable/#resumable-vs-hydration) se produit, les Frameworks doivent être en mesure d'effectuer un rendu complet pour reconstruire l'état interne du framework. Après le premier rendu, les frameworks peuvent être plus chirurgicaux quant à leurs mises à jour, mais le mal a été fait, le code a été chargé. Donc maintenant nous avons donc deux problèmes :
 
 - Les frameworks doivent charger et exécuter les composants pour reconstruire l'arborescence du rendu au démarrage. (Voir [l'hydratation est une pure perte de temps](https://www.builder.io/blog/hydration-is-pure-overhead)) Cela force le chargement et l'exécution par avance de tous les composants de l'arborescence du rendu.
 - Les gestionnaires d'événements sont fournis avec les composants, même s'ils ne sont pas nécessaires au moment du rendu. L'inclusion des gestionnaires d'événements force le chargement de code inutile.
@@ -32,7 +33,7 @@ De plus, le moteur d'exécution du framework n'a pas besoin de charger le code q
 
 ### L'Optimiseur
 
-L'Optimiseur (décrit en détail [ici](../../advanced/optimizer/index.mdx)) est une transformation de code qui extrait les fonctions dans des symboles importables de haut niveau, ce qui permet au moteur d'exécution de Qwik de charger de manière différée le JavaScript en fonction des besoins.
+L'[Optimiseur](../../advanced/optimizer/index.mdx) est une transformation de code qui extrait les fonctions dans des symboles importables de haut niveau, ce qui permet au moteur d'exécution de Qwik de charger de manière différée le JavaScript en fonction des besoins.
 
 L'Optimiseur et le moteur d'exécution de Qwik travaillent ensemble pour atteindre le résultat désiré du chargement différé avec précision.
 
@@ -41,7 +42,7 @@ Sans l'Optimiseur :
 - Le code devrait être découpé par le développeur en parties importables. Cela ne serait pas naturel pour écrire une application, ce qui rendrait l'expérience du développeur mauvaise.
 - L'application devrait charger beaucoup de code inutile, car il n'y aurait pas de zones pour le chargement différé.
 
-Le moteur d'exécution de Qwik doit comprendre le résultat de l'Optimiseur. La plus grande différence à comprendre est qu'en décomposant le composant en morceaux à chargement différé, l'exigence du chargement différé introduit du code asynchrone dans le framework. Le framework doit être écrit différemment pour prendre en compte l'asynchronisme. Les frameworks existants supposent que tout le code est disponible de manière synchrone. Cette hypothèse empêche une insertion facile du chargement différé dans les frameworks existants. (Par exemple, lorsqu'un nouveau composant est créé, le framework suppose que son code d'initialisation peut être invoqué de manière synchrone. Si c'est la première fois que le composant est référencé, son code doit être chargé de manière différée, et le framework doit donc en tenir compte).
+Le moteur d'exécution de Qwik doit comprendre le résultat de l'Optimiseur. Ce qu'il faut comprendre ici, c'est qu'en décomposant le composant en morceaux à chargement différé, l'exigence du chargement différé introduit du code asynchrone dans le framework. Le framework doit être écrit différemment pour prendre en compte l'asynchronisme. Les frameworks existants supposent que tout le code est disponible de manière synchrone. Cette hypothèse empêche une insertion facile du chargement différé dans les frameworks existants. (Par exemple, lorsqu'un nouveau composant est créé, le framework suppose que son code d'initialisation peut être invoqué de manière synchrone. Si c'est la première fois que le composant est référencé, son code doit être chargé de manière différée, et le framework doit donc en tenir compte).
 
 ### Chargement différé
 
@@ -49,10 +50,10 @@ Le chargement différé est asynchrone. Qwik est un framework asynchrone. Qwik c
 
 Dans Qwik tout est chargeable de manière différée :
 
-- Composant pour le rendu (bloc d'initialisation et bloc de rendu)
-- Composant pour la surveillance (effets secondaires, seulement chargé si les entrées changent)
-- Écouteurs (seulement chargé sur l'interaction)
-- Styles (uniquement chargés si le serveur ne les a pas déjà fournis)
+- Composant pour le rendu - bloc d'initialisation et bloc de rendu
+- Composant pour la surveillance - effets secondaires, seulement chargé si les entrées changent
+- Écouteurs - seulement chargé sur l'interaction
+- Styles - uniquement chargés si le serveur ne les a pas déjà fournis
 
 Le chargement différé est une propriété essentielle du framework et non un ajout après coup.
 
@@ -73,6 +74,5 @@ export const Counter = component$(() => {
 ```
 
 Remarquez la présence de `$` dans le code. `$` est un marqueur qui indique à l'optimiseur que la fonction qui le
-suit doit être chargée de manière différée. (Pour une explication détaillée, voir [$ et les règles de l'Optimiseur](../../advanced/optimizer/index.mdx).
-Le `$` est un caractère unique qui indique à l'Optimiseur et au développeur
+suit doit être chargée de manière différée. Le `$` est un caractère unique qui indique à l'Optimiseur et au développeur
 que le chargement différé asynchrone est nécessaire ici.

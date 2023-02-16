@@ -7,15 +7,15 @@ contributors:
   - adamdbradley
 ---
 
-# Contexte
+# ContextId
 
 Qwik fournit une API de contexte, très similaire à la fonctionnalité `useContext()` de React. En fait, l'API de contexte de Qwik est le moyen le plus efficace de faire descendre les données, réduisant la surcharge, générant moins de code et permettant à Qwik de faire du tree shaking plus poussé sur les données inutilisées.
 
 L'API du contexte de Qwik est composée de 3 méthodes, importables depuis `@builder.io/qwik` :
 
-- `createContext(contextName: string): Context`
-- `useContextProvider(ctx: Context, value: VALUE): Context`
-- `useContext(ctx: Context): VALUE`
+- `createContextId(contextName: string): ContextId`
+- `useContextProvider(ctx: ContextId, value: VALUE): void`
+- `useContext(ctx: ContextId): VALUE`
 
 ### Exemple
 
@@ -29,11 +29,11 @@ import {
   useStore,
   useContext,
   useContextProvider,
-  createContext,
+  createContextId,
 } from '@builder.io/qwik';
 
 // Crée un nouveau descripteur de contexte
-export const MyContext = createContext('my-context');
+export const MyContext = createContextId('my-context');
 
 export const Parent = component$(() => {
   // Crée un stockage réactif
@@ -66,15 +66,15 @@ Examinons de plus près toutes les API concernées :
 
 ## API
 
-### `createContext()`
+### `createContextId()`
 
 Cette méthode prend un string qui donne un nom unique au contexte, si votre application utilise beaucoup de contextes différents ou si vous écrivez une bibliothèque de composants, nous vous recommandons de suivre une convention de nom qui évite les conflits, comme par exemple :
 
 ```tsx
-export const QwikCityContext = createContext('io.builder.qwik.city');
+export const QwikCityContext = createContextId('io.builder.qwik.city');
 ```
 
-Remarquez que la valeur retournée par `createContext()` ne contient aucun état, et elle est immuable. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
+Remarquez que la valeur retournée par `createContextId()` ne contient aucun état, et elle est immuable. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
 
 Parce qu'elle ne contient aucun état, il est possible de l'appeler et d'en faire un singleton, exporté dans un module partagé.
 
@@ -127,13 +127,13 @@ export const Children = component$(() => {
 
 ## Contextes typés
 
-Lorsqu'un contexte est créé en utilisant `createContext()`, un type peut être fourni. En fait, il est fortement recommandé de le faire, afin de réduire les erreurs et les fautes de frappe :
+Lorsqu'un contexte est créé en utilisant `createContextId()`, un type peut être fourni. En fait, il est fortement recommandé de le faire, afin de réduire les erreurs et les fautes de frappe :
 
 ```tsx
 export interface SharedState {
   count: number;
 }
-export const MyContext = createContext<SharedState>('my-context');
+export const MyContext = createContextId<SharedState>('my-context');
 ```
 
 De cette façon, lorsque vous utilisez `MyContext` dans [`useContextProvider()`](/docs/components/context/index.mdx#usecontextprovider) et `useContext()`, la valeur fournie aura le type `SharedState`.
@@ -146,13 +146,13 @@ import {
   useStore,
   useContext,
   useContextProvider,
-  createContext,
+  createContextId,
 } from '@builder.io/qwik';
 
 export interface SharedState {
   count: number;
 }
-export const MyContext = createContext<SharedState>('my-context');
+export const MyContext = createContextId<SharedState>('my-context');
 
 export const Parent = component$(() => {
   const state = useStore<SharedState>({

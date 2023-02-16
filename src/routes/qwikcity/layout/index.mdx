@@ -1,0 +1,102 @@
+---
+title: Qwik City - Mise en page & Middleware
+contributors:
+  - manucorporat
+  - adamdbradley
+  - Oyemade
+  - mhevery
+  - nnelgxorz
+---
+
+# Mises en page imbriquées
+
+Les mises en page fournissent **une interface utilisateur intégrée et une gestion des requêtes (middleware)** à un ensemble de routes :
+
+- **Gestion des requêtes partagées** : Réalisé en ajoutant une méthode `onRequest`.
+- **Interface utilisateur partagée** : Réalisé par `export default` un composant Qwik.
+
+## Exemple
+
+Rassemblons tous les concepts que nous avons appris jusqu'à présent pour construire une application complète.
+
+Dans l'exemple proposé, nous avons un site avec 2 pages : `https://example.com` et `https://example.com/about`, et nous voulons ajouter une entête et un pied de page communs à toutes les pages, la seule différence entre les pages est le contenu au milieu.
+
+```
+┌───────────────────────────────────────────────────┐
+│ Header                                            │
+├─────────┬─────────────────────────────────────────┤
+│ Menu    │ <CONTENU_SPECIFIQUE_DE_LA_ROUTE>        │
+│ - home  │                                         │
+│ - about │                                         │
+│         │                                         │
+├─────────┴─────────────────────────────────────────┤
+│ Footer                                            │
+└───────────────────────────────────────────────────┘
+```
+
+D'abord, nous créons trois composants : `<Header>`, `<Footer>` et `<Menu>`.
+
+> Le développeur pourrait copier-coller ces composants manuellement dans chaque composant de la page, mais cela est répétitif et source d'erreurs. **Au lieu de cela, nous pouvons utiliser des mises en page pour réutiliser automatiquement les parties communes**.
+
+### Répertoire des routes
+
+```
+src/
+├── components/
+│   ├── header.tsx         # Implémentation du composant Header
+│   ├── footer.tsx         # Implémentation du composant Footer
+│   └── menu.tsx           # Implémentation du composant Menu
+└── routes/
+    ├── layout.tsx         # Implémentation du Layout utilisant : <Header>, <Footer> et <Menu>
+    ├── about/
+    │   └── index.tsx      # https://example.com/about
+    └── index.tsx          # https://example.com
+```
+
+### `src/routes/layout.tsx`
+
+Il sera utilisé pour toutes les routes sous le répertoire `src/routes`. Il rendra les composants `Header`, `Menu` et `Footer`, et rendra également les routes imbriquées sous le composant `Slot`.
+
+```tsx
+// Fichier : src/routes/layout.tsx
+export default component$(() => {
+  return (
+    <>
+      <Header />
+      <Menu />
+      <Slot /> {/* <== C'est ici que la route sera insérée */}
+      <Footer />
+    </>
+  );
+});
+```
+
+### `src/routes/index.tsx`
+
+Il s'agit de la route principale du site. Il sera rendu sous le composant `Slot` dans le fichier `src/routes/layout.tsx`, donc même s'il n'a aucun des composants `Header`, `Menu` ou `Footer`, il sera quand même rendu avec eux.
+
+```tsx
+// Fichier : src/routes/index.tsx
+export default component$(() => {
+  return <>Home</>;
+});
+```
+
+### `src/routes/about/index.tsx`
+
+Comme pour le fichier `src/routes/index.tsx`, mais pour la route `about`, il sera rendu sous le composant `Slot` dans le fichier `src/routes/layout.tsx`, donc même si il n'a aucun des composants `Header`, `Menu` ou `Footer`, il sera quand même rendue avec eux.
+
+```tsx
+// Fichier : src/routes/about/index.tsx
+export default component$(() => {
+  return <>About</>;
+});
+```
+
+Lorsque nous lançons l'appli, Qwik rendra le `About` imbriqué dans le `RootLayout`.
+
+```tsx
+<RootLayout>
+  <AboutPage />
+</RootLayout>
+```

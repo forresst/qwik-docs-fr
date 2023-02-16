@@ -5,38 +5,40 @@ contributors:
 ---
 
 # Conseils pour éviter l'hydratation
+
 ## N'enregistrez pas les événements en avance avec `useClientEffect$()`
+
 > ⚠ Utilisez `useClientEffect$()` avec précaution ⚠
 
 Au lieu de cela => méthodes `useOn()`
 
 **Bonnes pratiques** :
 
-```tsx
-useClientEffect$(()=> { 
-    const listener = (event)=> { 
+```ts
+useClientEffect$(()=> {
+    const listener = (event)=> {
         const mouseEvent = event as MouseEvent
         console.log(mouseEvent.x, mouseEvent.y);
     }
     document.addEventListener('mousemove', listener);
-    
+
     return ()=> {document.removeEventListener(listener)}
 })
 ```
 
 **Pourquoi est-ce un problème** :
-Cela oblige plus de javascript à se charger de manière anticipée, plutôt que d'être chirurgicalement réactif aux événements de l'utilisateur. Plus de javascript en amont => performance de l'application plus lente. 
+Cela oblige plus de javascript à se charger de manière anticipée, plutôt que d'être chirurgicalement réactif aux événements de l'utilisateur. Plus de javascript en amont => performance de l'application plus lente.
 
-Cela exige également que vous, le développeur, restiez plus attentif à la relation entre le serveur et le client (il y a une raison pour laquelle vous avez obtenu `use >Client< Effect` après tout). 
+Cela exige également que vous, le développeur, restiez plus attentif à la relation entre le serveur et le client (il y a une raison pour laquelle vous avez obtenu `use >Client< Effect` après tout).
 
 Bien que cela soit parfois nécessaire, le framework devrait avoir pour mission de vous éviter d'avoir à vous en soucier autant que possible.
 
-Sans parler du fait que cela demande un effort supplémentaire de votre part pour nettoyer manuellement l'écouteur. 
+Sans parler du fait que cela demande un effort supplémentaire de votre part pour nettoyer manuellement l'écouteur.
 
 **Faites plutôt cela** :
 
-```tsx
-useOnDocument('mousemove', $((event)=> { 
+```ts
+useOnDocument('mousemove', $((event)=> {
     const mouseEvent = event as MouseEvent;
     console.log(mouseEvent.x, mouseEvent.y)
     // Aucun nettoyage manuel n'est nécessaire !
@@ -44,13 +46,13 @@ useOnDocument('mousemove', $((event)=> {
 ```
 
 > REMARQUE : Des hooks similaires existent pour window et les composants individuels.
-> `window` -> `useOnWindow` , composant -> `useOn` 
-> * [docs useOn / useDocument / useWindow](https://qwik.builder.io/tutorial/hooks/use-on/)
-> * [Exemple](https://qwik.builder.io/tutorial/hooks/use-on/#example)
-> * [Tutoriel](https://qwik.builder.io/tutorial/events/programmatic/)
+> `window` -> `useOnWindow` , composant -> `useOn`
+>
+> - [docs useOn / useDocument / useWindow](https://qwik.builder.io/tutorial/hooks/use-on/)
+> - [Exemple](https://qwik.builder.io/tutorial/hooks/use-on/#example)
+> - [Tutoriel](https://qwik.builder.io/tutorial/events/programmatic/)
+
 ----
-
-
 
 ## Ne comptez pas sur `window` pour obtenir l'emplacement.
 
@@ -58,20 +60,20 @@ Au lieu de cela => `useLocation()`
 
 **Bonnes pratiques** :
 
-```tsx
-useClientEffect$(()=> { 
-    if (window.location.href).includes('foo') { 
+```ts
+useClientEffect$(()=> {
+    if (window.location.href).includes('foo') {
         //... faire quelque chose
     }
 })
 
-//OU 
+//OU
 
 //(à la racine du composant)
-if (typeof window !== "undefined") { 
+if (typeof window !== "undefined") {
     const queryParams = new URLSearchParams(window.location.search);
     const query: Record<string, string> = {};
-    queryParams.forEach((value, key) => { 
+    queryParams.forEach((value, key) => {
         query[key] = value;
     })
     doTheThing(query);
@@ -79,27 +81,27 @@ if (typeof window !== "undefined") {
 ```
 
 **Pourquoi est-ce un problème** :
-De très nombreuses choses que vous ferez en réponse aux informations de location peuvent facilement être faites lors du rendu initial sur le serveur, et donneront un pur HTML sans surcharge JS. 
+De très nombreuses choses que vous ferez en réponse aux informations de location peuvent facilement être faites lors du rendu initial sur le serveur, et donneront un pur HTML sans surcharge JS.
 
-Si vous forcez cette logique à s'exécuter du côté client, cela introduit plus de JS en amont et provoque un chargement anticipé. 
-
+Si vous forcez cette logique à s'exécuter du côté client, cela introduit plus de JS en amont et provoque un chargement anticipé.
 
 Si vous utilisez le modèle `if typeof window !== "undefined"`, vous constaterez rapidement que ce code est simplement ignoré. Il s'exécutera une fois sur le serveur et sautera le bloc de code parce que window sera toujours indéfini sur le serveur. Vous êtes habitué à ce que le code soit exécuté deux fois. Qwik n'a pas besoin de le faire ! 😎
 
 **Faites plutôt cela** :
-```tsx
+
+```ts
 const location = useLocation();
 
-if (location.href.includes('foo')) { 
+if (location.href.includes('foo')) {
     // faire quelque chose
 }
-//OU 
+//OU
 doTheThing(location.query);
-    
 ```
 
 
 ## EXCEPTION
+
 Lorsque vous utilisez SSG pour des fichiers purement statiques, c'est un mal nécessaire. Le serveur ne disposera pas d'informations sur l'emplacement actuel lorsqu'il générera les fichiers au moment de la construction.
 
 Mais attention ! Si les informations dont vous avez besoin (par exemple, les paramètres de requête) ne sont pas nécessaires avant un événement utilisateur, incluez plutôt la vérification dans votre code de gestion des événements pour éviter le chargement anticipé de JS.

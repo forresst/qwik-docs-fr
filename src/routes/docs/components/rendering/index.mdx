@@ -93,6 +93,14 @@ export const Parent = component$(() => {
 
 > note: it is not recommended to use the array's index as the key unless you can guarantee that the data for a given key will always be the same. It is always preferred to use some unique identifier from the data as the key.
 
+### `dangerouslySetInnerHTML`
+
+Qwik offre un attribut sur les éléments HTML appelé `dangerouslySetInnerHTML` comme un remplacement pour appeler `innerHTML` sur le DOM. En raison des possibilités de cross-site-scripting (XSS) lors du rendu de contenu non digne de confiance, vous devez utiliser cet attribut pour vous rappeler que cette opération peut être dangereuse.
+
+```tsx
+<div dangerouslySetInnerHTML={content}></div>
+```
+
 ## `render()` est asynchrone
 
 Les exemples ci-dessus montrent pourquoi le processus de rendu doit être asynchrone. Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.

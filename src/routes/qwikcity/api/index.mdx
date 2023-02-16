@@ -20,7 +20,7 @@ menu: ContentMenu | undefined;
 
 Le tableau `headings` contient des données sur [les éléments de titre html](https://developer.mozilla.org/fr/docs/Web/HTML/Element/Heading_Elements) de `<h1>` à `<h6>` d'un fichier markdown.
 
-Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Consultez la [définition du fichier menu](/qwikcity/content/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
+Les menus sont des données contextuelles déclarées avec des fichiers `menu.md`. Consultez la [définition du fichier menu](/qwikcity/advanced/menu/index.mdx) pour plus d'informations sur le format et l'emplacement du fichier.
 
 ## `useDocumentHead()`
 
@@ -45,6 +45,7 @@ export interface RouteLocation {
   readonly href: string;
   readonly pathname: string;
   readonly query: Record<string, string>;
+  readonly isNavigating: boolean;
 }
 ```
 
@@ -52,7 +53,7 @@ La valeur de retour de [`useLocation()`](/qwikcity/api/index.mdx#uselocation) es
 
 ### Paramètres de route
 
-`useLocation()` encode les [Paramètres de la route](/qwikcity/routing/route-parameters/index.mdx) en tant que paramètres.
+`useLocation()` encode les [Paramètres de la route](/qwikcity/routing/index.mdx) en tant que paramètres.
 
 Supposez que vous ayez fait :
 
@@ -91,7 +92,7 @@ Le code ci-dessus génère :
 
 La fonction `useNavigate()` permet de naviguer de manière programmée vers la page suivante sans impliquer un clic de l'utilisateur ou provoquer un rechargement complet de la page. Il s'agit de l'API utilisée par le composant `<Link>` en interne pour prendre en charge la navigation SPA.
 
-Bien qu'elle ressemble beaucoup à `useLocation`, cette API est **en écriture seule**, vous ne devez jamais lire la valeur, mais vous pouvez l'utiliser pour écrire où vous souhaitez naviguer en premier.
+Cette fonction renvoie une fonction `goto()` qui peut être utilisée pour naviguer vers un nouveau chemin.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -105,10 +106,19 @@ export default component$(() => {
       <button
         onClick$={() => {
           // cette affectation entraîne une navigation SPA
-          nav.path = '/dashboard';
+          nav('/dashboard');
         }}
       >
         Aller au tableau de bord
+      </button>
+
+      <button
+        onClick$={() => {
+          // appel sans arguments pour rafraîchir la page actuelle
+          nav();
+        }}
+      >
+        Actualiser la page
       </button>
     </>
   );
@@ -117,46 +127,32 @@ export default component$(() => {
 
 Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/dashboard` sans provoquer un rechargement de la page.
 
-## `useEndpoint()`
+> Notez que pour le référencement et l'accessibilité, il est préférable d'utiliser le composant `<Link>` plutôt que `useNavigate()` de manière programmatique pour naviguer vers une nouvelle page après une interaction avec l'utilisateur.
 
-Il s'agit de la principale API permettant de récupérer des données sur le serveur ! Elle fonctionne comme un RPC, en appelant le serveur et en renvoyant une [ressource](/docs/components/resource/index.mdx), qui sera résolue avec les données réelles.
+## `loader$()`
 
-Veuillez consulter les docs de [Gestion des données](../data/overview/index.mdx) pour plus de détails, en particulier la section [Récupérer](../data/retrieve/index.mdx) les données.
+La fonction `loader$()` est utilisée pour déclarer un nouveau Chargeur de Serveur (NdT: « Server Loader ») dans la page/endpoint ou layout donné. QwikCity exécutera tous les chargeurs déclarés pour la correspondance de la route donnée. Les composants Qwik peuvent ensuite référencer les chargeurs, en les important et en appelant la méthode `.use()` afin de récupérer les données.
 
 ```tsx
-import { Resource, component$, useStore } from '@builder.io/qwik';
-import type { RequestHandler } from '@builder.io/qwik-city';
-import { useEndpoint } from "@builder.io/qwik-city";
-
-
-export const onGet: RequestHandler<number> = async ({ params }) => {
-  // Ce code s'exécute sur le serveur
-  const PI = computePIinServer();
-  return PI;
-};
-
+export const useGetTime = loader$(() => {
+  return { time: new Date() }
+});
 export default component$(() => {
-  const piResource = useEndpoint<ProductData>();
+  const signal = useGetTime(); // Signal<{time: Date}>
+  console.log('Date': signal.value.time);
   return (
-    <Resource
-      value={piResource}
-      onResolved={(pi) => (
-        <>
-          <p>Le nombre PI est : {pi}</p>
-        </>
-      )}
-    />
-  );
+    <div>{signal.value.time.toISOString()}</div>
+  )
 });
 ```
 
-Ce qui donne le HTML suivant :
+Veuillez consulter la section [Chargeurs de serveur](/qwikcity/loader/index.mdx) pour plus d'informations.
 
-```html
-<p>Le nombre PI est : 3.14159</p>
-```
+## `action$()`
 
-> Pour être compatible avec le SSR, `useEndpoint()` élimine la nécessité d'exécuter une logique sur le serveur et de récupérer ces données sur le client !
+La fonction `action$()` est utilisée pour déclarer une nouvelle Action de Serveur dans la page/endpoint ou le layout donnée. QwikCity exécutera seulement l'action invoquée après une interaction avec l'utilisateur (comme un clic sur un bouton ou la soumission d'un formulaire).
+
+Veuillez vous référer à la section [Actions de Serveur](/qwikcity/action/index.mdx) pour plus d'informations.
 
 ## `<QwikCityProvider>`
 
@@ -188,6 +184,34 @@ export default function Root() {
 Ce composant est responsable du rendu de la route correspondante à un moment donné, il utilise en interne le [`useContent()`](/qwikcity/api/index.mdx#usecontent) et rend la page actuelle, ainsi que toutes les mises en page imbriquées.
 
 Ce composant est généralement situé comme un enfant de `<body>`, dans la plupart des starter vous le trouverez dans le fichier `src/root.tsx`.
+
+## `<Form>`
+
+Le composant `Form` est une enveloppe autour de l'élément natif `<form>`, et il est conçu pour fonctionner en parallèle avec les [Actions du serveur](/qwikcity/action/index.mdx).
+
+Puisque ce composant utilise l'élément natif `<form>`, il fonctionnera avec n'importe quel navigateur avec ou sans JavaScript activé, en outre, il améliore l'élément natif `<form>` en capturant l'événement `submit` et en empêchant le comportement par défaut, de sorte qu'il se comportera comme un SPA (Single Page Navigation) au lieu d'un rechargement complet de la page.
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { Form, action$ } from '@builder.io/qwik-city';
+// cette action sera appelée lorsque le formulaire sera soumis
+export const useLoginAction = action$((data, { cookies, redirect }) => {
+  if (validate(data.username, data.password)) {
+    cookies.set('auth', getAuthToken(data.username));
+    throw redirect(302, '/dashboard');
+  }
+});
+export default component$(() => {
+  const login = useLoginAction();
+  return (
+    <Form action={login}>
+      <input type="text" name="username" />
+      <input type="password" name="password" />
+      <button type="submit">Login</button>
+    </Form>
+  );
+});
+```
 
 ## `<Link>`
 

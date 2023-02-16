@@ -10,6 +10,7 @@ contributors:
   - RATIU5
   - manucorporat
   - literalpie
+  - fum4
 ---
 
 # État
@@ -24,7 +25,7 @@ Il est important de noter que l'état dans Qwik n'est pas nécessairement l'éta
 
 `const signal = useSignal(initialState)` est un hook qui crée un signal réactif. Il prend une valeur initiale et renvoie un signal réactif.
 
-Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété (`signal.value`). Si vous modifiez la propriété `value` de l'objet, tout composant qui en dépend sera mis à jour.
+Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété (par exemple : `signal.value`). Si vous modifiez la propriété `value` de l'objet, tout composant qui en dépend sera mis à jour.
 
 ### Exemple
 
@@ -112,7 +113,7 @@ export default component$(() => {
     {
       nested: { fields: { are: 'not tracked' } },
     },
-    { deep: true }
+    { recursive: true }
   );
 
   return (
@@ -134,7 +135,7 @@ export default component$(() => {
     {
       letters: ['A', 'B', 'C'],
     },
-    { deep: true }
+    { recursive: true }
   );
 
   return (
@@ -194,7 +195,7 @@ L'API du contexte est un moyen pour transmettre l'état aux composants sans avoi
 Consultez l'[API de contexte](../context/index.mdx) pour plus d'informations.
 
 ```tsx
-export const CTX = createContext('stuff');
+export const CTX = createContextId('stuff');
 
 export const Stores = component$(() => {
   const userData = useStore({

@@ -19,9 +19,9 @@ Apprendre Qwik et Qwik City ne sont pas deux choses différentes, Qwik City est 
 
 > Qwik¹ City²
 >
-> [**Qwik¹**](../../docs/overview/index.mdx) : Le coeur du framework, stable, primitifs, modèle de composants.
+> [**Qwik¹**](/docs/overview/index.mdx) : Le coeur du framework, stable, primitifs, modèle de composants.
 >
-> [**City²**](../directory-layout/index.mdx) : Un routeur opiniâtre basé sur des fichiers, pour construire rapidement.
+> [**City²**](/qwikcity/routing/index.mdx) : Un routeur opiniâtre basé sur des fichiers, pour construire rapidement.
 
 Nous appelons cela un **méta-framework** pour Qwik. Qwik City est à Qwik, ce que [Next.js](https://nextjs.org/) est à React, ce que [Nuxt](https://nuxtjs.org/) est à Vue, ou [SvelteKit](https://kit.svelte.dev/) à Svelte.
 
@@ -45,16 +45,3 @@ Par défaut, les sites Qwik City sont rapides car :
 - Ils sont résumables
 - Ils chargent un minimum de JavaScript
 - Ils sont livrés avec [Partytown](https://partytown.builder.io)
-
-Pour suivre ce guide, exécutez le CLI de Qwik dans votre ligne de commande :
-
-```shell
-npm create qwik@latest
-```
-
-Lorsque vous y êtes invité, choisissez un nom pour votre projet et Basic comme starter.
-
-> Remarque : le script `start` tente de lancer le site dans le navigateur du système,
-> ce qui dans les environnements sans entête (par exemple, dans un conteneur)
-> peut faire échouer la commande avec une erreur.
-> Modifiez `package.json` pour supprimer l'indicateur `--open`.

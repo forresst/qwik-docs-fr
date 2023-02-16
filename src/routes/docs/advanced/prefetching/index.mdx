@@ -68,7 +68,7 @@ export default function (opts: RenderToStreamOptions) {
 
 ### Cache de requête/réponse et Service Workers
 
-La stratégie de mise en cache préférée de prélecture utilisée par [Qwik City](../../../qwikcity/prefetching/overview/index.mdx), est d'utiliser un Service Worker pour remplir le [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) du navigateur. Qwik lui-même doit être configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un évènement `qprefetch`. Ensuite, Qwik City écoutera cet événement et communiquera avec son service worker pour persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire à longue durée de vie.
+La stratégie de mise en cache préférée de prélecture utilisée par [Qwik City](/qwikcity/advanced/prefetching/index.mdx), est d'utiliser un Service Worker pour remplir le [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) du navigateur. Qwik lui-même doit être configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un évènement `qprefetch`. Ensuite, Qwik City écoutera cet événement et communiquera avec son service worker pour persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire à longue durée de vie.
 
 En utilisant un service worker pour intercepter les requêtes de récupération du navigateur, cette approche permet un contrôle minutieux de la mise en cache, tout en empêchant les requêtes multiples pour la même ressource.
 

@@ -9,7 +9,7 @@ Utilisez le contexte pour transmettre des données aux composants enfants sans l
 
 Pour utiliser le contexte, vous avez besoin de trois éléments :
 
-- `createContext()` : ceci crée un ID sérialisable pour le contexte. Assurez-vous que cet identifiant est unique dans votre application.
+- `createContextId()` : ceci crée un ID sérialisable pour le contexte. Assurez-vous que cet identifiant est unique dans votre application.
 - `useContextProvider()` : Au niveau d'un composant parent, appelez cette méthode pour publier la valeur du contexte. Tous les enfants (et petits-enfants) qui sont des descendants de ce composant seront en mesure de récupérer le contexte.
 - [`useContext()`](/docs/components/context/index.mdx#usecontext) pour récupérer le contexte et l'utiliser dans n'importe quel composant.
 

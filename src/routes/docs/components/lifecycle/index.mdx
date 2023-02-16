@@ -13,24 +13,30 @@ import diagram from './diagram2.svg';
 
 Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des composants et leur cycle de vie se prolongent entre le serveur et le navigateur. Parfois, le composant sera d'abord rendu sur le serveur, parfois dans le navigateur, mais dans les deux cas, le cycle de vie sera le même, seule son exécution se déroule dans des environnements différents.
 
-Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, les hooks se présenteront comme ceci :
+**Dans Qwik, il n'y a que 3 étapes de cycle de vie :**
+
+- `Task` - s'exécute avant le rendu et quand l'état traqué change
+- `Render` - s'exécute après `Task` et avant `VisibleTask`.
+- `VisibleTask` - s'exécute après `Render` et lorsque le composant devient visible.
 
 ```
-  useTask$ --> RENDU --> useClientEffect$
-                        |
-| ------ SERVEUR ------ | ---- NAVIGATEUR ---- |
-                        |
-                   pause|reprise
+  useTask$ ------> RENDU -----> useBrowserVisibleTask$
+                                |
+| --- SERVEUR ou NAVIGATEUR --- | ----- NAVIGATEUR ----- |
+                                |
+                           pause|reprise
 ```
+
+**SERVEUR** : Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, le `useTask$` et le `RENDER` seront exécutés sur le serveur, et ensuite le `VisibleTask` sera exécuté dans le navigateur, après que le composant soit visible.
 
 > **Notez** que parce que le composant a été monté sur le serveur, **seulement useClientEffect$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
 
-Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
+**NAVIGATEUR** : Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
 
 ```
-  useTask$ --> RENDU --> useClientEffect$
+  useTask$ --> RENDU --> useBrowserVisibleTask
 
-| --------------- NAVIGATEUR --------------- |
+| ---------------- NAVIGATEUR --------------- |
 ```
 
 > **Notez** que le cycle de vie est exactement le même, mais cette fois-ci, tous les hooks sont exécutés dans le navigateur, et non sur le serveur.
@@ -46,10 +52,10 @@ Parfois, un composant sera monté/rendu pour la première fois dans le navigateu
 En outre, cette tâche peut être réactive et être réexécutée lorsqu'un [signal ou un store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
 
 ```tsx
-useTask$(({track}) => {
+useTask$(({ track }) => {
   track(() => store.count);
   // s'exécutera lors du montage du composant et à chaque fois que "store.count" change
-})
+});
 ```
 
 **Notez que toute exécution ultérieure se produira toujours dans le navigateur**, car la réactivité est une chose réservée au client.
@@ -145,25 +151,37 @@ export const Cmp = component$(() => {
 
 > Mais comme mentionné ci-dessus - pour la récupération des données, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place.
 
-## `useClientEffect$()`
+## `useBrowserVisibleTask$()`
 
-- **Quand :** APRÈS le premier rendu du composant et sur les changements d'état traqués
+- **Quand :** une fois que le composant devient visible sur le navigateur, et lorsque l'état traqué change
 - **Nombre de fois :** au moins une fois
 - **Plateforme :** navigateur uniquement
 
-Pour tous les composants qui ont été montés pendant le SSR ( sur le serveur), la fonction `useClientEffect$()` s'exécutera par avance, c'est-à-dire sans interaction de l'utilisateur, mais cette avance peut être configurée !
+`useBrowserVisibleTask$()` enregistre un hook à exécuter lorsque le composant devient visible dans le viewport, il s'exécutera au moins une fois dans le navigateur, et il peut être réactif et se ré-exécuter lorsqu'un [signal ou store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
+
+```tsx
+useBrowserVisibleTask$(({ track }) => {
+  track(() => store.count);
+  // s'exécutera lorsque le composant devient visible et chaque fois que "store.count" change
+  console.log('runs in the browser');
+});
+```
+
+Sous le capot, `useBrowserVisibleTask$()` crée un écouteur de DOM qui utilise [Intersection Observer](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API) pour détecter quand le composant devient visible dans le viewport.
+
+Cependant, cette `strategy` peut être modifiée, et par exemple, être exécutée lorsque le `document` est prêt.
 
 ```tsx
 useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
-  eagerness: 'visible', // 'load' | 'visible' | 'idle'
+  strategy: 'document-ready', // 'load' | 'visible' | 'idle'
 });
 ```
 
 C'est une caractéristique unique de Qwik, n'importe quel autre framework exécuterait ce code et d'autres dans le cadre de l'hydratation, mais dans Qwik, vous pouvons en fait le spécifier quand cela se produit :
 
-- `"visible"` : (il s'agit de la valeur par défaut) lorsque le composant devient visible dans la zone d'affichage (utilise sous le capot [l'observateur d'intersection](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API)).
-- `"load"` : à la fin du chargement des documents (événement « load » du document)
-- `"idle"` : après le chargement au premier moment où le site devient inactif. Il utilise sous le capot [`requestIdleCallback()`](https://developer.mozilla.org/fr/docs/Web/API/Window/requestIdleCallback).
+- `"intersection-observer"` : (il s'agit de la valeur par défaut) lorsque le composant devient visible dans la zone d'affichage (utilise sous le capot [l'observateur d'intersection](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API)).
+- `"document-ready"` : à la fin du chargement des documents (événement « load » du document)
+- `"document-idle"` : après le chargement au premier moment où le site devient inactif. Il utilise sous le capot [`requestIdleCallback()`](https://developer.mozilla.org/fr/docs/Web/API/Window/requestIdleCallback).
 
 ### Exemple
 
@@ -172,7 +190,7 @@ export const Timer = component$(() => {
   const store = useStore({
     count: 0,
   });
-  useClientEffect$(() => {
+  useBrowserVisibleTask$(() => {
     // S'exécute uniquement dans le client
     const timer = setInterval(() => {
       store.count++;
@@ -185,25 +203,20 @@ export const Timer = component$(() => {
 });
 ```
 
-> **REMARQUE :** N'abusez pas de `useClientEffect$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useClientEffect$()` n'est probablement pas la bonne solution.
+> **REMARQUE :** N'abusez pas de `useBrowserVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useBrowserVisibleTask$()` n'est probablement pas la bonne solution.
 
-### Quand utiliser `useClientEffect$()`
+### Quand utiliser `useBrowserVisibleTask$()`
 
-Utilisez ce hook lorsque vous avez besoin d'exécuter du JS au moment du chargement de la page, même si l'utilisateur n'interagit jamais avec la page.
+> **REMARQUE :** N'abusez pas de `useBrowserVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useBrowserVisibleTask$()` n'est probablement pas la bonne réponse.
 
-Par exemple :
+Comme son nom l'indique, `useBrowserVisibleTask$()` est utile lorsque vous devez exécuter du code lorsque le composant devient visible dans le viewport. Ceci est utile pour :
 
+- Exécuter du code AVANT l'interaction avec l'utilisateur, comme des animations, ou toute autre logique qui doit être exécutée avant l'interaction avec l'utilisateur.
 - Lecture du DOM après le rendu
 - Initialiser quelques animations
 - logique WebGL
-- Utiliser les API DOM comme `localStorage`.
-- Exécuter du code sans interaction avec l'utilisateur, comme un setInterval()
 
-#### Comment se compare-t-il à la fonction `useEffect()` de React ?
-
-Les deux API partagent beaucoup de sémantique, mais bien qu'elles soient toutes deux exécutées APRÈS le rendu, `useClientEffect$()` peut aussi être exécuté indépendamment du rendu.
-
-## Règles de la méthode d'utilisation
+## Règles d'utilisation de la méthode 
 
 Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règles suivantes :
 

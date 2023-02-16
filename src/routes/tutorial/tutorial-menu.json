@@ -72,8 +72,8 @@
         "enableSsrOutput": false
       },
       {
-        "id": "inline",
-        "title": "Composants en ligne",
+        "id": "lite",
+        "title": "Composants légers",
         "enableHtmlOutput": true,
         "enableClientOutput": true,
         "enableSsrOutput": true

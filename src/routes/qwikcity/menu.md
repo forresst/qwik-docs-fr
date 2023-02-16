@@ -2,48 +2,29 @@
 
 ## Qwik City
 
-- [Vue d'ensemble](overview/index.mdx)
-- [Disposition des fichiers](directory-layout/index.mdx)
-- [Ressources statiques](static-assets/index.mdx)
+- [Intro](overview/index.mdx)
+- [Structure du projet](project-structure/index.mdx)
 - [Référence de l'API](api/index.mdx)
 
-## Routage
+## Basiques
 
-- [Vue d'ensemble](routing/overview/index.mdx)
-- [Paramètres de route](routing/route-parameters/index.mdx)
-- [Réponses d'erreurs](routing/error-responses/index.mdx)
+- [Routage](routing/index.mdx)
+- [Chargeurs de données](loader/index.mdx)
+- [Actions du formulaire](action/index.mdx)
+- [Mises en page](layout/index.mdx)
+- [Pages](pages/index.mdx)
+- [Endpoints](endpoints/index.mdx)
 
-## Mise en page
+## Guides
 
-- [Vue d'ensemble](layout/overview/index.mdx)
-- [Imbriquée](layout/nested/index.mdx)
-- [Groupée](layout/grouped/index.mdx)
-- [Nommée](layout/named/index.mdx)
+- [Markdown & MDX](guides/mdx/index.mdx)
+- [SSG](guides/static-site-generation/index.mdx)
+- [Déployer](guides/deploy/index.mdx)
 
-## Gestion des données
+## Avancés
 
-- [Vue d'ensemble](data/overview/index.mdx)
-- [Récupérer](data/retrieve/index.mdx)
-- [Modifier](data/modify/index.mdx)
-- [Endpoints](data/endpoints/index.mdx)
-- [Redirections](data/redirects/index.mdx)
-
-## Pages
-
-- [Composants](content/component/index.mdx)
-- [MDX](content/mdx/index.mdx)
-- [Menu](content/menu/index.mdx)
-- [<head>](content/head/index.mdx)
-
-## Génération de sites statiques
-
-- [Vue d'ensemble](static-site-generation/overview/index.mdx)
-- [Configuration du site statique](static-site-generation/static-site-config/index.mdx)
-- [Routes dynamiques](static-site-generation/dynamic-routes/index.mdx)
-
-## Prélecture
-
-- [Vue d'ensemble](prefetching/overview/index.mdx)
-- [Service Worker](prefetching/service-worker-prefetching/index.mdx)
-- [Mise en cache de la réponse](prefetching/request-response-cache/index.mdx)
-- [Parallélisation des requêtes](prefetching/parallelizing-network-requests/index.mdx)
+- [Routage avancé](advanced/routing/index.mdx)
+- [Menus](advanced/menu/index.mdx)
+- [Variables Env](advanced/environment-variables/index.mdx)
+- [Prélecture](advanced/prefetching/index.mdx)
+- [Ressources statiques](advanced/static-assets/index.mdx)

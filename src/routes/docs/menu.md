@@ -43,6 +43,7 @@
 - [Optimiseur](advanced/optimizer/index.mdx)
 - [Répertoire personnalisé de construction](advanced/custom-build-dir/index.mdx)
 - [Internationalisation](advanced/i18n/index.mdx)
+- [Vite](advanced/vite/index.mdx)
 
 ## Communauté
 

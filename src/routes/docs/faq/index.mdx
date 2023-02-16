@@ -94,13 +94,13 @@ export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 
 ## Est-ce que Qwik charge du JS quand l'utilisateur interagit ?
 
-Non. En production, Qwik utilise beaucoup d'informations générées pendant le SSR (Rendu côté serveur) pour commencer la [prélecture](../../qwikcity/prefetching/overview/index.mdx) uniquement des morceaux d'interactivité disponibles sur la page courante dès que possible (ASAP). De cette façon, quand l'utilisateur clique ou interagit, le JS est déjà chargé.
+Non. En production, Qwik utilise beaucoup d'informations générées pendant le SSR (Rendu côté serveur) pour commencer la [prélecture](/qwikcity/advanced/prefetching/index.mdx) uniquement des morceaux d'interactivité disponibles sur la page courante dès que possible (ASAP). De cette façon, quand l'utilisateur clique ou interagit, le JS est déjà chargé.
 
 ## Si Qwik précharge le JS, alors quelle est la différence ?
 
 La prélecture n'est pas la même chose que le traitement et l'exécution du JS, et Qwik n'exécute le JS que lorsque l'utilisateur interagit.
 
-De plus, la [prélecture](../../qwikcity/prefetching/overview/index.mdx) permet à Qwik de donner la priorité aux parties importantes de l'interactivité avant les parties moins importantes.
+De plus, la [prélecture](/qwikcity/advanced/prefetching/index.mdx) permet à Qwik de donner la priorité aux parties importantes de l'interactivité avant les parties moins importantes.
 
 Par exemple, le bouton « Acheter maintenant » est plus important que le bouton « Ajouter au panier », donc Qwik va précharger le bouton « Acheter maintenant » en premier, et ensuite le bouton « Ajouter au panier ».
 
@@ -108,7 +108,7 @@ Qwik n'a pas besoin de tout précharger pour commencer à fonctionner, alors que
 
 ## Les applis Qwik sont-elles lentes sur les réseaux lents ?
 
-Pas du tout ! Grâce à la [prélecture](../../qwikcity/prefetching/overview/index.mdx) les applis Qwik ne sont pas plus affectées par les réseaux lents que les autres frameworks. En fait, en raison de la finesse du bundle et de la résumabilité, les applis Qwik peuvent devenir interactives avec beaucoup moins de JS, ce qui les rend effectivement plus rapides sur les réseaux lents.
+Pas du tout ! Grâce à la [prélecture](/qwikcity/advanced/prefetching/index.mdx) les applis Qwik ne sont pas plus affectées par les réseaux lents que les autres frameworks. En fait, en raison de la finesse du bundle et de la résumabilité, les applis Qwik peuvent devenir interactives avec beaucoup moins de JS, ce qui les rend effectivement plus rapides sur les réseaux lents.
 
 ## Qwik génère-t-il trop de petits fichiers ?
 
@@ -133,7 +133,7 @@ Oui ! [Qwik City](../../qwikcity/overview/index.mdx) inclut un routeur basé su
 
 Vous pouvez déployer facilement une appli Qwik dans n'importe quel [environnement sans serveur grâce à nos adaptateurs](../../integrations/deployments/overview/index.mdx), nous supportons également un [adaptateur vanilla-node](../../integrations/deployments/node/index.mdx) pour les serveurs basés sur Nodejs, tel que Express.
 
-Vous pouvez déployer votre appli Qwik comme un site statique, s'il n'y a pas besoin du SSR, grâce à notre [adaptateur SSG (Génération de site statique)](../../qwikcity/static-site-generation/overview/index.mdx).
+Vous pouvez déployer votre appli Qwik comme un site statique, s'il n'y a pas besoin du SSR, grâce à notre [adaptateur SSG (Génération de site statique)](/qwikcity/guides/static-site-generation/index.mdx).
 
 ## Le SPA (Appli mono page) ou le MPA (Appli multi page) est plus rapide
 
@@ -152,7 +152,7 @@ MPA vs SPA n'est plus une décision architecturale prise au début du projet, ma
 
 ## Est-ce que Qwik peut faire de la Génération de Site Statique (SSG) ?
 
-Oui ! Cela fait partie de tous les starters de Qwik City, apprenez comment faire la [génération de site statique ici](../../qwikcity/static-site-generation/overview/index.mdx).
+Oui ! Cela fait partie de tous les starters de Qwik City, apprenez comment faire la [génération de site statique ici](/qwikcity/guides/static-site-generation/index.mdx).
 
 ## Mais... avec d'autres frameworks, je peux aussi faire du MPA et du SPA
 
@@ -189,7 +189,6 @@ Oui ! Il y a une communauté grandissante de développeurs Qwik sur [Discord](h
 OUI ! Mais cela dépend. Qwik est en développement depuis 2 ans maintenant, et nous avons atteint [les jalons de la bêta](https://www.builder.io/blog/qwik-and-qwik-city-have-reached-beta), ce qui signifie que nous sommes confiants dans le fait que Qwik est prêt pour la production, et qu'il n'y a pas de changements de rupture attendus.
 
 [Builder.io](https://www.builder.io/) et beaucoup d'équipes utilisent déjà Qwik en production, donc vous ne serez pas les seuls.
-
 
 ## Qwik sérialise trop de données dans le HTML
 
