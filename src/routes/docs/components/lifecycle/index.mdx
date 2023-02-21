@@ -172,7 +172,7 @@ Sous le capot, `useBrowserVisibleTask$()` crée un écouteur de DOM qui utilise 
 Cependant, cette `strategy` peut être modifiée, et par exemple, être exécutée lorsque le `document` est prêt.
 
 ```tsx
-useClientEffect$(() => console.log('s\'exécute dans le navigateur'), {
+useBrowserVisibleTask$(() => console.log('s\'exécute dans le navigateur'), {
   strategy: 'document-ready', // 'load' | 'visible' | 'idle'
 });
 ```
@@ -202,8 +202,6 @@ export const Timer = component$(() => {
   return <>{store.count}</>;
 });
 ```
-
-> **REMARQUE :** N'abusez pas de `useBrowserVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useBrowserVisibleTask$()` n'est probablement pas la bonne solution.
 
 ### Quand utiliser `useBrowserVisibleTask$()`
 

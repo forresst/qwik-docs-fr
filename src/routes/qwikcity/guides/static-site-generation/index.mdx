@@ -32,14 +32,14 @@ La génération de sites statiques est créée à partir de l'adaptateur intégr
 npm run qwik add
 ```
 
-Sélectionnez `Adaptor: Static site (.html files)`. C'est fait.
+Sélectionnez `Adapter: Static site (.html files)`. C'est fait.
 
 ## Changements
 
 L'exécution de la commande ci-dessus apportera les changements suivants à votre projet :
 
   - Un script `build.server` sera automatiquement ajouté à votre fichier `package.json`.
-  - Un fichier `adaptors/vite.config.ts` sera créé.
+  - Un fichier `adapters/static/vite.config.ts` sera créé.
 
 Dans node, vous pouvez exécuter la génération après la construction en utilisant :
 
@@ -51,7 +51,7 @@ Vos fichiers de construction seront générés dans le dossier `dist`.
 
 ## Configuration SSG
 
-Le fichier `adaptors/vite.config.ts` inclut également la configuration SSG, qui sera personnalisée pour chaque implémentation.
+Le fichier `adapters/static/vite.config.ts` inclut également la configuration SSG, qui sera personnalisée pour chaque implémentation.
 
 ### `origin`
 

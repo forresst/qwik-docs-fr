@@ -32,8 +32,12 @@ import {
   createContextId,
 } from '@builder.io/qwik';
 
+export interface IMyContext {
+    count: number
+}
+
 // Crée un nouveau descripteur de contexte
-export const MyContext = createContextId('my-context');
+export const MyContext = createContextId<IMyContext>('my-context');
 
 export const Parent = component$(() => {
   // Crée un stockage réactif
