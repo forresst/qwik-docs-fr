@@ -22,26 +22,24 @@ Un composant est un petit morceau de code réutilisable qui peut être utilisé 
 Dans Qwik, ils sont déclarés en utilisant la méthode `component$` :
 
 ```tsx
-import { component$, useStore } from '@builder.io/qwik';
+import { component$, useSignal } from '@builder.io/qwik';
 
 export const MyCmp = component$((props: MyCmpProps) => {
   // Déclare l'état local
-  const state = useStore({
-    count: 0,
-  });
+  const count = useSignal(0);
 
   // Returns JSX
   return (
     <>
       <span>
-        Hello, {props.name} {state.count}
+        Hello, {props.name} {count.value}
       </span>
-      <div>Times: {state.count}</div>
+      <div>Times: {count.value}</div>
       <button
         onClick$={() => {
           // Cela va mettre à jour l'état local et provoquer un nouveau rendu.
           // La réactivité est au cœur de Qwik !
-          state.count++;
+          count.value++;
         }}
       >
         Increment
@@ -112,29 +110,27 @@ Pour une description détaillée de la réactivité, voir la section corresponda
 Qwik fournit la possibilité de stocker une référence pour tout composant. Pour ce faire, vous devez créer un signal et passer le signal comme attribut `ref` au composant. Après que le composant ait été monté, la référence a été stockée sur le signal. Regardez l'exemple ci-dessous :
 
 ```tsx
-import { component$, useClientEffect$, useSignal, useStore } from '@builder.io/qwik';
+import { component$, useBrowserVisibleTask$, useSignal, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
-  const store = useStore({
-    width: 0,
-    height: 0,
-  });
+  const width = useSignal(0);
+  const height = useSignal(0);
   const outputRef = useSignal<Element>();
-  useClientEffect$(() => {
+  useBrowserVisibleTask$(() => {
     if (outputRef.value) {
       const rect = outputRef.value.getBoundingClientRect();
-      store.width = Math.round(rect.width);
-      store.height = Math.round(rect.height);
+      width.value = Math.round(rect.width);
+      height.value = Math.round(rect.height);
     }
   });
 
   return (
     <div>
-      <div style={{ border: '1px solid red', width: '100px' }} ref={outputRef}>
+      <div ref={outputRef} style={{ border: '1px solid red', width: '100px' }}>
         Changez la valeur du texte ici pour étirer la boîte.
       </div>
       <div>
-        La boîte rouge ci-dessus a une hauteur de {store.height} pixels et une largeur de {store.width} pixels.
+        La boîte rouge ci-dessus a une hauteur de {height.value} pixels et une largeur de {width.value} pixels.
       </div>
     </div>
   );
@@ -209,8 +205,8 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 ### État
 
-- [`useStore(initialState)`](../state/index.mdx#usestore) - crée un objet réactif qui peut être utilisé pour stocker l'état
 - [`useSignal(initialState)`](../state/index.mdx#usesignal) - crée une valeur réactive
+- [`useStore(initialState)`](../state/index.mdx#usestore) - crée un objet réactif qui peut être utilisé pour stocker l'état
 - [`createContextId(contentName)`](../context/index.mdx#createcontext) - crée une référence de contexte
 - [`useContextProvider()`](../context/index.mdx#usecontextprovider) - fournit une valeur à un contexte donné
 - [`useContext()`](../context/index.mdx#usecontext) - lit la valeur du contexte actuel
@@ -228,9 +224,9 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 ### Cycles de vie
 
-- [`useTask$()`](../lifecycle/index.mdx) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
+- [`useTask$()`](../lifecycle/index.mdx#usetask) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
 - [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
-- [`useClientEffect$()`](../lifecycle/index.mdx#useclienteffect) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
+- [`useBrowserVisibleTask$()`](../lifecycle/index.mdx#usebrowservisibletask) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
 
 ### Autre
 

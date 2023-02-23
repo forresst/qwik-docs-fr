@@ -6,6 +6,7 @@ contributors:
   - RATIU5
   - manucorporat
   - adamdbradley
+
 ---
 
 # Réactivité
@@ -14,7 +15,7 @@ La réactivité est un composant clé de Qwik. La réactivité permet à Qwik de
 
 ## Proxy
 
-La réactivité exige que le framework garde la trace de la relation entre l'état des applications et des composants. Le framework doit rendre l'ensemble de l'application au moins une fois pour construire le graphe de réactivité. La construction du graphe de réactivité se passe initialement sur le serveur et est sérialisée dans le HTML afin que le navigateur puisse utiliser l'information sans être obligé de faire un seul passage par tous les composants pour reconstruire le graphe. (Qwik n'a pas besoin de faire l'hydratation pour enregistrer les événements ou construire le graphe de réactivité).
+La réactivité exige que le framework garde la trace de la relation entre l'état de l'application et les composants. Le framework doit rendre l'ensemble de l'application au moins une fois pour construire le graphe de réactivité. La construction du graphe de réactivité se passe initialement sur le serveur et est sérialisée dans le HTML afin que le navigateur puisse utiliser l'information sans être obligé de faire un seul passage par tous les composants pour reconstruire le graphe. (Qwik n'a pas besoin de faire l'hydratation pour enregistrer les événements ou construire le graphe de réactivité).
 
 La réactivité peut être réalisée de plusieurs façons :
 
@@ -37,9 +38,9 @@ A cause des contraintes ci-dessus, Qwik utilise des proxies pour garder la trace
 
 ```tsx
 export const Counter = component$(() => {
-  const store = useStore({ count: 0 });
+  const count = useSignal(0);
 
-  return <button onClick$={() => store.count++}>{store.count}</button>;
+  return <button onClick$={() => count.value++}>{count.value}</button>;
 });
 ```
 
@@ -123,9 +124,9 @@ export const MyComp = component$(() => {
 
 ## Rendu désordonné
 
-Les composants Qwik peuvent être rendus de manière désordonnée. Un composant peut être rendu sans forcer un composant parent à être rendu en premier ou un composant enfant à être rendus comme une conséquence du composant rendu. C'est une caractéristique importante de Qwik car cela permet aux applications Qwik de ne re-rendre que les composants qui ont été invalidés en raison d'un changement d'état plutôt que de re-rendre l'ensemble de l'arborescence des composants lors d'un changement d'état.
+Les composants Qwik sont rendus dans le désordre. Un composant peut être rendu sans forcer un composant parent à être rendu en premier ou un composant enfant à être rendu en conséquence du rendu du composant. C'est une caractéristique importante de Qwik car cela permet aux applications Qwik de ne re-rendre que les composants qui ont été invalidés en raison d'un changement d'état plutôt que de re-rendre l'ensemble de l'arborescence des composants lors d'un changement d'état.
 
-Lorsque les composants sont rendus, ils doivent avoir accès à leurs props. Les composants parents créent des props. Les props doivent être sérialisables pour que le composant puisse être rendu indépendamment du parent. (Voir [sérialisation](../resumable/index.mdx#serialization) pour une présentation approfondie de ce qui est sérialisable).
+Lorsque les composants sont rendus, ils doivent avoir accès à leurs props. Les composants parents créent des props. Ces props doivent être [sérialisables](../resumable/index.mdx#serialization) pour que le composant puisse être rendu indépendamment du parent.
 
 ## Invalidation des composants enfants
 

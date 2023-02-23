@@ -5,65 +5,88 @@ contributors:
   - RATIU5
   - nnelgxorz
   - adamdbradley
+  - the-r3aper7
 ---
 
-# ContextId
+# Contexte
 
-Qwik fournit une API de contexte, très similaire à la fonctionnalité `useContext()` de React. En fait, l'API de contexte de Qwik est le moyen le plus efficace de faire descendre les données, réduisant la surcharge, générant moins de code et permettant à Qwik de faire du tree shaking plus poussé sur les données inutilisées.
+Qwik fournit une API de contexte, qui résout le problème du forage des props et qui est très similaire à la fonctionnalité `useContext()` de React. En fait, l'API de contexte de Qwik est le moyen le plus efficace de faire descendre les données aux différents composants, réduisant la surcharge, générant moins de code, et permettant à Qwik du [tree shaking](https://developer.mozilla.org/fr/docs/Glossary/Tree_shaking) plus poussé sur les données inutilisées.
 
 L'API du contexte de Qwik est composée de 3 méthodes, importables depuis `@builder.io/qwik` :
 
-- `createContextId(contextName: string): ContextId`
-- `useContextProvider(ctx: ContextId, value: VALUE): void`
-- `useContext(ctx: ContextId): VALUE`
+- [`createContextId(contextName: string): ContextId`](#createcontextid)
+- [`useContextProvider(ctx: ContextId, value: VALUE): void`](#usecontextprovider)
+- [`useContext(ctx: ContextId): VALUE`](#usecontext)
 
 ### Exemple
 
-Cet exemple est composé de deux éléments, le `Parent` et le `Child`. Le composant parent crée un nouvel état et l'affecte à un contexte, permettant à tout composant descendant d'obtenir une référence à cet « état ».
+Créons un contexte global qui contient l'état du thème utilisé par l'utilisateur et qui peut être accédé par n'importe quel composant dans l'arbre des composants. Ici, le fichier `root.tsx` agira comme le composant `Parent` et les autres fichiers/pages seront les composants `Child`.
 
-Dans le même temps, le composant parent effectue le rendu de `<div>Count: {state.count}</div>`, créant ainsi un abonnement réactif, qui sera re-rendu lorsque l'enfant changera la valeur dans le gestionnaire de clic : `<button onClick$={() => state.count++}>`.
+En même temps, le composant Child effectue le rendu d'un bouton et d'une balise `h2`, créant ainsi un abonnement réactif qui sera rendu à nouveau lorsque le Child modifiera la valeur dans le gestionnaire de clic : `<button onClick$={() => { themeStore.theme = 'dark' }}>`.
 
 ```tsx
+// fichier : src/root.tsx
 import {
   component$,
-  useStore,
+  useSignal,
   useContext,
   useContextProvider,
   createContextId,
 } from '@builder.io/qwik';
 
-export interface IMyContext {
-    count: number
-}
+export type Theme = 'dark' | 'light';
 
 // Crée un nouveau descripteur de contexte
-export const MyContext = createContextId<IMyContext>('my-context');
+export const ThemeContext = createContextId<Theme>('io.builder.qwik.docs.theme-context');
 
-export const Parent = component$(() => {
-  // Crée un stockage réactif
-  const state = useStore({
-    count: 0,
-  });
+export default component$(() => {
+  // Création d'un stockage réactif 
+  const themeStore = useSignal<Theme>('dark');
+  
+  // Attribution d'une valeur (état) au contexte (ThemeContext)
+  useContextProvider(ThemeContext, themeStore)
+ 
+  return (
+    // configuration par défaut
+    ...
+  );
+});
 
-  // Attribue une valeur (state) au contexte (MyContext)
-  useContextProvider(MyContext, state);
+// fichier : src/components/header/header.tsx
+export default component$(() => {
+
+  // Obtenir une référence de l'état en utilisant le ThemeContext
+  const themeStore = useContext(ThemeContext);
+
+  useStylesScoped$(`
+    .dark {
+      color: white;
+      background: black;
+    };
+    .white {
+      color: black;
+      background: white;
+    }
+  `);
+
   return (
     <>
-      <Child />
-      <div>Compteur : {state.count}</div>
+      <h1 class={theme.value}>
+        {theme.value === 'dark' ? 'Bienvenue dans le côté obscur' : 'Ce composant est avec le thème clair'}
+      </h1>
+      <button
+        onClick$={() => {
+          theme.value == 'light'
+            ? (theme.value = 'dark')
+            : (theme.value = 'light');
+        }}
+      >
+        Changer le thème
+      </button>
     </>
   );
 });
 
-export const Child = component$(() => {
-  // Obtient une référence de state en utilisant MyContext
-  const state = useContext(MyContext);
-  return (
-    <>
-      <button onClick$={() => state.count++}>Incrémenter</button>
-    </>
-  );
-});
 ```
 
 Examinons de plus près toutes les API concernées :
@@ -72,34 +95,44 @@ Examinons de plus près toutes les API concernées :
 
 ### `createContextId()`
 
-Cette méthode prend un string qui donne un nom unique au contexte, si votre application utilise beaucoup de contextes différents ou si vous écrivez une bibliothèque de composants, nous vous recommandons de suivre une convention de nom qui évite les conflits, comme par exemple :
+Cette méthode est utilisée pour créer un nouveau `ContextId`.
 
 ```tsx
-export const QwikCityContext = createContextId('io.builder.qwik.city');
+export interface GenericType {
+  ...
+}
+
+export const QwikCityContext = createContextId<GenericType>(name: string): ContextId<GenericType>;
 ```
 
-Remarquez que la valeur retournée par `createContextId()` ne contient aucun état, et elle est immuable. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
+#### Paramètres
 
-Parce qu'elle ne contient aucun état, il est possible de l'appeler et d'en faire un singleton, exporté dans un module partagé.
+- `name` : c'est une chaîne unique donnée à `createContextId` comme identifiant du contexte. Cela évitera les conflits lorsqu'il y a plusieurs contextes. Il est conseillé d'utiliser une convention de nommage comme `io.builder.qwik.city`.
+
+#### Retours
+
+Remarquez que la valeur retournée par `createContextId()` ne contient aucun état, c'est un objet immuable c'est-à-dire `{ id : 'io.builder.qwik.city' }`. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
+
+Puisqu'il ne contient aucun état, il est possible de l'appeler et d'en faire un singleton, exporté dans un module partagé.
 
 ### `useContextProvider()`
 
-Comme toutes les méthodes use-, elle ne peut être appelée qu'à la racine de [`component$()`](/docs/components/overview/index.mdx#component) (pas à l'intérieur des branches). Cette méthode est appelée par un composant de niveau supérieur et c'est ce qui assigne (fournit) une valeur au contexte. La valeur fournie ne sera pas globalement disponible dans toute l'arborescence du rendu, mais seulement pour les composants descendants dans l'arborescence.
+- Cette méthode est utilisée pour créer un Contexte pour un composant spécifique et ses descendants, en utilisant le `ContextId` comme identifiant clé du contexte.
 
-La valeur passée à [`useContextProvider()`](/docs/components/context/index.mdx#usecontextprovider) peut être n'importe quelle primitive, objet (inclus dans useStore), ou tableau qui contient des valeurs sérialisables.
+- Comme toutes les méthodes [`use-`](/docs/components/lifecycle/index.mdx#use-method-rules), elle est utilisée à la racine du [`component$()`](/docs/components/overview/index.mdx#component).
 
 ```tsx
 export const Parent = component$(() => {
-  const reactiveObject = useStore({
-    count: 0,
+
+  const qwikCityObject = useStore<GenricType>({
+    ...
   });
-  useContextProvider(MyContextReactive, reactiveObject);
 
-  const plainArray = listOfUSPresidents();
-  useContextProvider(MyContextArray, plainArray);
+  useContextProvider(QwikCityContext, qwikCityObject);
 
-  const appName = 'My super app';
-  useContextProvider(MyContextString, appName);
+  useContextProvider(PlainArrayContext, [1, 2, 3])
+
+  useContextProvider(AppNameContext, "My Qwik App")
 
   return (
     <>
@@ -109,74 +142,30 @@ export const Parent = component$(() => {
 });
 ```
 
-Voyons comment `Children` peut consommer les valeurs :
+#### Paramètres
+
+- `ContextId` : Un Contexte précédemment créé doit être fourni qui servira d'identifiant pour les données fournies (deuxième paramètre).
+
+- `data` : vous pouvez fournir n'importe quel type de données comme celles de Qwik useSignal, useStore, Array, Objects.
+
+#### Mises en garde
+
+- La valeur fournie ne sera pas disponible globalement dans l'ensemble de l'arbre de rendu, mais seulement pour les composants descendants de l'arbre.
 
 ### `useContext()`
 
-Encore une fois, comme toutes les méthodes use-, elles sont utilisables uniquement à la racine d'un `component$()`. Cette méthode nous permet de récupérer la valeur **fournie** dans un contexte nommé.
+Cette méthode est utilisée pour obtenir la valeur de `Context` qui est **fourni** par le composant parent.
 
 ```tsx
 export const Children = component$(() => {
-  const reactiveObject = useContext(MyContextReactive);
-  const plainArray = useContext(MyContextArray);
-  const appName = useContext(MyContextString);
+
+  const qwikCityObject = useContext(QwikCityContext);
+  const plainArray = useContext(PlainArrayContext);
+  const appName = useContext(AppNameContext);
 
   return (
     <>
       <div>Les composants enfants peuvent utiliser n'importe laquelle des valeurs fournies, telles que {appName}</div>
-    </>
-  );
-});
-```
-
-## Contextes typés
-
-Lorsqu'un contexte est créé en utilisant `createContextId()`, un type peut être fourni. En fait, il est fortement recommandé de le faire, afin de réduire les erreurs et les fautes de frappe :
-
-```tsx
-export interface SharedState {
-  count: number;
-}
-export const MyContext = createContextId<SharedState>('my-context');
-```
-
-De cette façon, lorsque vous utilisez `MyContext` dans [`useContextProvider()`](/docs/components/context/index.mdx#usecontextprovider) et `useContext()`, la valeur fournie aura le type `SharedState`.
-
-Voyons un exemple concret :
-
-```tsx
-import {
-  component$,
-  useStore,
-  useContext,
-  useContextProvider,
-  createContextId,
-} from '@builder.io/qwik';
-
-export interface SharedState {
-  count: number;
-}
-export const MyContext = createContextId<SharedState>('my-context');
-
-export const Parent = component$(() => {
-  const state = useStore<SharedState>({
-    count: 0,
-  });
-
-  useContextProvider(MyContext, state); // le vérificateur de type s'assurera que le deuxième paramètre est de type SharedState
-  return (
-    <>
-      <Child />
-      <div>Compteur : {state.count}</div>
-    </>
-  );
-});
-
-export const Child = component$(() => {
-  const state = useContext(MyContext); // le type de "state" sera "SharedState".
-  return (
-    <>
-      <button onClick$={() => state.count++}>Incrémenter</button>
     </>
   );
 });

@@ -29,7 +29,7 @@ Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des co
 
 **SERVEUR** : Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, le `useTask$` et le `RENDER` seront exécutés sur le serveur, et ensuite le `VisibleTask` sera exécuté dans le navigateur, après que le composant soit visible.
 
-> **Notez** que parce que le composant a été monté sur le serveur, **seulement useClientEffect$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
+> **Notez** que parce que le composant a été monté sur le serveur, **seulement useBrowserVisibleTask$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
 
 **NAVIGATEUR** : Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
 
@@ -77,13 +77,11 @@ useTask$(({ track }) => {
 La fonction `useTask$()` est utilisée pour observer la propriété `state.count`. Toute modification de `state.count` entraîne l'exécution de la fonction fléchée qui, à son tour, met à jour `state.doubleCount` avec le double de `state.count`.
 
 ```tsx
-import { component$, useStore, useTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 
 export const Cmp = component$(() => {
-  const store = useStore({
-    count: 1,
-    doubleCount: 0,
-  });
+  const count = useSignal(1);
+  const doubleCount = useSignal(0);
 
   // Cette tâche sera appelée exactement une fois, soit sur le serveur, soit sur le navigateur.
   useTask$(() => {
@@ -92,8 +90,8 @@ export const Cmp = component$(() => {
 
   // cette tâche sera appelée au montage et chaque fois que `store.count` change
   useTask$(({ track }) => {
-    const count = track(() => store.count);
-    store.doubleCount = 2 * count;
+    const count = track(() => count.value);
+    doubleCount.value = 2 * count;
   });
 
   return (
@@ -104,15 +102,15 @@ export const Cmp = component$(() => {
 });
 ```
 
-L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements dans `() => store.count`. Le callback sera exécuté une fois dans le SSR lorsque le composant est monté et à chaque fois que `store.count` change.
+L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements dans `() => count.value`. Le callback sera exécuté une fois dans le SSR lorsque le composant est monté et à chaque fois que `count.value` change.
 
-> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useClientEffect$()` à la place, qui s'exécute sur le client après le rendu.
+> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useBrowserVisibleTask$()` à la place, qui s'exécute sur le client après le rendu.
 
 ### Utilisez `useTask$()` lorsque vous avez besoin de
 
 - Exécuter des tâches asynchrones avant le rendu
 - Exécuter le code une seule fois avant le premier rendu du composant
-- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useClientEffect$`)
+- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useBrowserVisibleTask$`)
 - Exécuter le code de manière programmée lorsque l'état change
 
 > Remarque : si vous envisagez de charger des données (en utilisant `fetch()`) à l'intérieur de `useTask$`, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place. Cette API est plus efficace en termes d'exploitation du streaming SSR et de récupération en parallèle des données.
@@ -125,23 +123,21 @@ Parfois, il est nécessaire de n'exécuter du code que sur le serveur ou sur le 
 import { isServer, isBrowser } from '@builder.io/qwik/build';import { isServer, isBrowser } from '@builder.io/qwik/build';
 
 export const Cmp = component$(() => {
-  const store = useStore({
-    users: [],
-  });
+  const users = useSignal([]);
   useTask$(async () => {
     if (isServer) {
       // Si le composant est monté sur le serveur, appelez la base de données directement.
-      store.users = await db.requestUsers();
+      users.value = await db.requestUsers();
     }
     if (isBrowser) {
       // Si le composant est monté sur le navigateur, récupérer les utilisateurs via l'API.
-      store.users = await fetchGetUsers();
+      users.value = await fetchGetUsers();
     }
   });
 
   return (
     <>
-      {store.users.map((user) => (
+      {users.value.map((user) => (
         <User user={user} />
       ))}
     </>
@@ -187,19 +183,17 @@ C'est une caractéristique unique de Qwik, n'importe quel autre framework exécu
 
 ```tsx
 export const Timer = component$(() => {
-  const store = useStore({
-    count: 0,
-  });
+  const count = useSignal(0);
   useBrowserVisibleTask$(() => {
     // S'exécute uniquement dans le client
     const timer = setInterval(() => {
-      store.count++;
+      count.value++;
     }, 500);
     return () => {
       clearInterval(timer);
     };
   });
-  return <>{store.count}</>;
+  return <>{count.value}</>;
 });
 ```
 

@@ -15,11 +15,9 @@ Cette méthode vous permet de générer les valeurs calculées de manière async
 Comme toutes les méthodes `use-`, elle doit être appelée dans le contexte de [`component$()`](/docs/components/overview/index.mdx#component), et toutes les [règles de hook s'appliquent](../../../docs/components/lifecycle/index.mdx#use-method-rules).
 
 ```tsx
-const store = useStore({
-  bar: 'foo',
-});
+const bar = useSignal('foo');
 const resource = useResource$(async (ctx) => {
-  ctx.track(() => store.bar); // la ressource sera réexécutée lorsque store.bar sera modifié.
+  ctx.track(() => bar.value); // la ressource sera réexécutée lorsque bar.value sera modifié.
   ctx.track(() => props.url); // track() peut être appelé plusieurs fois, pour traquer plusieurs valeurs
   ctx.cleanup(() => {
     // Si la ressource doit être nettoyée, cette fonction sera appelée.
@@ -30,7 +28,7 @@ const resource = useResource$(async (ctx) => {
   ctx.cleanup(() => console.log('cleanup'));
 
   // Les ressources peuvent contenir des calculs asynchrones
-  const value = await expensiveCompute(store.bar, props.url);
+  const value = await expensiveCompute(bar.value, props.url);
   return value;
 });
 ```
@@ -71,19 +69,17 @@ en se basant sur le nom tapé par l'utilisateur, et sera mis à jour chaque fois
 
 ```tsx
 export default component$(() => {
-  const store = useStore<{ name?: string }>({
-    name: undefined,
-  });
+  const name = useSignal<string>();
 
   const ageResource = useResource$<{
     name: string;
     age: number;
     count: number;
   }>(async ({ track, cleanup }) => {
-    track(() => store.name);
+    track(() => name.value);
     const abortController = new AbortController();
     cleanup(() => abortController.abort('cleanup'));
-    const res = await fetch(`https://api.agify.io?name=${store.name}`, {
+    const res = await fetch(`https://api.agify.io?name=${name.value}`, {
       signal: abortController.signal,
     });
     return res.json();
@@ -92,7 +88,7 @@ export default component$(() => {
   return (
     <div>
       <h1>Entrez votre nom, et je devinerai votre âge !</h1>
-      <input onInput$={(e: Event) => store.name = (e.target as HTMLInputElement).value)} />
+      <input onInput$={(e: Event) => name.value = (e.target as HTMLInputElement).value)} />
       <Resource
         value={ageResource}
         onPending={() => <div>Chargement...</div>}
@@ -100,7 +96,7 @@ export default component$(() => {
         onResolved={(ageGuess) => {
           return (
             <div>
-              {store.name && (
+              {name.value && (
                 <>
                   {ageGuess.name} {ageGuess.age} years
                 </>
@@ -109,54 +105,6 @@ export default component$(() => {
           );
         }}
       />
-    </div>
-  );
-});
-```
-
-- #### sans `<Resource />`
-
-Le composant `<Resource />` est hautement optimisé pour éviter les re-rendus inutiles et pour le SSR.
-Nous vous recommandons vivement d'utiliser `<Resource />` chaque fois que cela est possible. Occasionnellement, vous pouvez
-rencontrer un cas particulier dans lequel vous avez besoin de plus de contrôle. Pour ces situations, Qwik vous permet également d'utiliser
-les données retournées par [`useResource$()`](/docs/components/resource/index.mdx) directement dans votre code TSX, comme montré ci-dessous.
-
-```tsx
-export default component$(() => {
-  const store = useStore<{ name?: string }>({
-    name: undefined,
-  });
-
-  const ageResource = useResource$<{
-    name: string;
-    age: number;
-    count: number;
-  }>(async ({ track, cleanup }) => {
-    track(() => store.name);
-    const abortController = new AbortController();
-    cleanup(() => abortController.abort('cleanup'));
-    const res = await fetch(`https://api.agify.io?name=${store.name}`, {
-      signal: abortController.signal,
-    });
-    return res.json();
-  });
-
-  return (
-    <div>
-      <h1>Entrez votre nom, et je devinerai votre âge !</h1>
-      <input onInput$={(e: Event) => store.name = (e.target as HTMLInputElement).value)} />
-      <div>
-        {ageResource.loading && <div>Chargement de l'âge supposé...</div>}
-        {!ageResource.loading && store.name && (
-          <div>
-            {ageResource.value.then((ageGuess) => (
-              <div>
-                {ageGuess.name} {ageGuess.age} years
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 });
