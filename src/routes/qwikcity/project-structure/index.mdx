@@ -1,33 +1,33 @@
 ---
-title: QwikCity - Project Structure
+title: QwikCity - Structure du projet
 contributors:
   - manucorporat
 ---
 
-# Project Structure
+# Structure du projet
 
-## Create a new project
+## Créer un nouveau projet
 
-To follow along with this guide, run the Qwik CLI in your command line:
+Pour suivre ce guide, exécutez le CLI de Qwik dans votre ligne de commande :
 
 ```shell
 npm create qwik@latest
 ```
 
-> Notice that you can also use the package manager of your choice, `yarn create qwik@latest` or `pnpm create qwik@latest`.
+> Veuillez noter que vous pouvez également utiliser le gestionnaire de paquets de votre choix, `yarn create qwik@latest` ou `pnpm create qwik@latest`.
 
-When prompted, choose a name for your project and Basic as your starter.
+Lorsque vous êtes invité à le faire, choisissez un nom pour votre projet et Basic comme starter.
 
-> Note: the `start` script attempts to launch the site in system’s browser,
-> which in headless environments (e.g., within a container)
-> could cause the command to fail with an error.
-> Edit `package.json` to remove the `--open` flag.
+> Remarque : le script `start` tente de lancer le site dans le navigateur du système,
+> ce qui dans les environnements headless (par exemple, dans un conteneur)
+> peut faire échouer la commande avec une erreur.
+> Modifiez `package.json` pour supprimer l'indicateur `--open`.
 
-The command will ask you a few questions and create a new project for you.
+La commande vous posera quelques questions et créera un nouveau projet pour vous.
 
-## Project structure
+## Structure du projet
 
-A typical Qwik project looks like this:
+Un projet typique de Qwik ressemble à ceci :
 
 ```bash
 qwik-app-demo
@@ -53,33 +53,33 @@ qwik-app-demo
 └── vite.config.ts
 ```
 
-## Project files
+## Fichiers du projet
 
 ### `src/routes/`
 
-The `src/routes/` directory is an special directory for QwikCity, since it's the directory where QwikCity will look for your pages. Folders and files inside this directory have an special meaning and they will be mapped to the URL of your app.
+Le répertoire `src/routes/` est un répertoire spécial pour QwikCity, puisque c'est le répertoire où QwikCity va chercher vos pages. Les dossiers et fichiers à l'intérieur de ce répertoire ont une signification particulière et ils seront mappés à l'URL de votre appli.
 
-- `src/routes/index.tsx` is the homepage of your app.
-- `src/routes/layout.tsx` is the root layout of your app, all pages will be rendered inside this layout.
+- `src/routes/index.tsx` est la page d'accueil de votre appli.
+- `src/routes/layout.tsx` est la mise en page racine de votre appli, toutes les pages seront rendues dans cette mise en page.
 
-> Refer to the [Routing](/qwikcity/routing) section for more information.
+> Reportez-vous à la section [Routage](/qwikcity/routing) pour plus d'informations.
 
 ### `src/components/`
 
-The `src/components/` directory is a directory by convention. All Qwik starters will have this directory, but you can change it if you want. This directory is where you should put your components, ie, reusable pieces of code that can be used in multiple places. They are not routes or layouts, but they can be used inside them.
+Le répertoire `src/components/` est un répertoire par convention. Tous les starters Qwik auront ce répertoire, mais vous pouvez le changer si vous le souhaitez. Ce répertoire est l'endroit où vous devriez mettre vos composants, c'est à dire des morceaux de code réutilisables qui peuvent être utilisés à plusieurs endroits. Ce ne sont pas des routes ou des layouts, mais ils peuvent être utilisés à l'intérieur de ceux-ci.
 
-For example, a `Button` component should be inside `src/components/button/button.tsx`.
+Par exemple, un composant `Button` doit se trouver dans `src/components/button/button.tsx`.
 
 ### `public/`
 
-The `public/` directory contains static assets such as images, fonts, and icons. When you build your app, these files will be copied to the `dist/` directory and served at the root.
+Le répertoire `public/` contient des ressources statiques telles que des images, des polices et des icônes. Lorsque vous construisez votre application, ces fichiers seront copiés dans le répertoire `dist/` et seront servis à la racine.
 
-Refer to [Vite configuration for more information](https://vitejs.dev/guide/build.html#public-base-path).
+Reportez-vous à [Configuration de Vite pour plus d'informations](https://vitejs.dev/guide/build.html#public-base-path).
 
 ### `src/entry.ssr.tsx`
 
-SSR entry point, in all cases the application is render outside the browser, this
-entry point will be the common one.
+Le point d'entrée SSR, dans tous les cas où l'application est rendue en dehors du navigateur, ce
+point d'entrée sera le point commun.
 
 - Server (express, cloudflare...)
 - npm run start
@@ -88,18 +88,18 @@ entry point will be the common one.
 
 ### `src/root.tsx`
 
-The `src/root.tsx` file is the entry point for the application tree. It's the first component that will be rendered. It's the root of the tree.
+Le fichier `src/root.tsx` est le point d'entrée de l'arbre de l'application. C'est le premier composant qui sera rendu. C'est la racine de l'arbre.
 
 ### `src/global.css`
 
-The `src/global.css` file is a global CSS file, if you need to define some CSS that is used in multiple places in your app, you can define it here.
+Le fichier `src/global.css` est un fichier CSS global, si vous avez besoin de définir un CSS qui est utilisé à plusieurs endroits dans votre application, vous pouvez le définir ici.
 
-The root component (`src/root.tsx`) imports this file by default.
+Le composant racine (`src/root.tsx`) importe ce fichier par défaut.
 
 ### `tsconfig.json`
 
-The `tsconfig.json` file contains the TypeScript compiler configuration. It's standard for any TypeScript project.
+Le fichier `tsconfig.json` contient la configuration du compilateur TypeScript. Il est standard pour tout projet TypeScript.
 
 ### `vite.config.ts`
 
-Qwik uses Vite to build the project. The `vite.config.ts` file contains the Vite configuration. It's standard for any Vite project. Please refer to the [Vite documentation](https://vitejs.dev/config/) for more information.
+Qwik utilise Vite pour construire le projet. Le fichier `vite.config.ts` contient la configuration de Vite. C'est un standard pour tout projet Vite. Veuillez vous référer à la [documentation Vite](https://vitejs.dev/config/) pour plus d'informations.

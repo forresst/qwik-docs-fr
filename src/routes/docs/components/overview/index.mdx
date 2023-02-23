@@ -110,7 +110,7 @@ Pour une description détaillée de la réactivité, voir la section corresponda
 Qwik fournit la possibilité de stocker une référence pour tout composant. Pour ce faire, vous devez créer un signal et passer le signal comme attribut `ref` au composant. Après que le composant ait été monté, la référence a été stockée sur le signal. Regardez l'exemple ci-dessous :
 
 ```tsx
-import { component$, useBrowserVisibleTask$, useSignal, useStore } from '@builder.io/qwik';
+import { component$, useBrowserVisibleTask$, useSignal } from '@builder.io/qwik';
 
 export default component$(() => {
   const width = useSignal(0);
@@ -205,9 +205,9 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 ### État
 
-- [`useSignal(initialState)`](../state/index.mdx#usesignal) - crée une valeur réactive
+- [`useSignal(initialStateObject)`](../state/index.mdx#usesignal) - crée une valeur réactive
 - [`useStore(initialState)`](../state/index.mdx#usestore) - crée un objet réactif qui peut être utilisé pour stocker l'état
-- [`createContextId(contentName)`](../context/index.mdx#createcontext) - crée une référence de contexte
+- [`createContextId(contextName)`](../context/index.mdx#createcontext) - crée une référence de contexte
 - [`useContextProvider()`](../context/index.mdx#usecontextprovider) - fournit une valeur à un contexte donné
 - [`useContext()`](../context/index.mdx#usecontext) - lit la valeur du contexte actuel
 

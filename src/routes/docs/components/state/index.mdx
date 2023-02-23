@@ -242,14 +242,14 @@ export default component$(() => {
   });
 
   useTask$(({ track }) => {
-    track(() => store.count);
+    track(() => state.count);
     state.doubleCount = state.count * 2;
   });
 
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
-      Compteur : {userData.count}
+      Compteur : {state.count}
       Compteur * 2 : {state.doubleCount}
     </>
   );
@@ -265,14 +265,14 @@ export default component$(() => {
   });
 
   const doubleCount = useResource$(({ track }) => {
-    track(() => store.count);
+    track(() => state.count);
     return state.count * 2;
   });
 
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
-      Compteur : {userData.count}
+      Compteur : {state.count}
       Compteur * 2 : {doubleCount.promise}
     </>
   );
@@ -290,7 +290,7 @@ Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l
 Parfois, vous souhaitez stocker une valeur dans l'état, mais vous ne voulez pas qu'elle soit sérialisée. Ceci est utile pour stocker des valeurs qui ne sont pas sérialisables, comme les fonctions ou les classes.
 
 ```tsx
-import { component$, useStore, noSerialize,useBrowserVisibleTask$ } from '@builder.io/qwik';
+import { component$, useStore, noSerialize, useBrowserVisibleTask$ } from '@builder.io/qwik';
 
 export const App = component$(() => {
   const state = useStore({

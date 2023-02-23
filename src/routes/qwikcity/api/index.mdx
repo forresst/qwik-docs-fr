@@ -194,6 +194,7 @@ Puisque ce composant utilise l'élément natif `<form>`, il fonctionnera avec n'
 ```tsx
 import { component$ } from '@builder.io/qwik';
 import { Form, action$ } from '@builder.io/qwik-city';
+
 // cette action sera appelée lorsque le formulaire sera soumis
 export const useLoginAction = action$((data, { cookies, redirect }) => {
   if (validate(data.username, data.password)) {
@@ -201,8 +202,10 @@ export const useLoginAction = action$((data, { cookies, redirect }) => {
     throw redirect(302, '/dashboard');
   }
 });
+
 export default component$(() => {
   const login = useLoginAction();
+
   return (
     <Form action={login}>
       <input type="text" name="username" />

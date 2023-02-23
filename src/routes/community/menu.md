@@ -1,6 +1,6 @@
-# Community
+# Communauté
 
-## Community
+## Communauté
 
 - [Groupes](groups/index.mdx)
 - [Projets](projects/index.mdx)

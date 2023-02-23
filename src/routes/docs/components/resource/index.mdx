@@ -88,7 +88,7 @@ export default component$(() => {
   return (
     <div>
       <h1>Entrez votre nom, et je devinerai votre âge !</h1>
-      <input onInput$={(e: Event) => name.value = (e.target as HTMLInputElement).value)} />
+      <input onInput$={(e: Event) => (name.value = (e.target as HTMLInputElement).value)} />
       <Resource
         value={ageResource}
         onPending={() => <div>Chargement...</div>}

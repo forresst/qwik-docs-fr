@@ -42,10 +42,10 @@ export const ThemeContext = createContextId<Theme>('io.builder.qwik.docs.theme-c
 export default component$(() => {
   // Création d'un stockage réactif 
   const themeStore = useSignal<Theme>('dark');
-  
+
   // Attribution d'une valeur (état) au contexte (ThemeContext)
   useContextProvider(ThemeContext, themeStore)
- 
+
   return (
     // configuration par défaut
     ...
@@ -56,7 +56,7 @@ export default component$(() => {
 export default component$(() => {
 
   // Obtenir une référence de l'état en utilisant le ThemeContext
-  const themeStore = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   useStylesScoped$(`
     .dark {

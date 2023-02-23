@@ -109,13 +109,13 @@ import { loader$ } from '@builder.io/qwik-city';
 
 export const useIsLogged = loader$(({cookie}) => {
   return {
-    logged: checkCookies(cookie);
+    logged: checkcookie(cookie);
   }
 });
 
 export const useGetCurrentUser = loader$(({cookie}) => {
   return {
-    user: currentUserFromCookies(cookie);
+    user: currentUserFromcookie(cookie);
   }
 });
 

@@ -179,7 +179,7 @@ export const KeyBoard = component$(() => {
       keyPressed.value = keyPressed.value + event.key;
     })
   );
-    return <div>{store.keyPressed}</div>;
+  return <div>{keyPressed.value}</div>;
 });
 
 export default component$(() => {

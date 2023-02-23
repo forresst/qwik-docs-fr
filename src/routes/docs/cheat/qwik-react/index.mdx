@@ -225,7 +225,7 @@ export const DebouncedInput = component$(() => {
   const value = useSignal('');
   const debouncedValue = useSignal('');
 
-  useTask$(({track}) => {
+  useTask$(({ track }) => {
     track(() => value.value);
     const debounced = setTimeout(() => {
       debouncedValue.value = value.value;

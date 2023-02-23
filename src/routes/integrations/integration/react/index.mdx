@@ -309,7 +309,7 @@ export default component$(() => {
   const hydrateReact = useSignal(false);
   return (
     <>
-      <button onClick$={() => (hydrateReact.value = true}}>Hydrate le curseur lors du clic</button>
+      <button onClick$={() => (hydrateReact.value = true)}>Hydrate le curseur lors du clic</button>
 
       <MUISlider client:signal={hydrateReact}></MUISlider>
     </>

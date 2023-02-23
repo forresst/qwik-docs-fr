@@ -96,7 +96,7 @@ export const Cmp = component$(() => {
 
   return (
     <div>
-      {store.count} / {store.doubleCount}
+      {count.value} / {doubleCount.value}
     </div>
   );
 });
@@ -120,7 +120,7 @@ L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements 
 Parfois, il est nécessaire de n'exécuter du code que sur le serveur ou sur le client. Ceci peut être réalisé en utilisant les booléens `isServer` et `isBrowser` exportés depuis `@builder.io/qwik/build`.
 
 ```tsx
-import { isServer, isBrowser } from '@builder.io/qwik/build';import { isServer, isBrowser } from '@builder.io/qwik/build';
+import { isServer, isBrowser } from '@builder.io/qwik/build';
 
 export const Cmp = component$(() => {
   const users = useSignal([]);

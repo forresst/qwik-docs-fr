@@ -41,7 +41,7 @@ export const Greeter = component$(() => {
   const capturePromise = Promise.resolve('Qwik serializes promises');
   // Les instances des classes personnalisées ne sont pas sérialisables.
   const captureNonSerializable = new MyCustomClass('non serializable');
-  
+
   return (
     <button
       onClick$={() => {
