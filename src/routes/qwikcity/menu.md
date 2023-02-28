@@ -19,12 +19,10 @@
 
 - [Markdown & MDX](guides/mdx/index.mdx)
 - [SSG](guides/static-site-generation/index.mdx)
-- [Déployer](guides/deploy/index.mdx)
 
 ## Avancés
 
 - [Routage avancé](advanced/routing/index.mdx)
 - [Menus](advanced/menu/index.mdx)
-- [Variables Env](advanced/environment-variables/index.mdx)
 - [Prélecture](advanced/prefetching/index.mdx)
 - [Ressources statiques](advanced/static-assets/index.mdx)

@@ -33,8 +33,41 @@ Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du h
 - modifier la balise `link` dans `<head>`.
 - modifier la balise `style` dans `<head>`.
 
-La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<Head>`, pour créer les éléments internes dans `document.head`.
+La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<RouterHead>`, pour créer les éléments internes dans `document.head`.
 
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { useDocumentHead } from '@builder.io/qwik-city';
+
+/**
+ * Le composant RouterHead est placé à l'intérieur de l'élément `<head>` du document.
+ */
+export const RouterHead = component$(() => {
+  const head = useDocumentHead();
+
+  return (
+    <>
+      <title>{head.title}</title>
+
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+      {head.meta.map((m) => (
+        <meta {...m} />
+      ))}
+
+      {head.links.map((l) => (
+        <link {...l} />
+      ))}
+
+      {head.styles.map((s) => (
+        <style {...s.props} dangerouslySetInnerHTML={s.style} />
+      ))}
+    </>
+  );
+});
+
+```
 ## `useLocation()`
 
 Utilisez la fonction [`useLocation()`](/qwikcity/api/index.mdx#uselocation) pour récupérer un objet `RouteLocation` pour l'emplacement actuel.
@@ -46,6 +79,7 @@ export interface RouteLocation {
   readonly pathname: string;
   readonly query: Record<string, string>;
   readonly isNavigating: boolean;
+  readonly url: URL;
 }
 ```
 
@@ -134,6 +168,9 @@ Ce composant aura un bouton et quand il sera cliqué, QwikCity naviguera vers `/
 La fonction `loader$()` est utilisée pour déclarer un nouveau Chargeur de Serveur (NdT: « Server Loader ») dans la page/endpoint ou layout donné. QwikCity exécutera tous les chargeurs déclarés pour la correspondance de la route donnée. Les composants Qwik peuvent ensuite référencer les chargeurs, en les important et en appelant la méthode `.use()` afin de récupérer les données.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+import { loader$ } from '@builder.io/qwik-city';
+
 export const useGetTime = loader$(() => {
   return { time: new Date() }
 });
@@ -225,6 +262,9 @@ Le composant `Link` fonctionne comme l'élément d'ancrage `<a>`, mais au lieu d
 Sous le capot, le composant `<Link>` utilise l'API [`useNavigate()`](/qwikcity/api/index.mdx#usenavigate) et empêche le comportement par défaut du `<a>` natif :
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+import { useNavigate } from '@builder.io/qwik-city';
+
 export const Link = component$<LinkProps>((props) => {
   const nav = useNavigate();
 

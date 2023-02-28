@@ -94,6 +94,8 @@ L'exemple ci-dessus renverra :
 Bien que [`useContent()`](/qwikcity/api/index.mdx#usecontent) peut être invoqué à partir de n'importe quel composant faisant partie de la route actuelle. Il est généralement utilisé dans un composant de mise en page (ou un composant utilisé par la mise en page) pour rendre le menu. Un exemple d'utilisation est présenté ici :
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+import { useLocation, useContent } from '@builder.io/qwik-city';
 export default component$(() => {
   const { menu } = useContent();
   const { pathname } = useLocation();

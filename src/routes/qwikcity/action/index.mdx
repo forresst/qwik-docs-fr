@@ -12,6 +12,7 @@ Les actions sont référencées en utilisant la méthode `.use()` à l'intérieu
 
 ```tsx
 // src/routes/layout.tsx
+import { component$ } from '@builder.io/qwik';
 import { action$ } from '@builder.io/qwik-city';
 export const useAddUser = action$((user) => {
   const userID = db.users.add(user);
@@ -149,7 +150,8 @@ export const addUser = action$(
 Lorsque vous soumettez des données à une action, celles-ci sont validées par rapport au schéma de Zod. Si les données ne sont pas valides, l'action indique l'erreur de validation dans la propriété `action.fail`.
 
 ```tsx
-import { action$, Form } from '@builder.io/qwik-city';
+import { component$ } from '@builder.io/qwik';
+import { action$, Form, zod$, z } from '@builder.io/qwik-city';
 
 export const addUser = action$(
   (user) => {
@@ -185,7 +187,7 @@ Veuillez consulter la [documentation Zod](https://zod.dev/) pour plus d'informat
 Afin de récupérer les valeurs en échec, l'action doit utiliser la méthode `fail()`.
 
 ```tsx
-import { action$, Form } from '@builder.io/qwik-city';
+import { action$, zod$, z } from '@builder.io/qwik-city';
 
 export const addUser = action$(
   (user, { fail }) => {
@@ -209,6 +211,9 @@ export const addUser = action$(
 Les échecs sont stockés dans la propriété `action.value`, tout comme la valeur de réussite. Toutefois, la propriété `action.value.failed` prend la valeur `true` lorsque l'action échoue.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+import { Form } from '@builder.io/qwik-city';
+
 export default component$(() => {
   const action = useAddUser();
   return (
@@ -229,7 +234,8 @@ Grâce à la discrimination par type de Typescript, vous pouvez utiliser la prop
 Lorsqu'une action est déclenchée, l'état précédent est stocké dans la propriété `action.formData`. Ceci est utile pour afficher un état de chargement pendant que l'action est en cours d'exécution.
 
 ```tsx
-import { action$, Form } from '@builder.io/qwik-city';
+import { component$ } from '@builder.io/qwik';
+import { action$, Form, zod$, z } from '@builder.io/qwik-city';
 
 export const useAddUser = action$(
   (user) => {
