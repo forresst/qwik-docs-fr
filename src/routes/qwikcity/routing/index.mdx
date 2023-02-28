@@ -17,11 +17,11 @@ Le routage dans Qwik City est basé sur un système de fichier comme [Next.js](h
 - **📄 Fichiers index. :** Page/endpoint.
 - **🖼️ Fichiers layout. :** Mise en page imbriquée/middleware.
 
-## Directory-based routing
+## Routage basé sur les répertoires
 
-Only the directory names are used to match the incoming requests to pages/endpoints.
+Seuls les noms des répertoires sont utilisés pour faire correspondre les requêtes entrantes aux pages/endpoints.
 
-For example, if you have a file at `src/routes/some/path/index.tsx`, it will be mapped to the URL path `https://example.com/some/path`.
+Par exemple, si vous avez un fichier à cet endroit `src/routes/some/path/index.tsx`, il sera mis en correspondance avec le chemin de l'URL `https://example.com/some/path`.
 
 ```
 src/
@@ -37,17 +37,17 @@ src/
     ├── [...catchall]/
     │   └── index.tsx         # https://example.com/anything/else/that/didnt/match
     │
-    └── layout.tsx            # This layout is used for all pages
+    └── layout.tsx            # Cette mise en page est utilisée pour toutes les pages
 ```
 
-- **`[id]`** is a directory that represents a dynamic route segment, in this example `id` is the param.
-- **`[...catchall]`** is a directory that represents a dynamic catch-all route, in this example `catchall` is the param.
-- **`index.ext` files** are the pages/endpoints.
-- **`layout.ext` files** are the layouts.
+- **`[id]`** est un répertoire qui représente un segment de route dynamique, dans cet exemple `id` est le paramètre.
+- **`[...catchall]`** est un répertoire qui représente une route dynamique catch-all, dans cet exemple `catchall` est le paramètre.
+- **les fichiers `index.ext`** sont les pages/endpoints.
+- **les ichiers `layout.ext`** sont les mises en page.
 
-### Dynamic route segments
+### Segments de routes dynamiques
 
-Special named directories with square brackets, such as `[paramName]` and `[...catchAll]` can be used to match route segments which are dynamic:
+Des répertoires spéciaux nommés avec des crochets, tels que `[paramName]` et `[...catchAll]` peuvent être utilisés pour faire correspondre des segments de route qui sont dynamiques :
 
 ```
 src/routes/blog/index.tsx → /blog/:slug (/blog/hello-world)
@@ -68,17 +68,17 @@ src/
             └── index.tsx     # https://example.com/user/foo
 ```
 
-> The folder `[skuId]` can be any of the thousands of products that you have in your database. It would be impractical to create a route for each product. Instead, we need to define a Route Parameter (a part of the URL) that will be used to extract the `[skuId]`.
+> Le dossier `[skuId]` peut être n'importe lequel des milliers de produits que vous avez dans votre base de données. Il serait peu pratique de créer une route pour chaque produit. Au lieu de cela, nous devons définir un paramètre de route (une partie de l'URL) qui sera utilisé pour extraire le `[skuId]`.
 
-## `index.` files
+## Fichiers `index.`
 
-Inside the `src/routes` directory, all files named `index` are considered pages/endpoints, Qwik supports the following extensions: `.ts`, `.tsx`, `.md` and `.mdx`.
+A l'intérieur du répertoire `src/routes`, tous les fichiers nommés `index` sont considérés comme des pages/endpoints, Qwik prend en charge les extensions suivantes : `.ts`, `.tsx`, `.md` et `.mdx`.
 
-Pages/endpoints are the leaf nodes of the routing tree, ie, **the modules that will handle the request and return a HTTP response**.
+Les pages/endpoints sont les nœuds feuilles de l'arbre de routage, c'est-à-dire **les modules qui vont traiter la requête et renvoyer une réponse HTTP**.
 
 ### Page `index.tsx`
 
-When `index.tsx` or `index.ts` exports a Qwik component as the default export, QwikCity will render the component and return a HTML response as a webpage.
+Lorsque `index.tsx` ou `index.ts` exporte un composant Qwik en tant qu'exportation par défaut, QwikCity rendra le composant et retournera une réponse HTML en tant que page web.
 
 ```tsx
 // src/routes/index.tsx
@@ -91,7 +91,7 @@ export default component$(() => {
 
 ### Endpoint `index.tsx`
 
-A `index.ts` can also access the HTTP request directly and return a raw HTTP response without involving any Qwik Component. This is done by exporting an `onRequest` method or `onGet`, `onPost`, `onPut`, `onDelete` depending if you only want to handle a specific request given its HTTP method.
+Un `index.ts` peut aussi accéder directement à la requête HTTP et retourner une réponse HTTP brute sans impliquer aucun composant Qwik. Ceci est fait en exportant une méthode `onRequest`, `onGet`, `onPost`, `onPut`  ou `onDelete` si vous voulez seulement gérer une requête spécifique donnée par sa méthode HTTP.
 
 ```tsx
 // src/routes/index.ts
@@ -102,11 +102,11 @@ export const onGet = ({ json }) => {
 };
 ```
 
-> Notice that in the last example, there is not a default export. This is because we are not rendering a Qwik component, but rather we are handling the request directly, and returning a JSON response. This is useful to implement RESTful APIs or any other type of HTTP endpoint.
+> Remarquez que dans le dernier exemple, il n'y a pas d'exportation par défaut. C'est parce que nous ne rendons pas un composant Qwik, mais plutôt nous gérons la requête directement, et retournons une réponse JSON. Ceci est utile pour implémenter des API RESTful ou tout autre type de endpoint HTTP.
 
 ### Page + Endpoint
 
-As you can see in Qwik City there is no a clear separation between pages and endpoints, in both cases it's a `index.tsx` file that exports a Qwik component or a `onRequest` method. However, it's possible to combine both approaches. For example, you can export a `onRequest` method that will handle the request, and then render a Qwik component.
+Comme vous pouvez le voir dans Qwik City il n'y a pas de séparation claire entre les pages et les endpoints, dans les deux cas c'est un fichier `index.tsx` qui exporte un composant Qwik ou une méthode `onRequest`. Cependant, il est possible de combiner les deux approches. Par exemple, vous pouvez exporter une méthode `onRequest` qui va gérer la requête, et ensuite rendre un composant Qwik.
 
 ```tsx
 // src/routes/index.ts
@@ -124,50 +124,50 @@ export default component$(async () => {
 });
 ```
 
-> In this example, a request handle will always set the `Cache-Control` header to `private` and the page will be rendered as a HTML page, but if the request contains a `format=json` query param, the endpoint will return a JSON response instead.
+> Dans cet exemple, un gestionnaire de requête mettra toujours l'entête `Cache-Control` à `private` et la page sera rendue comme une page HTML, mais si la requête contient un paramètre de requête `format=json`, le endpoint retournera une réponse JSON à la place.
 
-## `layout.` files
+## Fichiers `layout.`
 
-Layout modules are very similar to `index` files, both can handle requests and render Qwik components, however, layouts are designed to work like a middleware, allowing to **share UI and request handling (middleware)** to a set of routes.
+Les modules de mise en page sont très similaires aux fichiers `index`, les deux peuvent gérer les requêtes et rendre les composants Qwik, cependant, les mises en page sont conçues pour fonctionner comme un middleware, permettant de **partager l'interface utilisateur et la gestion des requêtes (middleware)** pour un ensemble de routes.
 
-Usually different pages need some common request handling, and share some UI. For example, picture a dashboard site where all the pages under the `/admin/*` directory:
+Généralement, les différentes pages ont besoin d'un traitement commun pour les requêtes, et partagent une certaine interface utilisateur. Par exemple, imaginez un site de tableau de bord où toutes les pages se trouvent dans le répertoire `/admin/*` :
 
-- **Shared request handling:** The request cookies need to be validated before even rendering the page, otherwise render a blank 401 page.
-- **Shared UI:** All pages share a common header showing the user's name and profile picture.
+- **Gestion des requêtes partagées :** Les cookies de la requête doivent être validés avant même de rendre la page, sinon une page 401 vide sera rendue.
+- **Interface utilisateur partagée :** Toutes les pages partagent une entête commune affichant le nom et la photo de profil de l'utilisateur.
 
-Instead of repeating the same code in each route, we can use layouts to automatically reuse common parts, and also to add middleware to the route.
+Au lieu de répéter le même code dans chaque route, nous pouvons utiliser des mises en page pour réutiliser automatiquement les parties communes, et aussi pour ajouter des middleware à la route.
 
-Take this `src/routes` directory as an example:
+Prenez ce répertoire `src/routes` comme exemple :
 
 ```
 src/
 └── routes/
     ├── admin/
-    │   ├── layout.tsx  <-- This layout is used for all pages under /admin/*
+    │   ├── layout.tsx  <-- Cette mise en page est utilisée pour toutes les pages sous /admin/*
     │   └── index.tsx
-    ├── layout.tsx      <-- This layout is used for all pages
+    ├── layout.tsx      <-- Cette mise en page est utilisée pour toutes les pages
     └── index.tsx
 ```
 
-### Middleware layouts
+### Mise en page de middleware
 
-Since layouts can implement request handling with `onRequest` or `onGet`, `onPost`, `onPut`, `onDelete`, they can be used to implement middleware, for example, to validate the request cookies before rendering the page.
+Puisque les mises en page peuvent implémenter la gestion des requêtes avec `onRequest`, `onGet`, `onPost`, `onPut` ou `onDelete`, elles peuvent être utilisées pour implémenter un middleware, par exemple, pour valider les cookies de la requête avant de rendre la page.
 
-For the route `https://example.com/admin`, the `onRequest` methods will be executed in the following order:
+Pour la route `https://example.com/admin`, les méthodes `onRequest` seront exécutées dans l'ordre suivant :
 
-1. `src/routes/layout.tsx`'s `onRequest`
-2. `src/routes/admin/layout.tsx`'s `onRequest`
-3. `src/routes/admin/index.tsx`'s component
+1. `onRequest` de `src/routes/layout.tsx`
+2. `onRequest` de `src/routes/admin/layout.tsx`
+3. Celui du composant `src/routes/admin/index.tsx`
 
-### Nested layouts
+### Mises en page imbriquées
 
-Layouts also **provide a way to add common UI to the rendered page**. For example, if we want to add a common header to all the routes, we can add a `Header` component to the root layout.
+Les mises en page **fournissent également un moyen d'ajouter une interface utilisateur commune à la page rendue**. Par exemple, si nous voulons ajouter une en-tête commune à toutes les routes, nous pouvons ajouter un composant `Header` à la mise en page racine.
 
-For the given example, the Qwik components will be rendered in the following order:
+Pour l'exemple donné, les composants Qwik seront rendus dans l'ordre suivant :
 
-1. `src/routes/layout.tsx`'s component
-2. `src/routes/admin/layout.tsx`'s component
-3. `src/routes/admin/index.tsx`'s component
+1. Le composant de `src/routes/layout.tsx`
+2. Le composant de `src/routes/admin/layout.tsx`
+3. Le composant de `src/routes/admin/index.tsx`
 
 ```tsx
 <RootLayout>
@@ -177,12 +177,12 @@ For the given example, the Qwik components will be rendered in the following ord
 </RootLayout>
 ```
 
-## Advanced routing
+## Routage avancé
 
-Qwik City also supports:
+Qwik City prend également en charge :
 
-- [Route Parameters](/qwikcity/advanced/routing/index.mdx)
-- [Nested layouts](/qwikcity/advanced/routing/index.mdx#nested-layout)
+- [Paramètres de route](/qwikcity/advanced/routing/index.mdx)
+- [Mises en page imbriquées](/qwikcity/advanced/routing/index.mdx#nested-layout)
 - [Menus](/qwikcity/advanced/menu/index.mdx)
 
-These are discussed later.
+Nous y reviendrons plus tard.

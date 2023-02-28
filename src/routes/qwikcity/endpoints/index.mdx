@@ -9,34 +9,34 @@ contributors:
 
 # Endpoints
 
-Endpoints are `index.ts` files in the `src/routes` directory that does not export a `default` component. Instead, it exports a `onRequest`, `onGet`, `onPost`, `onPut`, `onDelete`, `onPatch`, `onHead` function, which will be used to handle the incoming request.
+Les endpoints sont des fichiers `index.ts` dans le répertoire `src/routes` qui n'exportent pas de composant `default`. À la place, il exporte une fonction `onRequest`, `onGet`, `onPost`, `onPut`, `onDelete`, `onPatch`, `onHead`, qui sera utilisée pour traiter la requête entrante.
 
-The main use case for endpoints is to create a RESTful API for your application, or some HTTP handler that is rendered by Qwik.
+L'utilisation principale des endpoints est de créer une API RESTful pour votre application, ou un gestionnaire HTTP qui est rendu par Qwik.
 
 ```ts
-// Called with every HTTP request (regardless of method)
+// Appelé par chaque requête HTTP (quelle que soit la méthode)
 export const onRequest: RequestHandler = async (ev) => { ... }
 
-// Called when the HTTP method is POST
+// Appelé lorsque la méthode HTTP est POST
 export const onPost: RequestHandler = async (ev) => { ... }
 
-// Called when the HTTP method is PUT
+// Appelé lorsque la méthode HTTP est PUT
 export const onPut: RequestHandler = async (ev) => { ... }
 
-// Called when the HTTP method is PATCH
+// Appelé lorsque la méthode HTTP est PATCH
 export const onPatch: RequestHandler = async (ev) => { ... }
 
-// Called when the HTTP method is DELETE
+// Appelé lorsque la méthode HTTP est DELETE
 export const onDelete: RequestHandler = async (ev) => { ... }
 ```
 
-These functions are executed according to the [HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) used for this route.
+Ces fonctions sont exécutées en fonction de la [méthode HTTP](https://developer.mozilla.org/fr/docs/Web/HTTP/Methods) utilisée pour cette route.
 
-## Raw Response Control
+## Contrôle de la réponse brute
 
-Endpoints are routes that will not render any Qwik page, instead they allow you to have full control over the HTTP response. From changing the status code to adding headers, and even sending a raw response body.
+Les endpoints sont des routes qui ne rendent aucune page Qwik, mais qui vous permettent d'avoir un contrôle total sur la réponse HTTP. Du changement du code de statut à l'ajout d'entêtes, et même l'envoi d'un corps de réponse brut.
 
-### Changing the status code
+### Modification du code d'état
 
 ```tsx
 export const onGet: RequestHandler = async ({ status }) => {
@@ -44,7 +44,7 @@ export const onGet: RequestHandler = async ({ status }) => {
 };
 ```
 
-### Adding response headers
+### Ajout d'entêtes de réponse
 
 ```tsx
 export const onPost: RequestHandler = async ({ headers }) => {
@@ -52,7 +52,7 @@ export const onPost: RequestHandler = async ({ headers }) => {
 };
 ```
 
-### Setting a cookie
+### Configuration d'un cookie
 
 ```tsx
 export const onGet: RequestHandler = async ({ cookie }) => {
@@ -60,7 +60,7 @@ export const onGet: RequestHandler = async ({ cookie }) => {
 };
 ```
 
-### Changing the cache-control header
+### Modification de l'entête cache-control
 
 ```tsx
 export const onGet: RequestHandler = async ({ cacheControl }) => {
@@ -73,7 +73,7 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 };
 ```
 
-### Sending a JSON body
+### Envoi d'un corps JSON
 
 ```tsx
 export const onGet: RequestHandler = async ({ json }) => {
@@ -81,7 +81,7 @@ export const onGet: RequestHandler = async ({ json }) => {
 };
 ```
 
-### Sending a Text body
+### Envoi d'un corps de texte
 
 ```tsx
 export const onGet: RequestHandler = async ({ text }) => {
@@ -89,7 +89,7 @@ export const onGet: RequestHandler = async ({ text }) => {
 };
 ```
 
-### Sending a RAW response
+### Envoi d'une réponse RAW
 
 ```tsx
 export const onGet: RequestHandler = async ({ send }) => {
@@ -103,7 +103,7 @@ export const onGet: RequestHandler = async ({ send }) => {
 };
 ```
 
-### Create a reverse proxy using a fetch
+### Création d'un reverse proxy à l'aide d'un fetch
 
 ```tsx
 export const onGet: RequestHandler = async ({ send }) => {
@@ -112,7 +112,7 @@ export const onGet: RequestHandler = async ({ send }) => {
 };
 ```
 
-### Create a stream response manually
+### Création manuelle d'une réponse stream
 
 ```tsx
 export const onGet: RequestHandler = async ({ getWritableStream }) => {
@@ -129,7 +129,7 @@ export const onGet: RequestHandler = async ({ getWritableStream }) => {
 };
 ```
 
-### JSON GET Endpoint
+### Endpoint GET JSON
 
 ```ts
 // File: src/routes/product/[skuId]/index.ts
