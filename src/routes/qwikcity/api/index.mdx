@@ -66,8 +66,8 @@ export const RouterHead = component$(() => {
     </>
   );
 });
-
 ```
+
 ## `useLocation()`
 
 Utilisez la fonction [`useLocation()`](/qwikcity/api/index.mdx#uselocation) pour récupérer un objet `RouteLocation` pour l'emplacement actuel.
@@ -105,7 +105,7 @@ export default component$(() => {
   return (
     <>
       <h1>SKU</h1>
-      <p>nom du chemin : {loc.pathname}</p>
+      <p>nom du chemin : {loc.url.pathname}</p>
       <p>skuId : {loc.params.skuId}</p>
     </>
   );

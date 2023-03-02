@@ -36,7 +36,13 @@ pnpm install
 
 ### 4. Lancer localement en mode développement
 
-Pour lancer localement le site  traduit, veuillez exécuter la commande suivante :
+Toujours dans le répertoire `qwik-docs-fr`, veuillez d'abord faire un `build` :
+
+```shell
+pnpm build
+```
+
+Puis lancer localement le site traduit, veuillez exécuter la commande suivante :
 
 ```shell
 pnpm start

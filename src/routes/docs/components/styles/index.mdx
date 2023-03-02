@@ -182,6 +182,45 @@ Pour utiliser Tailwind sur votre appli, vous pouvez l'ajouter à votre appli ave
 npm run qwik add tailwind
 ```
 
+### PostCSS
+
+Il est également possible d'utiliser PostCSS dans votre application grâce à notre intégration prédéfinie :
+
+```shell
+npm run qwik add postcss
+```
+
+Important : Comme nous utilisons vite, la configuration doit être la suivante pour fonctionner :
+
+```shell
+// Configuration avec vite
+module.exports = {
+  plugins: {
+    autoprefixer: {},
+    "postcss-preset-env": {
+      stage: 3,
+      features: {
+        "nesting-rules": true,
+      },
+    },
+  },
+}
+```
+
+Vous pourrez désormais utiliser des CSS avec des règles d'imbrication comme celles qui suivent :
+
+```css
+body {
+  & .box {
+    background: red;
+
+    &:hover {
+      background: yellow;
+    }
+  }
+}
+```
+
 Consultez notre [documentation sur l'intégration](../../../integrations/integration/tailwind) pour plus d'informations.
 
 ## Pourquoi ne pas utiliser les styles en ligne avec la balise `<style>` ?

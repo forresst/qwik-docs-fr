@@ -12,9 +12,9 @@ Plutôt que de montrer une page blanche, par défaut Qwik City fournit une page 
 
 ### Page 404 personnalisée
 
-Au lieu d'afficher la réponse 404 générique (ennuyeuse), il est possible de fournir une page 404 personnalisée en utilisant les mêmes mises en page habituelles que le reste de votre site. 
+Au lieu d'afficher la réponse 404 générique (ennuyeuse), il est possible de fournir une page 404 personnalisée en utilisant les mêmes mises en page habituelles que le reste de votre site.
 
-Pour créer une page 404 personnalisée, ajoutez un fichier `404.tsx` au répertoire racine `src/routes`. 
+Pour créer une page 404 personnalisée, ajoutez un fichier `404.tsx` au répertoire racine `src/routes`.
 
 ```
 src/
@@ -75,11 +75,7 @@ export default component$(() => {
   if (!product.value) {
     // aucune donnée sur le produit n'a été trouvée
     // afin de rendre notre propre produit personnalisé 404
-    return (
-      <p>
-        Désolé, il semble que nous n'ayons pas ce produit.
-      </p>
-    )
+    return <p>Désolé, il semble que nous n'ayons pas ce produit.</p>;
   }
 
   // Les données du produit ont été trouvées, alors rendons-les.

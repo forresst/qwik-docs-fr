@@ -15,15 +15,17 @@ Au lieu de cela => méthodes `useOn()`
 **Bonnes pratiques** :
 
 ```ts
-useBrowserVisibleTask$(()=> {
-    const listener = (event)=> {
-        const mouseEvent = event as MouseEvent
-        console.log(mouseEvent.x, mouseEvent.y);
-    }
-    document.addEventListener('mousemove', listener);
+useBrowserVisibleTask$(() => {
+  const listener = (event) => {
+    const mouseEvent = event as MouseEvent;
+    console.log(mouseEvent.x, mouseEvent.y);
+  };
+  document.addEventListener('mousemove', listener);
 
-    return ()=> {document.removeEventListener('mousemove', listener)}
-})
+  return () => {
+    document.removeEventListener('mousemove', listener);
+  };
+});
 ```
 
 **Pourquoi est-ce un problème** :
@@ -38,11 +40,14 @@ Sans parler du fait que cela demande un effort supplémentaire de votre part pou
 **Faites plutôt cela** :
 
 ```ts
-useOnDocument('mousemove', $((event)=> {
+useOnDocument(
+  'mousemove',
+  $((event)=> {
     const mouseEvent = event as MouseEvent;
-    console.log(mouseEvent.x, mouseEvent.y)
+    console.log(mouseEvent.x, mouseEvent.y);
     // Aucun nettoyage manuel n'est nécessaire !
-}))
+  })
+);
 ```
 
 > REMARQUE : Des hooks similaires existent pour window et les composants individuels.
@@ -92,12 +97,11 @@ Si vous utilisez le modèle `if typeof window !== "undefined"`, vous constaterez
 ```ts
 const location = useLocation();
 
-if (location.href.includes('foo')) {
-    // faire quelque chose
+if (location.url.href.includes('foo')) {
+  // faire quelque chose
 }
 //OU
-doTheThing(location.query);
-
+doTheThing(location.url.searchParams);
 ```
 
 ## EXCEPTION

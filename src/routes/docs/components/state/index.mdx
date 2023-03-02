@@ -290,14 +290,14 @@ Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l
 Parfois, vous souhaitez stocker une valeur dans l'état, mais vous ne voulez pas qu'elle soit sérialisée. Ceci est utile pour stocker des valeurs qui ne sont pas sérialisables, comme les fonctions ou les classes.
 
 ```tsx
-import { component$, useStore, noSerialize, useBrowserVisibleTask$ } from '@builder.io/qwik';
+import { component$, useStore, noSerialize, useVisibleTask$ } from '@builder.io/qwik';
 
 export const App = component$(() => {
   const state = useStore({
     monacoInstance: null,
   });
 
-  useBrowserVisibleTask$(() => {
+  useVisibleTask$(() => {
     // Monaco n'est pas sérialisable, donc nous ne pouvons pas le stocker dans l'état en utilisant `noSerialize()`
     state.monacoInstance = noSerialize(new Monaco());
   });

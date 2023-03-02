@@ -5,35 +5,37 @@ contributors:
 ---
 
 # Vite
+
 Qwik utilise [Vite](https://vitejs.dev/) pour fournir une expérience de développement rapide. Vite est un outil de construction qui sert votre code via des modules ES natifs pendant le développement. 
 Cela signifie qu'il n'a pas besoin de regrouper votre code ou de le transpiler pour fonctionner dans le navigateur. Il est également doté d'un remplacement de module à chaud (HMR) ultra-rapide qui met à jour votre navigateur instantanément lorsque vous apportez des modifications à votre code.
 
 ## Configuration
+
 Après avoir échafaudé un nouveau projet Qwik, vous trouverez un fichier `vite.config.js` à la racine de votre projet. C'est là que vous pouvez configurer Vite.
 
 ## Plugins
+
 Qwik est livré avec deux plugins qui permettent d'utiliser facilement Vite avec Qwik et Qwik City.
+
 ```js
-import { defineConfig } from "vite";
-import { qwikCity } from "@builder.io/qwik-city/vite";
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite';
+import { qwikCity } from '@builder.io/qwik-city/vite';
+import { qwikVite } from '@builder.io/qwik/optimizer';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => {
   return {
-    plugins: [
-      qwikCity(),
-      qwikVite(),
-      tsconfigPaths(),
-    ],
+    plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
   };
 });
 ```
 
 ### `qwikVite()`
+
 Pour modifier la configuration, vous pouvez passer un objet à la fonction `qwikVite`. Les options possibles sont :
 
 #### `debug`
+
 ```js
 /**
  * Imprime les logs de débogage verbeux du plugin Qwik.
@@ -43,6 +45,7 @@ debug?: boolean;
 ```
 
 #### `entryStrategy`
+
 ```js
 /**
  * La stratégie d'entrée Qwik à utiliser lors du bundling pour la production.
@@ -53,6 +56,7 @@ entryStrategy?: EntryStrategy;
 ```
 
 #### `srcDir`
+
 ```js
 /**
  * Le répertoire source pour trouver tous les composants de Qwik. Puisque Qwik
@@ -64,6 +68,7 @@ srcDir?: string;
 ```
 
 #### `vendorRoots`
+
 ```js
 /**
  * Liste des répertoires pour rechercher récursivement les composants Qwik ou les fournisseurs.
@@ -73,6 +78,7 @@ vendorRoots?: string[];
 ```
 
 #### `client`
+
 ```js
 client?: {
     /**
@@ -99,9 +105,10 @@ client?: {
      */
     manifestOutput?: (manifest: QwikManifest) => Promise<void> | void;
 };
- ```
+```
 
 #### `ssr`
+
 ```js 
 ssr?: {
     /**
@@ -128,6 +135,7 @@ ssr?: {
 ```
 
 #### `optimizerOptions`
+
 ```js
 /**
  * Options pour l'optimiseur Qwik.
@@ -137,6 +145,7 @@ optimizerOptions?: OptimizerOptions;
 ```
 
 #### `transformedModuleOutput`
+
 ```js
 /**
  * Hook qui est appelé après la construction et fournit tous les modules
@@ -148,6 +157,7 @@ transformedModuleOutput?:
 ```
 
 #### `devTools`
+
 ```js
 devTools?: {
     /**
@@ -162,9 +172,11 @@ devTools?: {
 ```
 
 ### `qwikCity()`
+
 Pour modifier la configuration, vous pouvez passer un objet à la fonction `qwikCity`. Les options possibles sont :
 
 #### `routesDir`
+
 ```js
 /**
  * Répertoire des `routes`. Par défaut à `src/routes`.
@@ -173,6 +185,7 @@ routesDir?: string;
 ```
 
 #### `serverPluginsDir`
+
 ```js
 /**
  * Répertoire des `server plugins`. Par défaut à `src/server-plugins`.
@@ -181,6 +194,7 @@ serverPluginsDir?: string;
 ```
 
 #### `basePathname`
+
 ```js
 /**
  * Le chemin de base est utilisé pour créer des chemins d'URL absolus jusqu'au
@@ -191,6 +205,7 @@ basePathname?: string;
 ```
 
 #### `trailingSlash`
+
 ```js
 /**
  * Veillez à ce qu'un slash de fin termine les urls des pages. Par défaut à `true`.
@@ -200,14 +215,16 @@ trailingSlash?: boolean;
 ```
 
 #### `mdxPlugins`
+
 ```js
 /**
  * Activer ou désactiver les plugins MDX inclus par défaut dans qwik-city.
  */
 mdxPlugins?: MdxPlugins;
-``` 
+```
 
 #### `mdx`
+
 ```js
 /**
 * MDX Options https://mdxjs.com/
@@ -216,4 +233,5 @@ mdx?: any;
 ```
 
 ## Dépannage
+
 Avant de créer une issue sur le dépôt Qwik, veuillez vérifier la section `Dépannage` de la [documentation Vite](https://vitejs.dev/guide/troubleshooting.html) et assurez-vous que vous utilisez la version recommandée.

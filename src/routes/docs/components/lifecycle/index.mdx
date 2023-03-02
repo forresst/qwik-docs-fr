@@ -20,7 +20,7 @@ Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des co
 - `VisibleTask` - s'exécute après `Render` et lorsque le composant devient visible.
 
 ```
-  useTask$ ------> RENDU -----> useBrowserVisibleTask$
+  useTask$ ------> RENDU -----> useVisibleTask$
                                 |
 | --- SERVEUR ou NAVIGATEUR --- | ----- NAVIGATEUR ----- |
                                 |
@@ -29,12 +29,12 @@ Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des co
 
 **SERVEUR** : Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, le `useTask$` et le `RENDER` seront exécutés sur le serveur, et ensuite le `VisibleTask` sera exécuté dans le navigateur, après que le composant soit visible.
 
-> **Notez** que parce que le composant a été monté sur le serveur, **seulement useBrowserVisibleTask$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
+> **Notez** que parce que le composant a été monté sur le serveur, **seulement useVisibleTask$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
 
 **NAVIGATEUR** : Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
 
 ```
-  useTask$ --> RENDU --> useBrowserVisibleTask
+  useTask$ --> RENDU --> useVisibleTask
 
 | ---------------- NAVIGATEUR --------------- |
 ```
@@ -104,13 +104,13 @@ export const Cmp = component$(() => {
 
 L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements dans `() => count.value`. Le callback sera exécuté une fois dans le SSR lorsque le composant est monté et à chaque fois que `count.value` change.
 
-> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useBrowserVisibleTask$()` à la place, qui s'exécute sur le client après le rendu.
+> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useVisibleTask$()` à la place, qui s'exécute sur le client après le rendu.
 
 ### Utilisez `useTask$()` lorsque vous avez besoin de
 
 - Exécuter des tâches asynchrones avant le rendu
 - Exécuter le code une seule fois avant le premier rendu du composant
-- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useBrowserVisibleTask$`)
+- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useVisibleTask$`)
 - Exécuter le code de manière programmée lorsque l'état change
 
 > Remarque : si vous envisagez de charger des données (en utilisant `fetch()`) à l'intérieur de `useTask$`, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place. Cette API est plus efficace en termes d'exploitation du streaming SSR et de récupération en parallèle des données.
@@ -147,28 +147,28 @@ export const Cmp = component$(() => {
 
 > Mais comme mentionné ci-dessus - pour la récupération des données, pensez à utiliser [`useResource$()`](/docs/components/resource/index.mdx) à la place.
 
-## `useBrowserVisibleTask$()`
+## `useVisibleTask$()`
 
 - **Quand :** une fois que le composant devient visible sur le navigateur, et lorsque l'état traqué change
 - **Nombre de fois :** au moins une fois
 - **Plateforme :** navigateur uniquement
 
-`useBrowserVisibleTask$()` enregistre un hook à exécuter lorsque le composant devient visible dans le viewport, il s'exécutera au moins une fois dans le navigateur, et il peut être réactif et se ré-exécuter lorsqu'un [signal ou store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
+`useVisibleTask$()` enregistre un hook à exécuter lorsque le composant devient visible dans le viewport, il s'exécutera au moins une fois dans le navigateur, et il peut être réactif et se ré-exécuter lorsqu'un [signal ou store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
 
 ```tsx
-useBrowserVisibleTask$(({ track }) => {
+useVisibleTask$(({ track }) => {
   track(() => store.count);
   // s'exécutera lorsque le composant devient visible et chaque fois que "store.count" change
   console.log('runs in the browser');
 });
 ```
 
-Sous le capot, `useBrowserVisibleTask$()` crée un écouteur de DOM qui utilise [Intersection Observer](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API) pour détecter quand le composant devient visible dans le viewport.
+Sous le capot, `useVisibleTask$()` crée un écouteur de DOM qui utilise [Intersection Observer](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API) pour détecter quand le composant devient visible dans le viewport.
 
 Cependant, cette `strategy` peut être modifiée, et par exemple, être exécutée lorsque le `document` est prêt.
 
 ```tsx
-useBrowserVisibleTask$(() => console.log('s\'exécute dans le navigateur'), {
+useVisibleTask$(() => console.log('s\'exécute dans le navigateur'), {
   strategy: 'document-ready', // 'load' | 'visible' | 'idle'
 });
 ```
@@ -184,7 +184,7 @@ C'est une caractéristique unique de Qwik, n'importe quel autre framework exécu
 ```tsx
 export const Timer = component$(() => {
   const count = useSignal(0);
-  useBrowserVisibleTask$(() => {
+  useVisibleTask$(() => {
     // S'exécute uniquement dans le client
     const timer = setInterval(() => {
       count.value++;
@@ -197,11 +197,11 @@ export const Timer = component$(() => {
 });
 ```
 
-### Quand utiliser `useBrowserVisibleTask$()`
+### Quand utiliser `useVisibleTask$()`
 
-> **REMARQUE :** N'abusez pas de `useBrowserVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useBrowserVisibleTask$()` n'est probablement pas la bonne réponse.
+> **REMARQUE :** N'abusez pas de `useVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useVisibleTask$()` n'est probablement pas la bonne réponse.
 
-Comme son nom l'indique, `useBrowserVisibleTask$()` est utile lorsque vous devez exécuter du code lorsque le composant devient visible dans le viewport. Ceci est utile pour :
+Comme son nom l'indique, `useVisibleTask$()` est utile lorsque vous devez exécuter du code lorsque le composant devient visible dans le viewport. Ceci est utile pour :
 
 - Exécuter du code AVANT l'interaction avec l'utilisateur, comme des animations, ou toute autre logique qui doit être exécutée avant l'interaction avec l'utilisateur.
 - Lecture du DOM après le rendu
