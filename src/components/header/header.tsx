@@ -45,7 +45,7 @@ export const Header = component$(() => {
       <div class="header-inner">
         <div class="header-logo">
           <a href="/">
-            <span class="sr-only">Qwik Homepage</span>
+            <span class="sr-only">Accueil Qwik</span> {/* TranslatedToFrench */}
             <QwikLogo width={180} height={50} />
           </a>
         </div>
@@ -68,12 +68,12 @@ export const Header = component$(() => {
         <ul class="lg:grow lg:flex lg:justify-end lg:p-4 menu-toolkit">
           <li>
             <a href="/docs/overview/" class={{ active: pathname.startsWith('/docs') }}>
-              <span>Docs</span>
+              <span>Docs</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
             <a href="/qwikcity/overview/" class={{ active: pathname.startsWith('/qwikcity') }}>
-              <span>Qwik City</span>
+              <span>Qwik City</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
@@ -81,22 +81,22 @@ export const Header = component$(() => {
               href="/integrations/integration/overview/"
               class={{ active: pathname.startsWith('/integrations') }}
             >
-              <span>Integrations</span>
+              <span>Intégrations</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
             <a href="/community/groups" class={{ active: pathname.startsWith('/community') }}>
-              <span>Community</span>
+              <span>Communauté</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
             <a href="/showcase/" class={{ active: pathname.startsWith('/showcase') }}>
-              <span>Showcase</span>
+              <span>Galerie</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
             <a href="/media/" class={{ active: pathname.startsWith('/media') }}>
-              <span>Media</span>
+              <span>Médias</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
@@ -104,7 +104,7 @@ export const Header = component$(() => {
               href="/examples/introduction/hello-world/"
               class={{ active: pathname.startsWith('/examples') }}
             >
-              <span>Examples</span>
+              <span>Exemples</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
@@ -112,7 +112,7 @@ export const Header = component$(() => {
               href="/tutorial/welcome/overview/"
               class={{ active: pathname.startsWith('/tutorial') }}
             >
-              <span>Tutorial</span>
+              <span>Tutoriel</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>

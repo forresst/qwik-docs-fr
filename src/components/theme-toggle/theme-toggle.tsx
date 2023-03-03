@@ -54,7 +54,7 @@ export const ThemeToggle = component$(() => {
           type="button"
           class="theme-toggle"
           id="theme-toggle"
-          title="Toggles light & dark"
+          title="Basculer entre clair & sombre" // TranslatedToFrench
           aria-label={state.theme}
           aria-live="polite"
           onClick$={onClick$}

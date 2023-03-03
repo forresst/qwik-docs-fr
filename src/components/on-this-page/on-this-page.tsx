@@ -13,13 +13,13 @@ export const OnThisPage = component$(() => {
   const contentHeadings = headings?.filter((h) => h.level <= 3) || [];
 
   const { url } = useLocation();
-  const editUrl = `https://github.com/BuilderIO/qwik/edit/main/packages/docs/src/routes${url.pathname}index.mdx`;
+  const editUrl = `https://github.com/forresst/qwik-docs-fr/edit/main/src/routes${url.pathname}index.mdx`; // TranslatedToFrench
 
   return (
     <aside class="on-this-page fixed text-sm z-20 bottom-0 right-[max(0px,calc(50%-42rem))] overflow-y-auto hidden xl:block xl:w-[16rem] xl:top-[9rem]">
       {contentHeadings.length > 0 ? (
         <>
-          <h6>On This Page</h6>
+          <h6>Sur cette page</h6> {/* TranslatedToFrench */}
           <ul>
             {contentHeadings.map((h) => (
               <li key={h.id}>
@@ -38,12 +38,12 @@ export const OnThisPage = component$(() => {
         </>
       ) : null}
 
-      <h6>More</h6>
+      <h6>Plus</h6> {/* TranslatedToFrench */}
       <ul>
         <li>
           <a href={editUrl} target="_blank">
             <EditIcon width={22} height={22} />
-            <span>Edit this page</span>
+            <span>Modifier cette page</span> {/* TranslatedToFrench */}
           </a>
         </li>
         <li>
@@ -72,13 +72,13 @@ export const OnThisPage = component$(() => {
               />
               <path d="M256 367.91a20 20 0 1120-20 20 20 0 01-20 20z" fill="currentColor" />
             </svg>
-            <span>Create an issue</span>
+            <span>Créer une issue</span> {/* TranslatedToFrench */}
           </a>
         </li>
         <li>
           <a href="https://qwik.builder.io/chat" target="_blank" rel="nofollow noopener">
             <ChatIcon width={20} height={20} />
-            <span>Join our community</span>
+            <span>Rejoindre notre communauté</span> {/* TranslatedToFrench */}
           </a>
         </li>
         <li>
