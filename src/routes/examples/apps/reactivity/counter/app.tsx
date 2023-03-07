@@ -5,9 +5,9 @@ export default component$(() => {
 
   return (
     <div>
-      <p>Count: {store.count}</p>
+      <p>Compteur : {store.count}</p>
       <p>
-        <button onClick$={() => store.count++}>Click</button>
+        <button onClick$={() => store.count++}>Cliquer</button>
       </p>
     </div>
   );

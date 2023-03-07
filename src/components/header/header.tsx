@@ -55,8 +55,8 @@ export const Header = component$(() => {
           }}
           class="mobile-menu"
           type="button"
-          title="Toggle right menu"
-          aria-label="Toggle right menu"
+          title="Afficher/masquer menu de droite" // TranslatedToFrench
+          aria-label="Afficher/masquer menu de droite" // TranslatedToFrench
         >
           <span class="more-icon">
             <MoreIcon width={30} height={30} />

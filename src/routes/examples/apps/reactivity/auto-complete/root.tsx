@@ -4,7 +4,7 @@ export const Root = () => {
   return (
     <html>
       <head>
-        <title>Auto-complete example using Qwik</title>
+        <title>Exemple d'autocomplétion avec Qwik</title>
       </head>
       <body>
         <App />

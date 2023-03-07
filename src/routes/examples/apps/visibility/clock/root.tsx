@@ -4,7 +4,7 @@ export const Root = () => {
   return (
     <html>
       <head>
-        <title>Clock</title>
+        <title>Horloge</title>
       </head>
       <body>
         <App />

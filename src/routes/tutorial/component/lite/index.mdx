@@ -1,15 +1,15 @@
 ---
-title: Lite Component
+title: Composant lite
 contributors:
   - adamdbradley
   - the-r3aper7
   - manucorporat
 ---
 
-One of Qwik's super powers lies in its lazy-loading features. Each component will generate a separate Symbol which is downloaded on demand. This allows you to build a large application with many components and only download the components that are needed for the current view.
+Un des super pouvoirs de Qwik réside dans ses fonctionnalités de chargement de manière différée. Chaque composant génère un Symbol séparé qui est chargé à la demande. Cela vous permet de construire une grande application avec beaucoup de composants et de charger seulement les composants qui sont nécessaires pour la vue courante.
 
-But for some cases you may want to load a component together with the parent component. For example, if you have a `<Greeter>` component that is always used with the `<App>` component, you may want to load the `<Greeter>` component with the `<App>` component. This is called a [lite or lightweight component](/docs/components/lite-components).
+Mais dans certains cas, vous voudrez peut-être charger un composant en même temps que le composant parent. Par exemple, si vous avez un composant `<Greeter>` qui est toujours utilisé avec le composant `<App>`, vous voudrez peut-être charger le composant `<Greeter>` avec le composant `<App>`. C'est ce qu'on appelle un [composant lite ou léger](/docs/components/lite-components).
 
-In this example, the `<App>` and a `<Greeter>` components are prepared for you. The `<Greeter />` component is declared using the [`component$()`](/docs/components/overview/index.mdx#component) method and is a Qwik component. Remove the [`component$()`](/docs/components/overview/index.mdx#component) to convert `<Greeter>` to a [lite component](/docs/components/lite-components).
+Dans cet exemple, les composants `<App>` et `<Greeter>` sont préparés pour vous. Le composant `<Greeter>` est déclaré en utilisant la méthode [`component$()`](/docs/components/overview/index.mdx#component) et est un composant Qwik. Enlevez la méthode [`component$()`](/docs/components/overview/index.mdx#component) pour convertir `<Greeter>` en un [composant lite](/docs/components/lite-components).
 
-Open the `Symbols` tab and notice that the `<Greeter />` component is no longer an independent export, but instead is bundled as part of the `<App>` component.
+Ouvrez l'onglet `Symbols` et remarquez que le composant `<Greeter />` n'est plus une exportation indépendante, mais qu'il fait partie du composant `<App>`.

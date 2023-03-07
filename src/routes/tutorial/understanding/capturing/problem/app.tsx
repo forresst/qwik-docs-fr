@@ -20,7 +20,7 @@ export default component$(() => {
       <tt>&lt;App&gt;</tt>
       <tt>largeData</tt>: {JSON.stringify(store.largeData)}
       <br />
-      Click <button onClick$={() => store.counter.count++}>+1</button>
+      Cliquer <button onClick$={() => store.counter.count++}>+1</button>
       <Child counter={counter} />
     </>
   );

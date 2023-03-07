@@ -8,5 +8,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Framework reimagined for the edge!',
+  title: 'Framework réimaginé pour le edge !', // TranslatedToFrench
 };

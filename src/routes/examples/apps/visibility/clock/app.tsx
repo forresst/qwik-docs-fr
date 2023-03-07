@@ -8,11 +8,11 @@ export default component$(() => {
   return (
     <div>
       <p onClick$={() => console.log('test')}>
-        This is an example of Lazy executing code on component when component becomes visible.
+      C'est un exemple d'exécution différé de code sur le composant lorsque celui-ci devient visible.
       </p>
 
       <p>
-        ⬇️ <strong>Scroll down</strong> until the clock is in view.
+        ⬇️ <strong>Faites défiler vers le bas</strong> jusqu'à ce que l'horloge soit visible.
       </p>
 
       <ul>

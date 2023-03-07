@@ -41,7 +41,7 @@ export default component$<{
   return (
     <Resource
       value={builderContentRsrc}
-      onPending={() => <div>Loading...</div>}
+      onPending={() => <div>Chargement...</div>} // TranslatedToFrench
       onResolved={(content) =>
         content.html ? (
           <props.tag class="builder" dangerouslySetInnerHTML={content.html} />

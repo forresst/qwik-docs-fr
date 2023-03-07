@@ -15,8 +15,8 @@ export const ReplCommands = ({
           }}
           class="copy-to-playground"
           type="button"
-          title="Copy To Playground"
-          aria-label="Copy To Playground"
+          title="Copier dans l'aire de jeu" // TranslatedToFrench
+          aria-label="Copier dans l'aire de jeu" // TranslatedToFrench
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <rect
@@ -40,7 +40,7 @@ export const ReplCommands = ({
               stroke-width="32"
             />
           </svg>
-          Open in Playground
+          Ouvrir dans l'aire de jeu {/* TranslatedToFrench */}
         </button>
       ) : null}
 

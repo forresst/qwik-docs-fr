@@ -3,13 +3,13 @@ import { component$, useStore, useTask$ } from '@builder.io/qwik';
 export default component$(() => {
   return (
     <div>
-      This example features an auto-complete component with a debounce of 150 ms.
+      Cet exemple présente un composant de complétion automatique avec un délai d'attente de 150 ms.
       <br />
-      The function `debouncedGetPeople` needs to be exported because it is used in `useTask$`.
+      La fonction `debouncedGetPeople` doit être exportée car elle est utilisée dans `useTask$`.
       <br />
       <br />
-      Go ahead, search for Star Wars characters such as "Luke Skywalker", it uses the{' '}
-      <a href="https://swapi.dev/">Star Wars API</a>
+      Allez-y, cherchez des personnages de Star Wars comme "Luke Skywalker", il utilise le{' '}.
+      <a href="https://swapi.dev/">API de Star Wars</a>
       <AutoComplete></AutoComplete>
     </div>
   );
@@ -65,7 +65,7 @@ export const SuggestionsListComponent = (props: { state: IState }) => {
     </ul>
   ) : (
     <div class="no-results">
-      <em>No suggestions, you re on your own!</em>
+      <em>Aucune suggestion, vous êtes unique !</em>
     </div>
   );
 };
