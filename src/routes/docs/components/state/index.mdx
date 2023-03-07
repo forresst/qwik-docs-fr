@@ -50,7 +50,7 @@ Le simple fait d'accéder à la propriété `count.value` entraînera la mise à
 
 Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale. On peut se représenter un store comme un signal à valeurs multiples, ou à un objet constitué de plusieurs signaux.
 
-`const store = useStore(initialState)` est un hook qui crée un objet réactif. Il prend un état initial, et retourne un objet réactif.
+`const store = useStore(initialStateObject)` est un hook qui crée un objet réactif. Il prend un état initial, et retourne un objet réactif.
 
 L'objet réactif renvoyé par [`useStore()`](/docs/components/state/index.mdx#usestore) est comme n'importe quel autre objet, mais il est réactif. Si vous modifiez une propriété de l'objet, tout composant qui dépend de cette propriété sera mis à jour.
 

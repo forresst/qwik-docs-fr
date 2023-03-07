@@ -74,12 +74,9 @@ Utilisez la fonction [`useLocation()`](/qwikcity/api/index.mdx#uselocation) pour
 
 ```tsx
 export interface RouteLocation {
-  readonly params: RouteParams; // Record<string,string>
-  readonly href: string;
-  readonly pathname: string;
-  readonly query: Record<string, string>;
-  readonly isNavigating: boolean;
+  readonly params: RouteParams; // Readonly<Record<string, string>>
   readonly url: URL;
+  readonly isNavigating: boolean;
 }
 ```
 
@@ -91,11 +88,12 @@ La valeur de retour de [`useLocation()`](/qwikcity/api/index.mdx#uselocation) es
 
 Supposez que vous ayez fait :
 
-- La route : `https://example.com/sku/[skuId]`
+- Le fichier : `src/routes/sku/[skuId]/index.tsx`
 - L'utilisateur navigue vers : `https://example.com/sku/1234`
-- Ensuite, vous pouvez récupérez le `skuId` via `useLocation().params.skuId`.
+- Ensuite, vous pouvez récupérez le `skuId` via `useLocation().params.skuId`
 
 ```tsx
+// src/routes/sku/[skuId]/index.tsx
 import { component$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 
@@ -116,7 +114,7 @@ Le code ci-dessus génère :
 
 ```html
 <h1>SKU</h1>
-<p>nom du chemin : /sku/1234</p>
+<p>nom du chemin : /sku/1234/</p>
 <p>skuId : 1234</p>
 ```
 

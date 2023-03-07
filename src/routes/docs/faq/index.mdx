@@ -94,13 +94,13 @@ export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 
 ## Est-ce que Qwik charge du JS quand l'utilisateur interagit ?
 
-Non. En production, Qwik utilise beaucoup d'informations générées pendant le SSR (Rendu côté serveur) pour commencer la [prélecture](/qwikcity/advanced/prefetching/index.mdx) uniquement des morceaux d'interactivité disponibles sur la page courante dès que possible (ASAP). De cette façon, quand l'utilisateur clique ou interagit, le JS est déjà chargé.
+Non. En production, Qwik utilise beaucoup d'informations générées pendant le SSR (Rendu côté serveur) pour commencer la [pré-alimentation du cache]((../../qwikcity/advanced/speculative-module-fetching/index.mdx)) avec uniquement des morceaux d'interactivité disponibles sur la page courante dès que possible (ASAP). De cette façon, quand l'utilisateur clique ou interagit, le JS est déjà chargé dans le cache.
 
-## Si Qwik précharge le JS, alors quelle est la différence ?
+## Si Qwik demande toujours le JS, alors quelle est la différence ?
 
-La prélecture n'est pas la même chose que le traitement et l'exécution du JS, et Qwik n'exécute le JS que lorsque l'utilisateur interagit.
+La pré-alimentation du cache n'est pas la même chose que le traitement et l'exécution du JS, et Qwik n'exécute le JS que lorsque l'utilisateur interagit.
 
-De plus, la [prélecture](/qwikcity/advanced/prefetching/index.mdx) permet à Qwik de donner la priorité aux parties importantes de l'interactivité avant les parties moins importantes.
+De plus, la [Récupération spéculative de module](../../qwikcity/advanced/speculative-module-fetching/index.mdx) permet à Qwik de donner la priorité aux parties importantes de l'interactivité avant les parties moins importantes.
 
 Par exemple, le bouton « Acheter maintenant » est plus important que le bouton « Ajouter au panier », donc Qwik va précharger le bouton « Acheter maintenant » en premier, et ensuite le bouton « Ajouter au panier ».
 
@@ -108,7 +108,7 @@ Qwik n'a pas besoin de tout précharger pour commencer à fonctionner, alors que
 
 ## Les applis Qwik sont-elles lentes sur les réseaux lents ?
 
-Pas du tout ! Grâce à la [prélecture](/qwikcity/advanced/prefetching/index.mdx) les applis Qwik ne sont pas plus affectées par les réseaux lents que les autres frameworks. En fait, en raison de la finesse du bundle et de la résumabilité, les applis Qwik peuvent devenir interactives avec beaucoup moins de JS, ce qui les rend effectivement plus rapides sur les réseaux lents.
+Pas du tout ! Grâce à la [Récupération spéculative de module](../../qwikcity/advanced/speculative-module-fetching/index.mdx), les applis Qwik ne sont pas plus affectées par les réseaux lents que les autres frameworks. En fait, en raison de la finesse du bundle et de la résumabilité, les applis Qwik peuvent devenir interactives avec beaucoup moins de JS, ce qui les rend effectivement plus rapides sur les réseaux lents.
 
 ## Qwik génère-t-il trop de petits fichiers ?
 

@@ -9,7 +9,13 @@ contributors:
 
 # Prélecture
 
-La prélecture est un moyen pour les applications de commencer à charger des modules en tâche de fond, avant que l'utilisateur n'ait réellement besoin de ces modules. La solution idéale est de ne précharger que la plus petite quantité de code qui est hautement susceptible d'être exécutée à partir de l'interaction de l'utilisateur, tout en omettant tout JavaScript qui _ne pourrait pas_ être utilisé.
+Qwik fournit plusieurs stratégies pour précharger les modules à l'avance, et en se basant sur ça, Qwik City est capable d'aller plus loin en utilisant la [Récupération spéculative des modules](../../../qwikcity/advanced/speculative-module-fetching/index.mdx). Cette page de documentation décrit les caractéristiques de **faible niveau** de la prélecture de Qwik, mais il est recommandé de lire plutôt la documentation de Qwik City sur la [Récupération spéculative des modules](../../../qwikcity/advanced/speculative-module-fetching/index.mdx).
+
+- [Pré-alimenter le Cache avec des services workers](../../../qwikcity/advanced/speculative-module-fetching/index.mdx)
+- [Lien rel](#lien-rel)
+- [Web Worker Fetch](#web-worker-fetch)
+
+La prélecture est un moyen pour les applications de commencer à charger des modules en tâche de fond, avant que l'utilisateur n'ait réellement besoin de ces modules. La solution idéale est de ne précharger que la plus petite quantité de code qui est hautement susceptible d'être exécutée à partir de l'interaction de l'utilisateur, tout en omettant tout JavaScript qui _ne serait pas_ utilisé.
 
 Qwik excelle dans le chargement et l'exécution d'une quantité minimale de JavaScript. Et puisque Qwik est capable de comprendre comment les composants individuels sont utilisés (et ce qui n'est pas utilisé), il peut aussi mieux décider quels bundles doivent être préchargés.
 
@@ -28,6 +34,8 @@ Puisque Qwik comprend ce qui est possible, il est capable de précharger le code
 ## Stratégie de prélecture
 
 La stratégie de prélecture est la logique qui décide quel JavaScript, s'il y en a, que Qwik doit précharger en arrière plan. Par défaut, Qwik préchargera tous les écouteurs visibles sur la page. Pour configurer la stratégie de prélecture, utilisez l'argument options de la fonction `renderToStream()`, souvent trouvé dans le fichier source `src/entry.ssr.tsx`. La fourniture de stratégies optimales de prélecture est un sujet sur lequel Qwik va continuer à faire des recherches et des expérimentations.
+
+Pour les applications Qwik City, nous recommandons fortement d'utiliser [Récupération spéculative des modules](../../../qwikcity/advanced/speculative-module-fetching/index.mdx).
 
 ```ts
 export default function (opts: RenderToStreamOptions) {
@@ -59,18 +67,30 @@ export default function (opts: RenderToStreamOptions) {
 }
 ```
 
+Pour les applications Qwik City, nous recommandons fortement d'utiliser [Récupération spéculative des modules](../../../qwikcity/advanced/speculative-module-fetching/index.mdx), qui utilise l'implémentation `prefetchEvent`.
+
 | Option              | Description                                                                                                                                                                                                                                                                                                          |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prefetchEvent`     | Distribue un événement `qprefetch` avec des données détaillées contenant les urls qui doivent être préchargées. Le script de distribution de l'événement sera intégré dans le HTML du document.                                                                                                                      |
+| `prefetchEvent`     | Distribue un événement `qprefetch` avec les données `detail` contenant les urls qui doivent être préchargées. Le script de distribution de l'événement sera intégré dans le HTML du document. Par défaut, l'implémentation de `prefetchEvent` sera définie sur `always`.                                             |
 | `linkInsert`        | Insère l'élément `<link>` dans le document. Si vous utilisez `html-append`, chaque `<link>` sera rendu directement dans le html, ajouté à la fin du body. En utilisant l'option `js-append`, il insérera plutôt du JavaScript, qui crée les éléments au moment de l'exécution et les ajoute à la fin du body.        |
 | `linkRel`           | Cette option est utilisée pour définir [l'attribut `rel`](https://developer.mozilla.org/fr/docs/Web/HTML/Link_types) de l'élément `<link>`. Lorsque l'option `linkInsert` est utilisée, la valeur par défaut est `prefetch`. Les autres options sont `preload` et `modulepreload`.                                   |
 | `workerFetchInsert` | Préférez les urls en appelant un `fetch()` pour chaque module, dans le but de remplir le cache du réseau.                                                                                                                                                                                                            |
 
 ### Cache de requête/réponse et Service Workers
 
-La stratégie de mise en cache préférée de prélecture utilisée par [Qwik City](/qwikcity/advanced/prefetching/index.mdx), est d'utiliser un Service Worker pour remplir le [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) du navigateur. Qwik lui-même doit être configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un évènement `qprefetch`. Ensuite, Qwik City écoutera cet événement et communiquera avec son service worker pour persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire à longue durée de vie.
+La [Récupération spéculative des modules](../../../qwikcity/advanced/speculative-module-fetching/index.mdx) est la stratégie de mise en cache la plus utilisée par Qwik City. Cette stratégie écoute l'évènement `qprefetch`, qui est distribué par le framework Qwik. L'évènement contient une liste d'URLs que le thread d'arrière plan doit utiliser pour pré-remplir le [Cache](https://developer.mozilla.org/fr/docs/Web/API/Cache) du navigateur.
 
-En utilisant un service worker pour intercepter les requêtes de récupération du navigateur, cette approche permet un contrôle minutieux de la mise en cache, tout en empêchant les requêtes multiples pour la même ressource.
+Qwik lui-même est configuré pour utiliser l'implémentation `prefetchEvent`, qui enverra un événement `qprefetch`. Par défaut, l'implémentation `prefetchEvent` est configurée à `always`. Ensuite, [Qwik City](../../../qwikcity/advanced/speculative-module-fetching/index.mdx) écoutera cet évènement et communiquera avec son service worker pour faire persister les paires d'objets Requête/Réponse afin qu'elles soient mises en cache dans une mémoire longue durée.
+
+En utilisant un service worker pour intercepter les requêtes `fetch` du navigateur, cette approche permet un contrôle fin de la mise en cache, tout en empêchant les requêtes en double pour la même ressource.
+
+Vous trouverez ci-dessous un exemple de distribution manuelle de l'événement. Ces événements sont envoyés par Qwik lui-même et ne nécessitent pas que les développeurs envoient ces événements manuellement. De plus, le [service worker](../../../qwikcity/advanced/speculative-module-fetching/index.mdx) ajoutera automatiquement des écouteurs pour ces événements.
+
+```ts
+dispatchEvent(new CustomEvent("qprefetch", { detail: {
+  bundles: [...]
+}}));
+```
 
 ### Lien `rel`
 
@@ -83,6 +103,11 @@ Par exemple, Safari (le navigateur qui équipe les iPhones et les iPads) ne pren
 > \- <cite><a href="https://andydavies.me/blog/2020/07/08/rel-equals-prefetch-and-the-importance-of-effective-http-slash-2-prioritisation/">Rel=prefetch et l'importance d'une priorisation efficace de HTTP/2</a></cite>
 
 De plus, il peut être possible de lancer plusieurs requêtes pour la même ressource. Par exemple, disons que nous voulons récupérer à l'avance `module-a.js`, et que pendant le chargement (qui peut prendre un temps court ou très long), l'utilisateur interagit avec l'appli, qui décide alors de demander et d'exécuter `module-a.js`. À l'heure où nous écrivons ces lignes, les navigateurs envoient souvent une deuxième requête, ce qui ne fait qu'empirer les choses.
+
+#### link rel="modulepreload"
+
+- Même si c'est dans la spécification HTML, cela ne signifie pas que vos utilisateurs finaux préchargent votre application correctement. [Puis-je utiliser : modulepreload](https://caniuse.com/link-rel-modulepreload)
+- Non pris en charge par [Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1425310).
 
 ### Web Worker Fetch
 

@@ -23,6 +23,6 @@
 ## Avancés
 
 - [Routage avancé](advanced/routing/index.mdx)
+- [Récupération spéculative de modules](advanced/speculative-module-fetching/index.mdx)
 - [Menus](advanced/menu/index.mdx)
-- [Prélecture](advanced/prefetching/index.mdx)
 - [Ressources statiques](advanced/static-assets/index.mdx)

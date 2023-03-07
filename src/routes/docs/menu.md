@@ -37,10 +37,10 @@
 
 - [Le signe dollar $](advanced/dollar/index.mdx)
 - [Conteneurs](advanced/containers/index.mdx)
-- [Prélecture](advanced/prefetching/index.mdx)
 - [QRL](advanced/qrl/index.mdx)
 - [Qwikloader](advanced/qwikloader/index.mdx)
 - [Optimiseur](advanced/optimizer/index.mdx)
+- [Prélecture](advanced/prefetching/index.mdx)
 - [Répertoire personnalisé de construction](advanced/custom-build-dir/index.mdx)
 - [Internationalisation](advanced/i18n/index.mdx)
 - [Vite](advanced/vite/index.mdx)

@@ -40,18 +40,18 @@ src/
     └── layout.tsx            # Cette mise en page est utilisée pour toutes les pages
 ```
 
-- **`[id]`** est un répertoire qui représente un segment de route dynamique, dans cet exemple `id` est le paramètre.
-- **`[...catchall]`** est un répertoire qui représente une route dynamique catch-all, dans cet exemple `catchall` est le paramètre.
-- **les fichiers `index.ext`** sont les pages/endpoints.
-- **les ichiers `layout.ext`** sont les mises en page.
+- **`[id]`** est un répertoire qui représente un segment de route dynamique, dans cet exemple `id` est le paramètre de type string accessible par `getLocation().params.id`.
+- **`[...catchall]`** est un répertoire qui représente une route dynamique catch-all, dans cet exemple `catchall` est le paramètre de type string accessible par `getLocation().params.id`.
+- **les fichiers `index.tsx|mdx`** sont les pages/endpoints.
+- **les fichiers `layout.tsx`** sont les mises en page.
 
 ### Segments de routes dynamiques
 
 Des répertoires spéciaux nommés avec des crochets, tels que `[paramName]` et `[...catchAll]` peuvent être utilisés pour faire correspondre des segments de route qui sont dynamiques :
 
 ```
-src/routes/blog/index.tsx → /blog/:slug (/blog/hello-world)
-src/routes/user/[username]/index.tsx → /user/:username/settings (/user/foo/)
+src/routes/blog/index.tsx → /blog
+src/routes/user/[username]/index.tsx → /user/:username (/user/foo)
 src/routes/post/[...all]/index.tsx → /post/* (/post/2020/id/title)
 ```
 
@@ -62,7 +62,7 @@ src/
     │   └── index.tsx         # https://example.com/blog
     ├── post/
     │   └── [...all]/
-    │       └── index.tsx     # https://example.com/post/2020/id/title/2020/12/03
+    │       └── index.tsx     # https://example.com/post/2020/id/title
     └── user/
         └── [username]/
             └── index.tsx     # https://example.com/user/foo
@@ -77,7 +77,7 @@ import { useLocation } from '@builder.io/qwik-city';
 
 export default component$(() => {
   const loc = useLocation();
-  return <div>Hello {loc.params.username}!</div>
+  return <div>Hello {loc.params.username}!</div>;
 });
 ```
 
