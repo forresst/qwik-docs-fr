@@ -10,4 +10,4 @@ Bien que ce ne soit pas un cas d'utilisation courant, vous pouvez occasionnellem
 
 Comme Qwik traite de manière asynchrone par défaut, votre code doit être explicitement configuré pour les appels synchrones. Cet exemple montre comment par avance charger un gestionnaire d'événement qui traite un événement synchrone.
 
-**Votre tâche :** Convertissez le `onClick$` d'un évènement asynchrone à un évènement synchrone en utilisant [`useVisibleTask$`](https://qwik.builder.io/docs/components/lifecycle/#usebrowservisibletask) du cycle de vie et [l'enregistrement normal de l'évènement](https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener).
+**Votre tâche :** Convertissez le `onClick$` d'un évènement asynchrone à un évènement synchrone en utilisant [`useVisibleTask$`](https://qwik.builder.io/docs/components/lifecycle/#usevisibletask) du cycle de vie et [l'enregistrement normal de l'évènement](https://developer.mozilla.org/fr/docs/Web/API/EventTarget/addEventListener).

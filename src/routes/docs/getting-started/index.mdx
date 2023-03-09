@@ -38,9 +38,9 @@ Le CLI vous guidera à travers un menu interactif pour définir le nom du projet
 
 ## Écriture de composants Qwik
 
-Un composant est un petit morceau de code réutilisable qui peut être utilisé pour construire une interface utilisateur.
+Les composants sont les éléments de base des applications Qwik. 
 
-Les composants Qwik devraient être familiers à de nombreux développeurs d'interface utilisateur :
+Les [composants Qwik](../components/overview/index.mdx) devraient être familiers à de nombreux développeurs d'interface utilisateur :
 
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
@@ -67,5 +67,11 @@ export const MyCmp = component$((props: MyCmpProps) => {
   );
 });
 ```
+
+Les composants Qwik sont uniques en cela :
+
+- Les composants Qwik sont automatiquement décomposés en morceaux avec un chargement différé par l'[Optimiseur](../../advanced/optimizer/index.mdx).
+- Ils sont [resumables](../../concepts/resumable/index.mdx). (Un composant peut être créé sur un serveur et continuer son exécution sur le client).
+- Ils sont [réactifs](../../concepts/reactivity/index.mdx)  et peuvent effectuer un rendu indépendamment des autres composants de la page. Consultez le [rendu](../../components/rendering/index.mdx).
 
 Apprenez-en plus sur les concepts clés de l'écriture des [Composants Qwik](../components/overview/index.mdx).

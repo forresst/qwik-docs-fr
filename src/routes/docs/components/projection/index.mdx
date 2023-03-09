@@ -167,8 +167,6 @@ Reprenons l'exemple de notre `Collapsible` ci-dessus :
 
 Pour que les deux composants aient un cycle de vie indépendant, la projection doit être déclarative. De cette façon, le parent ou l'enfant peuvent changer ce qui est projeté ou comment il est projeté sans que l'autre ne soit à nouveau rendu.
 
-Avec l'approche `children`, le composant peut impérativement modifier les `children` de manière infinie. Cela rendrait extrêmement difficile la construction d'un framework qui ne forcerait pas à la fois le re-rendu du parent et des enfants.
-
 ## Exemple avancé
 
 Un exemple de composant pliable qui projette son contenu de manière conditionnelle.

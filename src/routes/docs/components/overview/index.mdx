@@ -11,9 +11,10 @@ contributors:
 
 Les composants sont les blocs de construction de base des applications Qwik. Les composants Qwik sont uniques dans le sens où :
 
-- Les composants Qwik sont automatiquement décomposés en morceaux avec un chargement différé par l'Optimiseur. (Voir la section Optimiseur)
-- Ils sont [resumables](../../concepts/resumable/index.mdx). (Un composant peut être créé sur un serveur et continuer son exécution sur le client). (Voir la section Résumable)
-- Ils peuvent effectuer un rendu indépendamment des autres composants de la page. (Voir la section Le rendu)
+- Les composants Qwik sont automatiquement décomposés en morceaux avec un chargement différé par l'[Optimiseur](../../advanced/optimizer/index.mdx).
+- Ils sont [resumables](../../concepts/resumable/index.mdx). (Un composant peut être créé sur un serveur et continuer son exécution sur le client).
+- Ils sont [réactifs](../../concepts/reactivity/index.mdx)  et peuvent effectuer un rendu indépendamment des autres composants de la page. Consultez le [rendu](../../components/rendering/index.mdx).
+
 
 ## `component$()`
 
@@ -226,7 +227,7 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 
 - [`useTask$()`](../lifecycle/index.mdx#usetask) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
 - [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
-- [`useVisibleTask$()`](../lifecycle/index.mdx#usebrowservisibletask) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
+- [`useVisibleTask$()`](../lifecycle/index.mdx#usevisibletask) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
 
 ### Autre
 

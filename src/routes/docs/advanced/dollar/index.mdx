@@ -238,7 +238,7 @@ Cela fonctionne mais représente beaucoup de travail. Le développeur doit place
 ```tsx
 function onScroll(fnQrl: QRL<() => void>) {
   document.addEventListener('scroll', async () => {
-    const fn = await qImport.resolve();
+    const fn = await fnQrl.resolve();
     fn();
   });
 }

@@ -8,7 +8,7 @@ export default component$(() => {
       <br />
       Qwik ne me chargera jamais sur le client. Je suis seulement rendu sur le serveur.
       <br />
-      <button onClick$={() => alert('Hello')}>greet!</button>
+      <button onClick$={() => alert('Hello')}>Saluer !</button>
       <hr />
       <Counter />
     </>

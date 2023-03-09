@@ -1,12 +1,9 @@
 # Guide
 
-## Guides
+## Intro
 
 - [Vue d'ensemble](overview/index.mdx)
 - [Démarrage](getting-started/index.mdx)
-- [Pensez Qwik](think-qwik/index.mdx)
-- [FAQ](faq/index.mdx)
-- [Routage (QwikCity)](../qwikcity/overview/index.mdx)
 
 ## API de composant
 
@@ -20,6 +17,12 @@
 - [Rendu](components/rendering/index.mdx)
 - [Style](components/styles/index.mdx)
 - [Composants légers](components/lite-components/index.mdx)
+
+## Guides
+
+- [Pensez Qwik](think-qwik/index.mdx)
+- [FAQ](faq/index.mdx)
+- [Routage (QwikCity)](../qwikcity/overview/index.mdx)
 
 ## Aide-mémoire
 
