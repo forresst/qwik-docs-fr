@@ -24,7 +24,7 @@ export default component$(() => {
   useStyles$(styles);
   return (
     <article class="showcase">
-      <h1>Showcase</h1>
+      <h1>Galerie</h1> {/* TranslatedToFrench */}
 
       <ul class="grid">
         {pages.map((entry) => (
@@ -32,28 +32,28 @@ export default component$(() => {
         ))}
       </ul>
       <section>
-        <h2>Add Site</h2>
-        <p>This page missing any great site or in need of an update?</p>
+        <h2>Ajouter un site</h2> {/* TranslatedToFrench */}
+        <p>Est-ce que cette page manque d'un bon site ou a besoin d'une mise à jour ?</p> {/* TranslatedToFrench */}
         <p>
           <a
             href="https://github.com/BuilderIO/qwik/edit/main/packages/docs/scripts/pages.json"
             target="_blank"
             class="edit-page"
           >
-            Edit this page!
+            Modifier cette page ! {/* TranslatedToFrench */}
           </a>
         </p>
       </section>
       <section>
-        <h2>How are the scores calculated?</h2>
+        <h2>Comment les scores sont-ils calculés ?</h2> {/* TranslatedToFrench */}
         <p>
-          The scores are calculated using the{' '}
+        Les scores sont calculés à l'aide de l'outil{' '} {/* TranslatedToFrench */}
           <a href="https://developers.google.com/speed/docs/insights/v5/get-started">
-            PageSpeed Insights API
+            PageSpeed Insights API {/* TranslatedToFrench */}
           </a>
-          , analyzed with the{' '}
+          , analysé avec la{' '} {/* TranslatedToFrench */}
           <a href="https://developers.google.com/speed/docs/insights/rest/v5/pagespeedapi/runpagespeed#strategy">
-            MOBILE strategy
+            stratégie MOBILE {/* TranslatedToFrench */}
           </a>
           .
         </p>

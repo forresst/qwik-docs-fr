@@ -66,17 +66,17 @@ export default component$(() => {
               {store.next ? (
                 <p class="next-link">
                   <a href={`/tutorial/${store.next.id}/`} class="next">
-                    Next: {store.next.title}
+                    Suivant : {store.next.title} {/* TranslatedToFrench */}
                   </a>
                 </p>
               ) : null}
               <a
                 class="edit-tutorial"
-                href={`https://github.com/BuilderIO/qwik/edit/main/packages/docs/src/routes/tutorial/${store.appId}`}
+                href={`https://github.com/forresst/qwik-docs-fr/edit/main/src/routes/tutorial/${store.appId}`} // TranslatedToFrench
                 target="_blank"
               >
                 <EditIcon width={16} height={16} />
-                <span>Edit Tutorial</span>
+                <span>Modifier le tutoriel</span> {/* TranslatedToFrench */}
               </a>
             </div>
           </div>

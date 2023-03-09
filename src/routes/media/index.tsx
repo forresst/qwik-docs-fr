@@ -18,7 +18,7 @@ export const youtube = (title: string, id: string, start_time?: number): MediaEn
 };
 
 export const MEDIA = mediaObj({
-  videos: [
+  vidéos: [ // TranslatedToFrench
     youtube("Qwik… the world's first O(1) JavaScript framework?", 'x2eF3YLiNhY'),
     youtube('Qwik JS and the future of frameworks', 'z14c3u9q8rI'),
     youtube('Qwik: Under-The-Hood of a Resumable JavaScript Framework', 'BxGbnLb5i9Q'),
@@ -43,7 +43,7 @@ export const MEDIA = mediaObj({
     youtube('🇪🇸 ¿Qué onda Qwik?', 'H7TL4SqcC3E'),
     youtube('Qwik: The Lightest, Fastest Way to Build Web Apps', 'l2mBk9meSvc'),
   ],
-  podcasts: [
+  podcasts: [ // TranslatedToFrench
     youtube('Build Resumable Apps with Qwik', '_PDpoJUacuc'),
     youtube('Qwik + React State (and a new mic!)', 'fa6-Mn0Eybg'),
     youtube(
@@ -66,7 +66,7 @@ export const MEDIA = mediaObj({
       'wMnqgjHkLiY'
     ),
   ],
-  presentations: [
+  présentations: [ // TranslatedToFrench
     youtube('Qwik framework overview', 'Jf_E1_19aB4', 629),
     youtube(
       'Mindblowing Google PageSpeed Scores with Qwik | Misko Hevery | Reliable Web Summit 2021',
@@ -87,7 +87,7 @@ export const MEDIA = mediaObj({
     youtube('Qwik: Beta and Beyond', 'Tfd62DiRTKc'),
     youtube('Qwik Core Developers Training', 'Mi7udzhcCDQ'),
   ],
-  blogs: [
+  blogs: [ // TranslatedToFrench
     {
       href: 'https://www.builder.io/blog/hydration-is-pure-overhead',
       title: 'Hydration is Pure Overhead',
@@ -145,7 +145,7 @@ export const MEDIA = mediaObj({
       title: 'Introducing Qwik starters - get up and running with Qwik now',
     },
   ],
-  resources: [
+  ressources: [ // TranslatedToFrench
     {
       href: 'https://docs.google.com/presentation/d/1Jj1iw0lmaecxtUpqyNdF1aBzbCVnSlbPGLbOpN2xydc/edit#slide=id.g13225ffe116_6_234',
       title: 'Qwik - Google Presentation Template',
@@ -223,28 +223,28 @@ export default component$(() => {
   useStyles$(styles);
   return (
     <article class="media">
-      <h1>Qwik Presentations, Talks, Videos and Podcasts</h1>
+      <h1>Présentations, conférences, vidéos et podcasts de Qwik</h1> {/* TranslatedToFrench */}
 
-      <Section id="videos" listStyle="thumbnails" imgLoading="eager" />
+      <Section id="vidéos" listStyle="thumbnails" imgLoading="eager" /> {/* TranslatedToFrench */}
 
-      <Section id="podcasts" listStyle="thumbnails" />
+      <Section id="podcasts" listStyle="thumbnails" /> {/* TranslatedToFrench */}
 
-      <Section id="presentations" listStyle="thumbnails" />
+      <Section id="présentations" listStyle="thumbnails" /> {/* TranslatedToFrench */}
 
-      <Section id="blogs" listStyle="bullets" />
+      <Section id="blogs" listStyle="bullets" /> {/* TranslatedToFrench */}
 
-      <Section id="resources" listStyle="bullets" />
+      <Section id="ressources" listStyle="bullets" /> {/* TranslatedToFrench */}
 
       <section>
-        <h2>Add Media</h2>
-        <p>This page missing any great resources or in need of an update?</p>
+        <h2>Ajouter un média</h2> {/* TranslatedToFrench */}
+        <p>Cette page manque de ressources importantes ou doit être mise à jour ?</p> {/* TranslatedToFrench */}
         <p>
           <a
             href="https://github.com/BuilderIO/qwik/edit/main/packages/docs/src/routes/media/index.tsx"
             target="_blank"
             class="edit-page"
           >
-            Edit this page!
+            Modifier cette page ! {/* TranslatedToFrench */}
           </a>
         </p>
       </section>
@@ -253,7 +253,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Qwik Presentations, Talks, Videos and Podcasts',
+  title: 'Présentations, conférences, vidéos et podcasts de Qwik', // TranslatedToFrench
 };
 
 // Media Listing
