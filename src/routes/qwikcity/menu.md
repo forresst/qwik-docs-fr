@@ -8,7 +8,7 @@
 ## Basiques
 
 - [Routage](routing/index.mdx)
-- [Chargeurs de routes](loader/index.mdx)
+- [Chargeurs de routes](route-loader/index.mdx)
 - [Actions du formulaire](action/index.mdx)
 - [Mises en page](layout/index.mdx)
 - [Pages](pages/index.mdx)
