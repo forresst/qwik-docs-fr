@@ -32,6 +32,7 @@ import {
   useContext,
   useContextProvider,
   createContextId,
+  useStylesScoped$
 } from '@builder.io/qwik';
 
 export type Theme = 'dark' | 'light';
@@ -122,6 +123,8 @@ Puisqu'il ne contient aucun état, il est possible de l'appeler et d'en faire un
 - Comme toutes les méthodes [`use-`](/docs/components/lifecycle/index.mdx#use-method-rules), elle est utilisée à la racine du [`component$()`](/docs/components/overview/index.mdx#component).
 
 ```tsx
+import { component$, useStore, useContextProvider } from '@builder.io/qwik';
+
 export const Parent = component$(() => {
 
   const qwikCityObject = useStore<GenricType>({
@@ -157,6 +160,8 @@ export const Parent = component$(() => {
 Cette méthode est utilisée pour obtenir la valeur de `Context` qui est **fourni** par le composant parent.
 
 ```tsx
+import { component$, useContext } from '@builder.io/qwik';
+
 export const Children = component$(() => {
   const qwikCityObject = useContext(QwikCityContext);
   const plainArray = useContext(PlainArrayContext);

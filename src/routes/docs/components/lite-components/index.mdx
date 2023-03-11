@@ -12,6 +12,8 @@ contributors:
 En plus des composants standards de Qwik qui ont toutes les propriétés de chargement différé, Qwik supporte aussi les composants de faible poids (léger) qui se comportent plus comme dans des frameworks traditionnels.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 // Composant léger : déclaré à l'aide d'une fonction standard.
 export const MyButton = (props: { text: string }) => {
   return <button>{props.text}</button>;

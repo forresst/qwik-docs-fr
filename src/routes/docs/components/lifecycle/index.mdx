@@ -52,6 +52,8 @@ Grâce à la [résumabilité](/docs/concepts/resumable/index.mdx), la vie des co
 En outre, cette tâche peut être réactive et être réexécutée lorsqu'un [signal ou un store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
 
 ```tsx
+import { useTask$ } from '@builder.io/qwik';
+
 useTask$(({ track }) => {
   track(() => store.count);
   // s'exécutera lors du montage du composant et à chaque fois que "store.count" change
@@ -121,6 +123,7 @@ Parfois, il est nécessaire de n'exécuter du code que sur le serveur ou sur le 
 
 ```tsx
 import { isServer, isBrowser } from '@builder.io/qwik/build';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 
 export const Cmp = component$(() => {
   const users = useSignal([]);
@@ -156,6 +159,8 @@ export const Cmp = component$(() => {
 `useVisibleTask$()` enregistre un hook à exécuter lorsque le composant devient visible dans le viewport, il s'exécutera au moins une fois dans le navigateur, et il peut être réactif et se ré-exécuter lorsqu'un [signal ou store](/docs/components/state/index.mdx) **traqué** change, comme ceci :
 
 ```tsx
+import { useVisibleTask$ } from '@builder.io/qwik';
+
 useVisibleTask$(({ track }) => {
   track(() => store.count);
   // s'exécutera lorsque le composant devient visible et chaque fois que "store.count" change
@@ -168,6 +173,8 @@ Sous le capot, `useVisibleTask$()` crée un écouteur de DOM qui utilise [Inters
 Cependant, cette `strategy` peut être modifiée, et par exemple, être exécutée lorsque le `document` est prêt.
 
 ```tsx
+import { useVisibleTask$ } from '@builder.io/qwik';
+
 useVisibleTask$(() => console.log('s\'exécute dans le navigateur'), {
   strategy: 'document-ready', // 'load' | 'visible' | 'idle'
 });
@@ -182,6 +189,8 @@ C'est une caractéristique unique de Qwik, n'importe quel autre framework exécu
 ### Exemple
 
 ```tsx
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+
 export const Timer = component$(() => {
   const count = useSignal(0);
   useVisibleTask$(() => {

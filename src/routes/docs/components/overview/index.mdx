@@ -62,6 +62,8 @@ Les props sont utilisés pour transmettre des données dans le composant. Les pr
 Dans cet exemple, un composant `Item` déclare comme optionnels `name`, `quantity`, `description`, et `price`.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 interface ItemProps {
    name?: string;
    quantity?: number;
@@ -79,6 +81,8 @@ export const Item = component$((props: ItemProps) => {
 Les composants Qwik peuvent utiliser d'autres composants.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 export const Counter = component$((props: {step?:number, initial?: number}) => {
   ...
 });
@@ -155,6 +159,8 @@ const Parent = () => (
 Dans l'exemple ci-dessus, la référence au composant `Parent` implique une référence transitive au composant `Child`. Lorsque le bundler crée un morceau, une référence à `Parent` nécessite d'empaqueter également `Child`. (`Parent` fait référence en interne à `Child`.) Ces dépendances transitives sont un problème car cela signifie qu'avoir une référence sur le composant racine fera transitivement référence au reste de l'application - quelque chose que Qwik essaie d'éviter explicitement.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 export const Child = component$(() => {
   return <span>child</span>;
 });

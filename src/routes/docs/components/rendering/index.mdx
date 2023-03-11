@@ -23,6 +23,8 @@ Qwik est unique car il sait comment rendre les templates de manière non ordonn�
 Un simple exemplede compteur :
 
 ```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+
 export const Counter = component$(() => {
   const count = useSignal(0);
 
@@ -51,6 +53,8 @@ Qwik utilise JSX pour exprimer le template du composant. La description de JSX e
 Qwik charge les composants de manière différée, selon les besoins. Pour minimiser le nombre de composants à charger, Qwik ne descend dans les composants enfants que si les props du composant ont changé.
 
 ```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+
 export const Parent = component$(() => {
   const count = useSignal(0);
   const step = useSignal(1);
@@ -79,6 +83,8 @@ Dans l'exemple ci-dessus, il y a deux boutons :
 Dans de nombreux cas, vous voudrez rendre des composants en mappant un tableau dans la fonction de rendu avec `data.map()`. Dans ces cas, il est nécessaire de fournir une clé au premier enfant de la fonction de mappage.
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 export const Parent = component$(() => {
   return (
     <>

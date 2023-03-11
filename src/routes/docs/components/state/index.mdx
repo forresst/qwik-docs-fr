@@ -32,6 +32,8 @@ Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seul
 Cet exemple montre comment `useSignal()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
 
 ```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+
 export default component$(() => {
   const count = useSignal(0);
 
@@ -62,6 +64,8 @@ L'objet réactif renvoyé par [`useStore()`](/docs/components/state/index.mdx#us
 Cet exemple montre comment `useStore()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
 
 ```tsx
+import { component$, useStore } from '@builder.io/qwik';
+
 export default component$(() => {
   const state = useStore({ count: 0 });
 
@@ -108,6 +112,8 @@ store.nested = { fields: { are: { "tracked" } } }
 Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à `useStore()`, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
 
 ```tsx
+import { component$, useStore } from '@builder.io/qwik';
+
 export default component$(() => {
   const store = useStore(
     {
@@ -166,6 +172,8 @@ Il y a deux façons de passer l'état à d'autres composants : avec des props o
 La façon la plus simple de passer l'état à d'autres composants est de le passer comme props. C'est la façon dont vous le feriez dans React, et cela fonctionne aussi dans Qwik.
 
 ```tsx
+import { component$, useStore } from '@builder.io/qwik';
+
 export const Parent = component$(() => {
   const userData = useStore({
     count: 0,
@@ -235,6 +243,8 @@ La principale différence entre les deux est que [`useTask$()`](/docs/components
 ### Exemple de [`useTask$()`](/docs/components/lifecycle/index.mdx#usetask)
 
 ```tsx
+import { component$, useStore, useTask$ } from '@builder.io/qwik';
+
 export default component$(() => {
   const state = useStore({
     count: 0,
@@ -259,6 +269,8 @@ export default component$(() => {
 ### Exemple de [`useResource$()`](/docs/components/resource/index.mdx)
 
 ```tsx
+import { component$, useStore, useResource$ } from '@builder.io/qwik';
+
 export default component$(() => {
   const state = useStore({
     count: 0,

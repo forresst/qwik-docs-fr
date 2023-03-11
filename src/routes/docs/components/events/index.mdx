@@ -20,6 +20,8 @@ Dans l'exemple suivant, l'attribut `onClick$` de l'élément `<button>` est util
 Notez que `onClick$` se termine par [`$`](todo/correct-link). C'est une indication pour l'[Optimizer](/docs/advanced/optimizer) et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique une zone de chargement différée à cet endroit. Le code associé au gestionnaire `click` ne sera pas chargé avant que l'utilisateur ne déclenche l'événement `click`.
 
 ```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+
 export const Counter = component$(() => {
   const count = useSignal(0);
 
@@ -49,6 +51,8 @@ En raison de la nature asynchrone de Qwik, une exécution du gestionnaire d'év�
 Cela introduit un problème lorsque le gestionnaire d'événement a besoin d'empêcher le comportement par défaut de l'événement. Le traditionnel `event.preventDefault()` ne fonctionnera pas, donc utilisez plutôt l'attribut `preventdefault:{eventName}` de Qwik :
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
+
 export const PreventDefaultExample = component$(() => {
   return (
     <a
@@ -71,6 +75,8 @@ export const PreventDefaultExample = component$(() => {
 Jusqu'à présent, nous avons vu comment écouter les événements qui proviennent des éléments. Il y a des événements (par exemple, `scroll` et `mousemove`) qui nécessitent que nous les écoutions sur `window` ou `document`. Pour cette raison, Qwik autorise les préfixes `document:on` et `window:on` lors de l'écoute des événements.
 
 ```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+
 export const EventExample = component$(() => {
   const scroll = useSignal(0);
   const mouse = useSignal({ x: 0, y: 0 });
@@ -109,6 +115,8 @@ Le but de `window:on`/`document:` est d'enregistrer un événement sur un emplac
 Le hook `useOn` ajoutera un écouteur d'événement basé sur le DOM au niveau du composant.
 
 ```tsx
+import { component$, useSignal, useOn, $ } from '@builder.io/qwik';
+
 export const ClickableComponent = component$(() => {
   useOn(
     'click',
@@ -145,6 +153,8 @@ export default component$(() => {
 Le hook `useOnWindow` ajoutera un écouteur d'événement à window.
 
 ```tsx
+import { component$, useOnWindow, $ } from '@builder.io/qwik';
+
 export const Online = component$(() => {
   useOnWindow(
     'online',
@@ -171,6 +181,8 @@ export default component$(() => {
 Le hook `useOnDocument` ajoutera un écouteur d'événement à document.
 
 ```tsx
+import { component$, useSignal, $, useOnDocument } from '@builder.io/qwik';
+
 export const KeyBoard = component$(() => {
   const keyPressed = useSignal('');
   useOnDocument(
@@ -194,7 +206,7 @@ Les composants sont des fonctions, pas des éléments. Comme les événements DO
 Voyons maintenant comment déclarer un composant enfant qui peut être utilisé avec des événements comme props.
 
 ```tsx
-import { PropFunction } from '@builder.io/qwik';
+import { PropFunction, component$ } from '@builder.io/qwik';
 
 interface CmpButtonProps {
   onClick$?: PropFunction<() => void>;
@@ -226,6 +238,8 @@ Examinons une variante de l'implémentation de `<CmpButton>` ci-dessus.
 Dans cet exemple, nous souhaitons démontrer le passage de callbacks aux composants. Pour cette raison, nous avons créé un écouteur `onDblclick$` :
 
 ```tsx
+import { PropFunction, component$ } from '@builder.io/qwik';
+
 interface CmpButtonProps {
   onClick$?: PropFunction<() => number>;
 }
@@ -264,6 +278,8 @@ L'opération est asynchrone et renvoie donc une promesse, que nous pouvons réso
 ## Récupération de l'état
 
 ```tsx
+import { useSignal, component$ } from '@builder.io/qwik';
+
 export const Counter = component$(() => {
   const count = useSignal(0);
 

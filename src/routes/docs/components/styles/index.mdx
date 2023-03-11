@@ -36,6 +36,7 @@ export const blueClass = style({
 **component.tsx:**
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
 import { blueClass } from './styles.css';
 
 export const Cmp = component$(() => {
@@ -77,6 +78,7 @@ export const BlueBox = styled.div`
 **component.tsx:**
 
 ```tsx
+import { component$ } from '@builder.io/qwik';
 import { BlueBox } from './styles.css';
 
 export const Cmp = component$(() => {
@@ -95,7 +97,7 @@ Une référence chargée de manière différée pour les styles du composant.
 Les styles de composants permettent à Qwik de charger de manière différée les informations de style pour le composant seulement quand cela est nécessaire. (Et d'éviter de les charger deux fois en cas d'hydratation du SSR).
 
 ```tsx
-import { useStyles$ } from '@builder.io/qwik';
+import { useStyles$, component$ } from '@builder.io/qwik';
 import styles from './code-block.css?inline';
 
 export const CmpStyles = component$(() => {
@@ -120,7 +122,7 @@ Les styles du navigateur sont globaux et s'appliquent à tous les éléments du 
 Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
 
 ```tsx
-import { useStylesScoped$ } from '@builder.io/qwik';
+import { useStylesScoped$, component$ } from '@builder.io/qwik';
 import styles from './code-block.css?inline';
 
 export const CmpStyles = component$(() => {
@@ -143,7 +145,7 @@ export const CmpStyles = component$(() => {
 En utilisant `useStylesScoped$`, tous les sélecteurs enfants d'un jeu de règles seront appliqués au composant. Si vous devez donner un style à des composants enfants rendus par un `<Slot />`, vous devrez vous affranchir de la portée des styles en utilisant le sélecteur `:global()`.
 
 ```tsx
-import { useStylesScoped$ } from '@builder.io/qwik';
+import { useStylesScoped$, component$ } from '@builder.io/qwik';
 
 export const List = component$(() => {
   useStylesScoped$(`
