@@ -6,6 +6,7 @@ contributors:
   - Oyemade
   - mhevery
   - nnelgxorz
+  - cunzaizhuyi
 ---
 
 # MDX
@@ -115,4 +116,36 @@ export default defineConfig(() => {
     ],
   };
 });
+```
+
+## Propriétés Open Graph
+
+Vous pouvez utiliser les propriétés `og` ou `opengraph` pour définir les métadonnées du [Open Graph protocol](https://ogp.me/).
+
+```yaml
+title: Mon Titre
+description: Ma Description
+og:
+  - title: Mon Titre Personnalisé
+    description: true
+  - image: https://example.com/rock.jpg
+    image:alt: Une pomme rouge brillante dont on a croqué un morceau
+  - image: https://example.com/rock2.jpg
+```
+
+En définissant `og:title` ou `og:description` à `true`, les propriétés extérieures `title` et `description` seront vérifiées et utilisées à la place. Ainsi, vous pouvez éviter d'écrire deux fois le même titre et la même description.
+
+L'exemple ci-dessus génère le code HTML suivant.
+
+```HTML
+<title>My Title</title>
+<meta name="description" content="Ma Description" />
+
+<meta property="og:title" content="Mon Titre Personalisé" />
+<meta property="og:description" content="Ma Description" />
+
+<meta property="og:image" content="https://example.com/rock.jpg" />
+<meta property="og:image:alt" content="Une pomme rouge brillante dont on a croqué un morceau" />
+
+<meta property="og:image" content="https://example.com/rock2.jpg" />
 ```

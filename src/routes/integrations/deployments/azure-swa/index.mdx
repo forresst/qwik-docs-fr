@@ -2,6 +2,8 @@
 title: Qwik City - Azure Static Web Apps
 contributors:
   - derkoe
+  - manucorporat
+  - reemardelarosa
 ---
 
 # Middleware Azure Static Web Apps
@@ -62,6 +64,21 @@ Il y a deux façons de déployer :
    - Emplacement de l'Api : "./azure-functions"
    - Emplacement de sortie : "./dist"
 
-   Cela configurera un flux de travail GitHub qui déploiera votre application automatiquement. Pour plus d'informations, consultez le [Démarrage rapide de Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/get-started-portal?pivots=github).
+   Cela configurera un workflow GitHub dans votre dépôt qui déploiera votre application pour la branche main et pour chaque pull request.
 
-Notez que vous aurez besoin d'un [compte Azure] (https://signup.azure.com/) pour effectuer cette étape !
+   Le fichier du workflow résultant doit être adapté en ajoutant ce qui suit au bloc « Repository/Build Configurations » :
+   ```
+   skip_api_build: true
+   ```
+
+   Lisez le [Azure Static Web Apps quickstart] (https://learn.microsoft.com/azure/static-web-apps/get-started-portal?pivots=github) pour plus d'informations.
+
+3. Déployez depuis n'importe quel système CI
+
+   Vous pouvez déployer vers Azure Static Web Apps avec n'importe quel système CI en définissant la variable d'environnement `SWA_CLI_DEPLOYMENT_TOKEN` avec le jeton de déploiement Azure SWA et en exécutant la commande suivante à partir de votre pipeline :
+
+   ```
+   swa deploy ./dist --api-location ./azure-functions --env production
+   ```
+
+Notez que vous aurez besoin d'un [compte Azure](https://signup.azure.com/) pour effectuer cette étape !
