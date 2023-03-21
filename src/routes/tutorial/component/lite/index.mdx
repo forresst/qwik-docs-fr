@@ -8,8 +8,8 @@ contributors:
 
 Un des super pouvoirs de Qwik réside dans ses fonctionnalités de chargement de manière différée. Chaque composant génère un Symbol séparé qui est chargé à la demande. Cela vous permet de construire une grande application avec beaucoup de composants et de charger seulement les composants qui sont nécessaires pour la vue courante.
 
-Mais dans certains cas, vous voudrez peut-être charger un composant en même temps que le composant parent. Par exemple, si vous avez un composant `<Greeter>` qui est toujours utilisé avec le composant `<App>`, vous voudrez peut-être charger le composant `<Greeter>` avec le composant `<App>`. C'est ce qu'on appelle un [composant lite ou léger](/docs/components/lite-components).
+Mais dans certains cas, vous voudrez peut-être charger un composant en même temps que le composant parent. Par exemple, si vous avez un composant `<Greeter>` qui est toujours utilisé avec le composant `<App>`, vous voudrez peut-être charger le composant `<Greeter>` avec le composant `<App>`. C'est ce qu'on appelle un [composant lite ou léger](/docs/(qwik)/components/lite-components).
 
-Dans cet exemple, les composants `<App>` et `<Greeter>` sont préparés pour vous. Le composant `<Greeter>` est déclaré en utilisant la méthode [`component$()`](/docs/components/overview/index.mdx#component) et est un composant Qwik. Enlevez la méthode [`component$()`](/docs/components/overview/index.mdx#component) pour convertir `<Greeter>` en un [composant lite](/docs/components/lite-components).
+Dans cet exemple, les composants `<App>` et `<Greeter>` sont préparés pour vous. Le composant `<Greeter>` est déclaré en utilisant la méthode [`component$()`](/docs/(qwik)/components/overview/index.mdx#component) et est un composant Qwik. Enlevez la méthode [`component$()`](/docs/(qwik)/components/overview/index.mdx#component) pour convertir `<Greeter>` en un [composant lite](/docs/(qwik)/components/lite-components).
 
 Ouvrez l'onglet `Symbols` et remarquez que le composant `<Greeter />` n'est plus une exportation indépendante, mais qu'il fait partie du composant `<App>`.

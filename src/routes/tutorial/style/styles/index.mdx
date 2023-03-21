@@ -5,7 +5,7 @@ contributors:
   - adamdbradley
 ---
 
-Le style est une partie importante de la conception d'une application web. Qwik est responsable du chargement des informations de style quand un composant est monté. Utilisez [`useStyles$()`](/docs/components/styles/index.mdx#usestyles) pour dire à Qwik quel style doit être chargé.
+Le style est une partie importante de la conception d'une application web. Qwik est responsable du chargement des informations de style quand un composant est monté. Utilisez [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles) pour dire à Qwik quel style doit être chargé.
 
 ## Pourquoi pas des styles en ligne ?
 
@@ -27,7 +27,7 @@ Le problème avec cette approche est que nous allons charger les styles deux foi
 1. Les styles sont insérés dans le HTML en tant que partie du SSR.
 2. Ensuite, lorsque le composant est invalidé et doit être re-rendu, les styles sont rechargés parce qu'ils sont intégrés.
 
-Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert [`useStyles$()`](/docs/components/styles/index.mdx#usestyles). Il y a deux scénarios :
+Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles). Il y a deux scénarios :
 
 1. Le composant est rendu sur le serveur et les styles sont insérés dans `<head>` comme partie du SSR.
    - L'ajout d'une nouvelle instance d'un composant à l'application ne nécessite pas de charger les styles car ils sont déjà inclus dans le SSR.

@@ -1,0 +1,255 @@
+---
+title: Cycles de vie
+keywords: 'useEffect, hooks'
+contributors:
+  - nnelgxorz
+  - RATIU5
+  - manucorporat
+  - the-r3aper7
+  - mousaAM
+  - cunzaizhuyi
+  - egmaleta
+  - forresst
+  - reemardelarosa
+  - adamdbradley
+---
+
+import diagram from './diagram2.svg';
+
+# Cycles de vie
+
+Grâce à la [résumabilité](/docs/(qwik)/concepts/resumable/index.mdx), la vie des composants et leur cycle de vie se prolongent entre le serveur et le navigateur. Parfois, le composant sera d'abord rendu sur le serveur, parfois dans le navigateur, mais dans les deux cas, le cycle de vie sera le même, seule son exécution se déroule dans des environnements différents.
+
+**Dans Qwik, il n'y a que 3 étapes de cycle de vie :**
+
+- `Task` - s'exécute avant le rendu et quand l'état traqué change
+- `Render` - s'exécute après `Task` et avant `VisibleTask`.
+- `VisibleTask` - s'exécute après `Render` et lorsque le composant devient visible.
+
+```
+  useTask$ ------> RENDU -----> useVisibleTask$
+                                |
+| --- SERVEUR ou NAVIGATEUR --- | ----- NAVIGATEUR ----- |
+                                |
+                           pause|reprise
+```
+
+**SERVEUR** : Habituellement **la vie d'un composant commence sur le serveur** (pendant le SSR ou le SSG), dans ce cas, le `useTask$` et le `RENDER` seront exécutés sur le serveur, et ensuite le `VisibleTask` sera exécuté dans le navigateur, après que le composant soit visible.
+
+> **Notez** que parce que le composant a été monté sur le serveur, **seulement useVisibleTask$() s'exécute dans le navigateur**. Cela est dû au fait que le navigateur poursuit le même cycle de vie, qui a été interrompu sur le serveur juste après le rendu et repris dans le navigateur.
+
+**NAVIGATEUR** : Parfois, un composant sera monté/rendu pour la première fois dans le navigateur, par exemple lorsque l'utilisateur du SPA navigue vers une nouvelle page, ou qu'un composant "modal" apparaît pour la première fois dans la page. Dans ce cas, le cycle de vie se déroulera comme suit :
+
+```
+  useTask$ --> RENDU --> useVisibleTask
+
+| ---------------- NAVIGATEUR --------------- |
+```
+
+> **Notez** que le cycle de vie est exactement le même, mais cette fois-ci, tous les hooks sont exécutés dans le navigateur, et non sur le serveur.
+
+## `useTask$()`
+
+- **Quand :** AVANT le premier rendu du composant, et lorsque l'état traqué change
+- **Nombre de fois :** une seule fois
+- **Plateforme :** serveur et navigateur
+
+`useTask$()` enregistre un hook à exécuter lors de la création du composant, il sera exécuté au moins une fois soit sur le serveur soit dans le navigateur, selon l'endroit où le composant est initialement rendu.
+
+En outre, cette tâche peut être réactive et être réexécutée lorsqu'un [signal ou un store](/docs/(qwik)/components/state/index.mdx) **traqué** change, comme ceci :
+
+```tsx
+import { useTask$ } from '@builder.io/qwik';
+
+useTask$(({ track }) => {
+  track(() => store.count);
+  // s'exécutera lors du montage du composant et à chaque fois que "store.count" change
+});
+```
+
+**Notez que toute exécution ultérieure se produira toujours dans le navigateur**, car la réactivité est une chose réservée au client.
+
+```
+  useTask$(track state) -> RENDU -> CLIC (changement de l'état) -> RE-EXECUTION useTask$(état traqué)
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔            |                          ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+| --------- SERVEUR --------- | --------------- NAVIGATEUR --------------- |
+                              |
+                         pause|reprise
+```
+
+> Si `useTask$()` ne traque aucun état, il sera exécuté **exactement une fois**, soit sur le serveur **soit** dans le navigateur (**pas les deux**), selon l'endroit où le composant est initialement rendu. Il se comporte effectivement comme un hook « au montage ».
+
+`useTask$()` bloquera le rendu du composant jusqu'à ce que son callback asynchrone soit résolu, en d'autres termes, les tâches s'exécutent séquentiellement même si elles sont asynchrones. (Une seule tâche s'exécute à la fois / Les tâches bloquent le rendu).
+
+### Exemple
+
+La fonction `useTask$()` est utilisée pour observer la propriété `state.count`. Toute modification de `state.count` entraîne l'exécution de la fonction fléchée qui, à son tour, met à jour `state.doubleCount` avec le double de `state.count`.
+
+```tsx
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+
+export const Cmp = component$(() => {
+  const count = useSignal(1);
+  const doubleCount = useSignal(0);
+
+  // Cette tâche sera appelée exactement une fois, soit sur le serveur, soit sur le navigateur.
+  useTask$(() => {
+    console.log('composant monté');
+  });
+
+  // cette tâche sera appelée au montage et chaque fois que `store.count` change
+  useTask$(({ track }) => {
+    const count = track(() => count.value);
+    doubleCount.value = 2 * count;
+  });
+
+  return (
+    <div>
+      {count.value} / {doubleCount.value}
+    </div>
+  );
+});
+```
+
+L'exemple ci-dessus utilise la fonction `track` pour surveiller les changements dans `() => count.value`. Le callback sera exécuté une fois dans le SSR lorsque le composant est monté et à chaque fois que `count.value` change.
+
+> Notez que `useTask$()` s'exécute **AVANT** le rendu réel et dans le serveur, donc si vous devez faire une manipulation du DOM, utilisez `useVisibleTask$()` à la place, qui s'exécute sur le client après le rendu.
+
+### Utilisez `useTask$()` lorsque vous avez besoin de
+
+- Exécuter des tâches asynchrones avant le rendu
+- Exécuter le code une seule fois avant le premier rendu du composant
+- Calculer l'état dérivé à partir de l'état traqué (sans provoquer un nouveau rendu potentiel comme dans `useVisibleTask$`)
+- Exécuter le code de manière programmée lorsque l'état change
+
+> Remarque : si vous envisagez de charger des données (en utilisant `fetch()`) à l'intérieur de `useTask$`, pensez à utiliser [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) à la place. Cette API est plus efficace en termes d'exploitation du streaming SSR et de récupération en parallèle des données.
+
+### Tâche serveur/navigateur uniquement
+
+Parfois, il est nécessaire de n'exécuter du code que sur le serveur ou sur le client. Ceci peut être réalisé en utilisant les booléens `isServer` et `isBrowser` exportés depuis `@builder.io/qwik/build`.
+
+```tsx
+import { isServer, isBrowser } from '@builder.io/qwik/build';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+
+export const Cmp = component$(() => {
+  const users = useSignal([]);
+  useTask$(async () => {
+    if (isServer) {
+      // Si le composant est monté sur le serveur, appelez la base de données directement.
+      users.value = await db.requestUsers();
+    }
+    if (isBrowser) {
+      // Si le composant est monté sur le navigateur, récupérer les utilisateurs via l'API.
+      users.value = await fetchGetUsers();
+    }
+  });
+
+  return (
+    <>
+      {users.value.map((user) => (
+        <User user={user} />
+      ))}
+    </>
+  );
+});
+```
+
+> Mais comme mentionné ci-dessus - pour la récupération des données, pensez à utiliser [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) à la place.
+
+## `useVisibleTask$()`
+
+- **Quand :** une fois que le composant devient visible sur le navigateur, et lorsque l'état traqué change
+- **Nombre de fois :** au moins une fois
+- **Plateforme :** navigateur uniquement
+
+`useVisibleTask$()` enregistre un hook à exécuter lorsque le composant devient visible dans le viewport, il s'exécutera au moins une fois dans le navigateur, et il peut être réactif et se ré-exécuter lorsqu'un [signal ou store](/docs/(qwik)/components/state/index.mdx) **traqué** change, comme ceci :
+
+```tsx
+import { useVisibleTask$ } from '@builder.io/qwik';
+
+useVisibleTask$(({ track }) => {
+  track(() => store.count);
+  // s'exécutera lorsque le composant devient visible et chaque fois que "store.count" change
+  console.log('runs in the browser');
+});
+```
+
+Sous le capot, `useVisibleTask$()` crée un écouteur de DOM qui utilise [Intersection Observer](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API) pour détecter quand le composant devient visible dans le viewport.
+
+Cependant, cette `strategy` peut être modifiée, et par exemple, être exécutée lorsque le `document` est prêt.
+
+```tsx
+import { useVisibleTask$ } from '@builder.io/qwik';
+
+useVisibleTask$(() => console.log('s\'exécute dans le navigateur'), {
+  strategy: 'document-ready', // 'load' | 'visible' | 'idle'
+});
+```
+
+C'est une caractéristique unique de Qwik, n'importe quel autre framework exécuterait ce code et d'autres dans le cadre de l'hydratation, mais dans Qwik, vous pouvons en fait le spécifier quand cela se produit :
+
+- `"intersection-observer"` : (il s'agit de la valeur par défaut) lorsque le composant devient visible dans la zone d'affichage (utilise sous le capot [l'observateur d'intersection](https://developer.mozilla.org/fr/docs/Web/API/Intersection_Observer_API)).
+- `"document-ready"` : à la fin du chargement des documents (événement « load » du document)
+- `"document-idle"` : après le chargement au premier moment où le site devient inactif. Il utilise sous le capot [`requestIdleCallback()`](https://developer.mozilla.org/fr/docs/Web/API/Window/requestIdleCallback).
+
+### Exemple
+
+```tsx
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+
+export const Timer = component$(() => {
+  const count = useSignal(0);
+  useVisibleTask$(() => {
+    // S'exécute uniquement dans le client
+    const timer = setInterval(() => {
+      count.value++;
+    }, 500);
+    return () => {
+      clearInterval(timer);
+    };
+  });
+  return <>{count.value}</>;
+});
+```
+
+### Quand utiliser `useVisibleTask$()`
+
+> **REMARQUE :** N'abusez pas de `useVisibleTask$()` lorsque la même logique peut être réalisée en utilisant `useTask$()` ou d'autres moyens. Posez-vous la question : Ce code doit-il vraiment être exécuté au début dans le navigateur ? Si la réponse est non, `useVisibleTask$()` n'est probablement pas la bonne réponse.
+
+Comme son nom l'indique, `useVisibleTask$()` est utile lorsque vous devez exécuter du code lorsque le composant devient visible dans le viewport. Ceci est utile pour :
+
+- Exécuter du code AVANT l'interaction avec l'utilisateur, comme des animations, ou toute autre logique qui doit être exécutée avant l'interaction avec l'utilisateur.
+- Lecture du DOM après le rendu
+- Initialiser quelques animations
+- logique WebGL
+
+## Règles d'utilisation de la méthode 
+
+Lorsque vous utilisez des hooks de cycle de vie, vous devez respecter les règles suivantes :
+
+- Ils ne peuvent être appelés qu'à la racine du `component$` (pas à l'intérieur de blocs conditionnels).
+- Ils ne peuvent être appelés qu'à la racine d'une autre méthode `use*`, ce qui permet la composition.
+
+```tsx
+useHook(); // <-- ❌ ne fonctionne pas
+
+export default component$(() => {
+  useCustomHook(); // <-- ✅ fonctionne
+  if (condition) {
+    useHook(); // <-- ❌ ne fonctionne pas
+  }
+  useTask$(() => {
+    useNavigate(); // <-- ❌ does not work
+  });
+  const myQrl = $(() => useHook()); // <-- ❌ ne fonctionne pas
+  return <button onClick$={() => useHook()}></button>; // <-- ❌ ne fonctionne pas
+});
+
+function useCustomHook() {
+  useHook(); // <-- ✅ fonctionne
+  if (condition) {
+    useHook(); // <-- ❌ ne fonctionne pas
+  }
+}
+```

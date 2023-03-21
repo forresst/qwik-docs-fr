@@ -5,14 +5,14 @@ contributors:
   - adamdbradley
 ---
 
-Utilisez [`useStore()`](/docs/components/state/index.mdx#usestore) pour stocker l'état du composant. Le but du store :
+Utilisez [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) pour stocker l'état du composant. Le but du store :
 
 1. stocker l'état du composant
 2. présenter l'état comme un proxy qui peut observer les lectures/écritures dans le store
 3. sérialiser l'état du store en JSON lors de la phase de pause de l'application
 4. observer quelles propriétés du store sont utilisées dans un template du composant et créer des abonnements au store. Ces abonnements sont ensuite utilisés pour mettre automatiquement à jour le template du composant en cas de modification d'un store.
 
-Les stores sont déclarés dans la fonction du composant à l'aide de la fonction [`useStore()`](/docs/components/state/index.mdx#usestore). Enveloppez l'affectation `github` dans l'appel de fonction `useStore(...)` pour créer un store.
+Les stores sont déclarés dans la fonction du composant à l'aide de la fonction [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore). Enveloppez l'affectation `github` dans l'appel de fonction `useStore(...)` pour créer un store.
 
 > **REMARQUE**
 > Dans cet exemple, le store ne change jamais. Par conséquent, il n'y a aucun moyen d'observer le re-rendu automatique des templates. Dans le prochain exemple, nous ajouterons un écouteur sur `<input>` pour montrer le re-rendu automatique du template.

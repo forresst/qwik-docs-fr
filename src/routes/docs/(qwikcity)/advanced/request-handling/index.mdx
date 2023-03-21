@@ -1,0 +1,137 @@
+---
+title: Qwik City Vue d'ensemble des données
+contributors:
+  - adamdbradley
+  - manucorporat
+---
+
+# Vue d'ensemble des données
+
+Chaque fichier `layout.ts` et `index.ts` du répertoire `src/routes` a la possibilité d'accéder à la requête HTTP, à la réponse et à l'URL en cours. Cela vous permet de récupérer et de modifier les données, et même de répondre avec du contenu personnalisé.
+
+Qwik City implémente un système de middleware basé sur la hiérarchie du répertoire `src/routes`. Le système middleware est utilisé pour gérer les requêtes et les réponses HTTP, et est disponible pour les pages, les mises en page, et les [endpoints](/docs/(qwikcity)/endpoints/index.mdx).
+
+````tsx
+Chaque route a la possibilité d'ajouter des gestionnaires de requête et de réponse HTTP, permettant aux développeurs de [récupérer](../retrieve/index.mdx) et de [modifier](../modify/index.mdx) des données. Les gestionnaires peuvent également être utilisés par les [endpoints](../endpoints/index.mdx), qui répondent uniquement avec des données plutôt qu'avec le code HTML d'une page.
+
+Cette fonctionnalité vous permet de traiter n'importe quel événement de requête, d'avoir des effets secondaires sur le pipeline de requête, juste avant de rendre le composant et de répondre avec un contenu personnalisé. Elle est disponible pour les pages, les mises en page et les routes de endpoint, mais pas pour les composants ordinaires.
+
+## Gestionnaires de requêtes et de réponses
+
+Sur les pages, les mises en page et les [endpoints](../endpoints/index.mdx), nous pouvons accéder aux données de la requête en implémentant des fonctions de gestion des requêtes telles que `onGet`, `onPost`, `onPut`, etc. Ces fonctions sont exécutées en fonction de la [méthode HTTP](https://developer.mozilla.org/fr/docs/Web/HTTP/Methods) utilisée pour cette route.
+
+De plus, une fonction `onRequest` peut être utilisée pour gérer n'importe quelle méthode de requête, plutôt qu'une méthode spécifique. Par exemple, si les fonctions `onGet` et `onRequest` sont fournies, pour une requête `GET`, la fonction `onGet` sera appelée. Cependant, dans ce scénario, si une méthode de requête `POST` arrivait, alors le gestionnaire `onRequest` serait appelé puisqu'un `onPost` n'a pas été fourni.
+Le gestionnaire `onRequest` est disponible comme un fourre-tout pour toutes les méthodes de requête qui n'ont pas de méthode spécifique.
+
+```tsx
+import type { RequestHandler } from '@builder.io/qwik-city';
+
+export const onGet: RequestHandler<ProductData> = async ({ params }) => {
+  // mettez votre accès au base de données ici (codage en dur des données pour la simplicité)
+  return {
+    skuId: params.skuId,
+    price: 123.45,
+    description: `Description pour ${params.skuId}`,
+  };
+};
+````
+
+## Evénement de requête
+
+Les fonctions de traitement des requêtes reçoivent un argument `RequestEvent` qui a les propriétés suivantes :
+
+| Champ      | Description                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| `request`  | L'objet de la requête                                                                              |
+| `response` | L'objet de réponse, qui peut être utilisé pour définir les `headers` et le `status` de la réponse. |
+| `url`      | URL qui inclut `pathname`, `hostname`, etc.                                                        |
+| `next`     | Prochaine fonction du middleware                                                                   |
+| `abort`    | Fonction d'annulation de la requête                                                                |
+| `params`   | Paramètres personnalisés de l'utilisateur trouvés dans l'URL                                       |
+| `cookie`   | Obtenir et définir des cookies.                                                                    |
+| `platform` | Objet de données de plateforme (utile pour Cloudflare, Netlify, etc.)                              |
+
+### Cookie
+
+```tsx
+interface Cookie {
+  get: (key: string) => CookieValue | null;
+  set: (key: string, value: string | number | Record<string, any>, options?: CookieOptions) => void;
+  delete: (key: string) => void;
+  has: (key: string) => boolean;
+}
+```
+
+La classe cookie est utilisée pour obtenir et définir les cookies dans votre appli Qwik City. Elle expose les méthodes suivantes :
+
+**get**
+
+Prend une chaîne avec le nom du cookie et renvoie la `CookieValue`, si elle est présente et nulle sinon.
+
+```tsx
+interface CookieValue {
+  value: string;
+  json: <T = unknown>() => T;
+  number: () => number;
+}
+```
+
+Une valeur de cookie est un enregistrement simple comportant trois champs :
+
+1. `value` : Contient la valeur du cookie sous forme de chaîne
+2. `json()` : Exécute `JSON.parse()` sur la valeur et renvoie le résultat
+3. `number()` : Exécute `Number()` sur la valeur et renvoie le résultat
+
+**getAll**
+
+Retourne un objet avec tous les cookies, s'il y en a. _Ceci est parfois nécessaire si les noms des cookies sont inconnus et doivent être analysés._
+
+**set**
+
+Prend une clé et une valeur et crée une entête qui sera ajoutée à la réponse. La valeur peut être un `string | number | Record<string, any>`
+
+Comme troisième argument, vous pouvez éventuellement fournir un enregistrement `CookieOptions` pour définir des champs supplémentaires.
+
+```tsx
+export interface CookieOptions {
+  domain?: string;
+  expires?: Date | string;
+  httpOnly?: boolean;
+  maxAge?: number | [number, 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks'];
+  path?: string;
+  sameSite?: 'lax' | 'none' | 'strict';
+  secure?: boolean;
+}
+```
+
+Pour plus d'informations sur ces attributs et leurs valeurs, veuillez consulter [l'article de MDN sur l'entête Set-Cookie](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Set-Cookie#attributs).
+
+**delete**
+
+Ajoute une entête avec la clé fournie au cookie. La nouvelle entête aura une date d'expiration dans le champ `expires`, indiquant aux navigateurs de la supprimer.
+
+```tsx
+cookie.delete('my-cookie');
+```
+
+Équivalent à un appel :
+
+```tsx
+cookie.set('my-cookie', 'deleted', new Date(0));
+```
+
+En option, vous pouvez définir le chemin et/ou le domaine lors de la suppression du cookie. Si votre cookie a été créé avec un chemin/domaine, vous devez définir ces champs pour que la suppression prenne effet.
+
+```tsx
+cookie.delete('my-cookie', { domain: 'https://qwik.builder.io', path: '/docs/' });
+```
+
+**has**
+
+Une méthode pratique qui renvoie true ou false en fonction de la présence de la clé fournie dans le cookie.
+
+Équivalent à l'appel :
+
+```tsx
+!!cookie.get('my-cookie');
+```

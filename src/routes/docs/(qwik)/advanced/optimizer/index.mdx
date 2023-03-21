@@ -1,0 +1,53 @@
+---
+title: Règles de l'Optimiseur
+contributors:
+  - the-r3aper7
+  - manucorporat
+  - adamdbradley
+---
+
+# Optimiseur
+
+La philosophie de Qwik est de retarder le chargement du code aussi longtemps que possible. Pour ce faire, Qwik s'appuie sur un Optimiseur pour réorganiser le code pour un chargement différé. L'Optimiseur est une transformation au niveau du code qui s'exécute pour synthétiser. (L'Optimiseur est écrit en Rust (et il est disponible comme WASM) pour une performance instantanée).
+
+L'Optimiseur recherche les `$` et applique une transformation qui extrait l'expression suivant le `$` et la transforme en un symbole importable et chargeable de manière différée.
+
+Commençons par examiner un exemple simple de `Counter` :
+
+```tsx
+export const Counter = component$(() => {
+  const count = useSignal(0);
+
+  return <button onClick$={() => count.value++}>{count.value}</button>;
+});
+```
+
+Le code ci-dessus représente ce qu'un développeur écrirait pour décrire le composant. Vous trouverez ci-dessous les transformations que l'Optimiseur applique au code pour le rendre chargeable de manière différée.
+
+```tsx
+const Counter = component(qrl('./chunk-a.js', 'Counter_onMount'));
+```
+
+`chunk-a.js`:
+
+```tsx
+export const Counter_onMount = () => {
+  const count = useSignal(0);
+  return <button onClick$={qrl('./chunk-b.js', 'Counter_onClick', [count])}>{count.value}</button>;
+};
+```
+
+`chunk-b.js`:
+
+```tsx
+const Counter_onClick = () => {
+  const [store] = useLexicalScope();
+  return store.count++;
+};
+```
+
+Remarquez que chaque occurrence de `$` entraîne la création d'un nouveau symbole chargeable de manière différée.
+
+## Sérialisation
+
+Consultez la [sérialisation](../../concepts/resumable/index.mdx#serialization) pour une explication de ce qui est sérialisable.

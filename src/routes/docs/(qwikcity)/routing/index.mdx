@@ -1,0 +1,228 @@
+---
+title: Qwik City - Routage
+contributors:
+  - manucorporat
+  - nnelgxorz
+  - the-r3aper7
+  - Oyemade
+  - mhevery
+  - adamdbradley
+---
+
+# Routage
+
+Le routage dans Qwik City est basé sur un système de fichier comme [Next.js](https://nextjs.org/docs/routing/introduction), [SvelteKit](https://kit.svelte.dev/docs/routing), [SolidStart](https://start.solidjs.com/core-concepts/routing) ou [Remix](https://remix.run/docs/en/main/guides/routing). Les fichiers et les répertoires dans le répertoire `src/routes` ont un rôle dans le routage de votre application.
+
+- **📂 Répertoires :** Décrit les segments d'URL à mettre en correspondance par le routeur.
+- **📄 Fichiers index. :** Page/endpoint.
+- **🖼️ Fichiers layout. :** Mise en page imbriquée/middleware.
+
+## Routage basé sur les répertoires
+
+Seuls les noms des répertoires sont utilisés pour faire correspondre les requêtes entrantes aux pages/endpoints.
+
+Par exemple, si vous avez un fichier à cet endroit `src/routes/some/path/index.tsx`, il sera mis en correspondance avec le chemin de l'URL `https://example.com/some/path`.
+
+```
+src/
+└── routes/
+    ├── contact/
+    │   └── index.mdx         # https://example.com/contact
+    ├── about/
+    │   └── index.md          # https://example.com/about
+    ├── docs/
+    │   └── [id]/
+    │       └── index.ts      # https://example.com/docs/1234
+    │                         # https://example.com/docs/anything
+    ├── [...catchall]/
+    │   └── index.tsx         # https://example.com/anything/else/that/didnt/match
+    │
+    └── layout.tsx            # Cette mise en page est utilisée pour toutes les pages
+```
+
+- **`[id]`** est un répertoire qui représente un segment de route dynamique, dans cet exemple `id` est le paramètre de type string accessible par `getLocation().params.id`.
+- **`[...catchall]`** est un répertoire qui représente une route dynamique catch-all, dans cet exemple `catchall` est le paramètre de type string accessible par `getLocation().params.id`.
+- **les fichiers `index.tsx|mdx`** sont les pages/endpoints.
+- **les fichiers `layout.tsx`** sont les mises en page.
+
+### Segments de routes dynamiques
+
+Des répertoires spéciaux nommés avec des crochets, tels que `[paramName]` et `[...catchAll]` peuvent être utilisés pour faire correspondre des segments de route qui sont dynamiques :
+
+```
+src/routes/blog/index.tsx → /blog
+src/routes/user/[username]/index.tsx → /user/:username (/user/foo)
+src/routes/post/[...all]/index.tsx → /post/* (/post/2020/id/title)
+```
+
+```
+src/
+└── routes/
+    ├── blog/
+    │   └── index.tsx         # https://example.com/blog
+    ├── post/
+    │   └── [...all]/
+    │       └── index.tsx     # https://example.com/post/2020/id/title
+    └── user/
+        └── [username]/
+            └── index.tsx     # https://example.com/user/foo
+```
+
+> Le dossier `[username]` peut être n'importe lequel des milliers d'utilisateurs que vous avez dans votre base de données. Il serait peu pratique de créer une route pour chaque utilisateur. Au lieu de cela, nous devons définir un paramètre de route (une partie de l'URL) qui sera utilisé pour extraire le `[username]`.
+
+```tsx
+// src/routes/user/[username]/index.tsx
+import { component$ } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
+
+export default component$(() => {
+  const loc = useLocation();
+  return <div>Hello {loc.params.username}!</div>;
+});
+```
+
+## Fichiers `index.`
+
+A l'intérieur du répertoire `src/routes`, tous les fichiers nommés `index` sont considérés comme des pages/endpoints, Qwik prend en charge les extensions suivantes : `.ts`, `.tsx`, `.md` et `.mdx`.
+
+Les pages/endpoints sont les nœuds feuilles de l'arbre de routage, c'est-à-dire **les modules qui vont traiter la requête et renvoyer une réponse HTTP**.
+
+### Page `index.tsx`
+
+Lorsque `index.tsx` ou `index.ts` exporte un composant Qwik en tant qu'exportation par défaut, Qwik City rendra le composant et retournera une réponse HTML en tant que page web.
+
+```tsx
+// src/routes/index.tsx
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  return <h1>Hello World</h1>;
+});
+```
+
+### Endpoint `index.tsx`
+
+Un `index.ts` peut aussi accéder directement à la requête HTTP et retourner une réponse HTTP brute sans impliquer aucun composant Qwik. Ceci se fait en exportant une méthode `onRequest`, `onGet`, `onPost`, `onPut`  ou `onDelete` si vous voulez seulement gérer une requête spécifique en fonction de sa méthode HTTP.
+
+```tsx
+// src/routes/index.ts
+import { component$ } from '@builder.io/qwik';
+
+export const onGet = ({ json }) => {
+  json(200, { message: 'Hello World' });
+};
+```
+
+> Remarquez que dans le dernier exemple, il n'y a pas d'exportation par défaut. C'est parce que nous ne rendons pas un composant Qwik, mais plutôt nous gérons la requête directement et retournons une réponse JSON. Ceci est utile pour implémenter des API RESTful ou tout autre type de endpoint HTTP.
+
+### Page + Endpoint
+
+Comme vous pouvez le voir dans Qwik City il n'y a pas de séparation claire entre les pages et les endpoints, dans les deux cas, c'est un fichier `index.tsx` qui exporte un composant Qwik ou une méthode `onRequest`. Cependant, il est possible de combiner les deux approches. Par exemple, vous pouvez exporter une méthode `onRequest` qui va gérer la requête, et ensuite rendre un composant Qwik.
+
+```tsx
+// src/routes/index.ts
+import { component$ } from '@builder.io/qwik';
+
+export const onRequest = ({ headers, query, json }) => {
+  headers.set('Cache-Control', 'private');
+  if (query.get('format') === 'json') {
+    json(200, { message: 'Hello World' });
+  }
+};
+
+export default component$(async () => {
+  return <h1>Hello World</h1>;
+});
+```
+
+> Dans cet exemple, un gestionnaire de requête mettra toujours l'entête `Cache-Control` à `private` et la page sera rendue comme une page HTML, mais si la requête contient un paramètre de requête `format=json`, le endpoint retournera une réponse JSON à la place.
+
+## Fichiers `layout.`
+
+Les modules de mise en page sont très similaires aux fichiers `index`, les deux peuvent gérer les requêtes et rendre les composants Qwik, cependant, les mises en page sont conçues pour fonctionner comme un middleware, permettant de **partager l'interface utilisateur et la gestion des requêtes (middleware)** pour un ensemble de routes.
+
+Généralement, les différentes pages ont besoin d'un traitement commun pour les requêtes et partagent une certaine interface utilisateur. Par exemple, imaginez un site de tableau de bord où toutes les pages se trouvent dans le répertoire `/admin/*` :
+
+- **Gestion des requêtes partagées :** Les cookies de la requête doivent être validés avant même de rendre la page, sinon, une page 401 vide sera rendue.
+- **Interface utilisateur partagée :** Toutes les pages partagent une entête commune affichant le nom et la photo de profil de l'utilisateur.
+
+Au lieu de répéter le même code dans chaque route, nous pouvons utiliser des mises en page pour réutiliser automatiquement les parties communes, et aussi pour ajouter des middleware à la route.
+
+Prenez ce répertoire `src/routes` comme exemple :
+
+```
+src/
+└── routes/
+    ├── admin/
+    │   ├── layout.tsx  <-- Cette mise en page est utilisée pour toutes les pages sous /admin/*
+    │   └── index.tsx
+    ├── layout.tsx      <-- Cette mise en page est utilisée pour toutes les pages
+    └── index.tsx
+```
+
+### Mise en page de middleware
+
+Puisque les mises en page peuvent implémenter la gestion des requêtes avec `onRequest`, `onGet`, `onPost`, `onPut` ou `onDelete`, elles peuvent être utilisées pour implémenter un middleware, par exemple, pour valider les cookies de la requête avant de rendre la page.
+
+Pour la route `https://example.com/admin`, les méthodes `onRequest` seront exécutées dans l'ordre suivant :
+
+1. `onRequest` de `src/routes/layout.tsx`
+2. `onRequest` de `src/routes/admin/layout.tsx`
+3. Celui du composant `src/routes/admin/index.tsx`
+
+### Mises en page imbriquées
+
+Les mises en page **fournissent également un moyen d'ajouter une interface utilisateur commune à la page rendue**. Par exemple, si nous voulons ajouter une en-tête commune à toutes les routes, nous pouvons ajouter un composant `Header` à la mise en page racine.
+
+Pour l'exemple donné, les composants Qwik seront rendus dans l'ordre suivant :
+
+1. Le composant de `src/routes/layout.tsx`
+2. Le composant de `src/routes/admin/layout.tsx`
+3. Le composant de `src/routes/admin/index.tsx`
+
+```tsx
+<RootLayout>
+  <AdminLayout>
+    <AdminPage />
+  </AdminLayout>
+</RootLayout>
+```
+
+## Request Event
+
+Chaque gestionnaire de requête, tel que `onRequest`, `onGet`, `onPost`, etc., se voit passer un objet `RequestEvent` comme premier argument du gestionnaire. L'objet `RequestEvent` contient des fonctions utilitaires et des propriétés permettant d'obtenir et de définir des valeurs pour la requête et la réponse du serveur. Cet objet contient les propriétés suivantes :
+
+- `basePathname` : Le chemin de base de la requête, qui peut être configuré au moment de la construction. La valeur par défaut est `/`.
+- `cacheControl` : Convenience function to set the [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) response header.
+- `cookie` : HTTP request and response [cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). Use the `get()` method to retrieve a request cookie value. Use the `set()` method to set a response cookie value.
+- `env` : Platform provided environment variables.
+- `error` : When called, the response will immediately end with the given status code. This could be useful to end a response with `404`, and use the 404 handler in the routes directory. See [Status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) for which status code should be used.
+- `getWritableStream` : Low-level access to write to the HTTP response stream. Once `getWritableStream()` is called, the status and headers can no longer be modified and will be sent over the network.
+- `headers` : HTTP [response headers](https://developer.mozilla.org/en-US/docs/Glossary/Response_header).
+- `html` : Convenience method to send an HTML body response. The response will be automatically set the `Content-Type` header to`text/html; charset=utf-8`. An `html()` response can only be called once.
+- `json` : Convenience method to JSON stringify the data and send it in the response. The response will be automatically set the `Content-Type` header to`application/json; charset=utf-8`. A `json()` response can only be called once.
+- `locale` : Which locale the content is in. The locale value can be retrieved from selected methods using `getLocale()`.
+- `method` : HTTP request [method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) value.
+- `next` : Call the next request handler. This is useful for middleware.
+- `params` : URL path params which have been parsed from the current url pathname segments. Use `query` to instead retrieve the query string search params.
+- `parseBody` : This method will check the request headers for a `Content-Type` header and parse the body accordingly. It supports `application/json`, `application/x-www-form-urlencoded`, and `multipart/form-data` content types. If the `Content-Type` header is not set, it will return `null`.
+- `pathname` : URL pathname value. Does not include the protocol, domain, query string (search params) or hash.
+- `platform` : Platform specific data and functions.
+- `query` : URL query string [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) value. Use `params` to instead retrieve the route params found in the url pathname.
+- `redirect` : URL to redirect to. When called, the response will immediately end with the correct redirect status and headers. See [Redirects](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections) for which status code should be used.
+- `request` : HTTP [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
+- `send` : Send a body response. The `Content-Type` response header is not automatically set when using `send()` and must be set manually. A `send()` response can only be called once.
+- `sharedMap` : Shared Map across all the request handlers. Every HTTP request will get a new instance of the shared map. The shared map is useful for sharing data between request handlers.
+- `status` : HTTP response [status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). Sets the status code when called with an argument. Always returns the status code, so calling `status()` without an argument will can be used to return the current status code.
+- `text` : Convenience method to send an text body response. The response will be automatically set the `Content-Type` header to`text/plain; charset=utf-8`. An `text()` response can only be called once.
+- `url` : HTTP request [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL).
+
+## Routage avancé
+
+Qwik City prend également en charge :
+
+- [Paramètres de route](/docs/(qwikcity)/advanced/routing/index.mdx)
+- [Mises en page imbriquées](/docs/(qwikcity)/advanced/routing/index.mdx#nested-layout)
+- [Menus](/docs/(qwikcity)/advanced/menu/index.mdx)
+
+Nous y reviendrons plus tard.

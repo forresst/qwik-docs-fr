@@ -1,0 +1,263 @@
+---
+title: Styles
+contributors:
+  - manucorporat
+  - zanettin
+  - cunzaizhuyi
+  - manuelsanchez2
+  - literalpie
+  - forresst
+  - DustinJSilk
+  - saikatdas0790
+  - LiKang6688
+  - Craiqser
+  - adamdbradley
+---
+
+# Styles
+
+## Styles globaux
+
+De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront chargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
+
+```tsx
+import './global.css';
+```
+
+> Automatiquement, Qwik essaiera de mettre en ligne ce fichier en mode production si la quantité de CSS est inférieure à 10KB. Si le fichier est plus grand que 10KB, il sera chargé comme un fichier séparé.
+
+## CSS-in-JS
+
+Qwik a un support CSS-in-JS de première classe utilisant [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract), qui fournit une solution css-in-js extrêmement efficace sans aucun temps d'exécution !
+
+**styles.css.ts:**
+
+```tsx
+import { style } from 'styled-vanilla-extract/qwik';
+
+export const blueClass = style({
+  display: 'block',
+  width: '100%',
+  height: '500px',
+  background: 'blue',
+});
+```
+
+**component.tsx:**
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { blueClass } from './styles.css';
+
+export const Cmp = component$(() => {
+  return <div class={blueClass} />;
+});
+```
+
+```shell
+npm run qwik add styled-vanilla-extract
+```
+
+Veuillez consulter les [docs de notre intégration officielle](/integrations/styled-vanilla-extract/index.mdx) pour plus d'informations.
+
+**Que penser de emotion ou d'autres librairies CSS-in-JS?** Bien qu'extrêmement populaires, emotion et d'autres librairies CSS-in-JS ne sont pas le meilleur choix pour Qwik. [Elles ne sont pas optimisées pour les performances d'exécution et n'ont pas un bon support de streaming SSR](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), ce qui conduit à une dégradation des performances du serveur et du client.
+
+## Composants stylisés
+
+Les composants stylisés est un outil populaire dans le monde de React pour écrire du CSS-in-JS. Grâce au même plugin [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract), vous pouvez écrire vos styles avec la syntaxe des composants stylisés dans Qwik avec un coût d'exécution nul !
+
+```shell
+npm run qwik add styled-vanilla-extract
+```
+
+Comme ceci :
+
+**styles.css.ts:**
+
+```tsx
+import { styled } from 'styled-vanilla-extract/qwik';
+
+export const BlueBox = styled.div`
+  display: block;
+  width: 100%;
+  height: 500px;
+  background: blue;
+`;
+```
+
+**component.tsx:**
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { BlueBox } from './styles.css';
+
+export const Cmp = component$(() => {
+  return <BlueBox />;
+});
+```
+
+## Styles par composant
+
+Qwik fournit un support intégré pour les styles par composant, cette technologie permet à Qwik d'injecter les styles fournis seulement si le composant est utilisé dans la page courante, ceci peut être réalisé en utilisant les hooks `useStyles$()` et `useStylesScoped$()`.
+
+### `useStyles$()`
+
+Une référence chargée de manière différée pour les styles du composant.
+
+Les styles de composants permettent à Qwik de charger de manière différée les informations de style pour le composant seulement quand cela est nécessaire. (Et d'éviter de les charger deux fois en cas d'hydratation du SSR).
+
+```tsx
+import { useStyles$, component$ } from '@builder.io/qwik';
+import styles from './code-block.css?inline';
+
+export const CmpStyles = component$(() => {
+  useStyles$(styles);
+  return <span class="my-text">Some text</span>;
+});
+```
+
+```css
+// code-block.css
+.my-text {
+  color: red;
+}
+```
+
+> Notez que pour importer des CSS sous forme de chaîne dans Vite, vous devez ajouter le paramètre de requête `?inline` à l'importation, comme ceci : `import styles from './code-block.css?inline';`
+
+### `useStylesScoped$`
+
+Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles).
+Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. 
+Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
+
+```tsx
+import { useStylesScoped$, component$ } from '@builder.io/qwik';
+import styles from './code-block.css?inline';
+
+export const CmpStyles = component$(() => {
+  useStylesScoped$(styles);
+  return <span class="my-text">Some text</span>;
+});
+```
+
+```css
+// code-block.css
+.my-text {
+  color: blue;
+}
+```
+
+> Veuillez noter que vous devez ajouter `?inline` à votre importation de styles.
+
+### Sélecteur `:global()`
+
+En utilisant `useStylesScoped$`, tous les sélecteurs enfants d'un jeu de règles seront appliqués au composant. Si vous devez donner un style à des composants enfants rendus par un `<Slot />`, vous devrez vous affranchir de la portée des styles en utilisant le sélecteur `:global()`.
+
+```tsx
+import { useStylesScoped$, component$ } from '@builder.io/qwik';
+
+export const List = component$(() => {
+  useStylesScoped$(`
+    .list {
+      display: flex;
+
+      > :global(*nth-child(3)) {
+        width: 100%
+      }
+    }
+  `);
+
+  return (
+    <div class="list">
+      <Slot />
+    </div>;
+  );
+});
+```
+
+Cela rendra un sélecteur css de `.list.⭐️8vzca0-0 > *:nth-child(3)`, vous permettant de cibler les composants enfants. Cela pourrait être considéré comme l'équivalent de l'utilisation de `::ng-deep` dans Angular.
+
+> Attention, cela peut avoir des effets inattendus qui se répercutent en cascade dans votre arborescence de composants.
+
+## Préprocesseurs
+
+### `.scss`, `.sass`, `.less`, `.styl`, `.stylus`
+
+Vite fonctionne bien avec de nombreux préprocesseurs. Assurez-vous simplement que vous installez les [plugins](https://vitejs.dev/guide/features.html#css-pre-processors) requis.
+
+### Tailwind
+
+Pour utiliser Tailwind sur votre appli, vous pouvez l'ajouter à votre appli avec notre intégration intégrée :
+
+```shell
+npm run qwik add tailwind
+```
+
+### PostCSS
+
+Il est également possible d'utiliser PostCSS dans votre application grâce à notre intégration prédéfinie :
+
+```shell
+npm run qwik add postcss
+```
+
+Important : Comme nous utilisons vite, la configuration doit être la suivante pour fonctionner :
+
+```shell
+// Configuration avec vite
+module.exports = {
+  plugins: {
+    autoprefixer: {},
+    "postcss-preset-env": {
+      stage: 3,
+      features: {
+        "nesting-rules": true,
+      },
+    },
+  },
+}
+```
+
+Vous pourrez désormais utiliser des CSS avec des règles d'imbrication comme celles qui suivent :
+
+```css
+body {
+  & .box {
+    background: red;
+
+    &:hover {
+      background: yellow;
+    }
+  }
+}
+```
+
+Consultez notre [documentation sur l'intégration](../../../integrations/integration/tailwind) pour plus d'informations.
+
+## Pourquoi ne pas utiliser les styles en ligne avec la balise `<style>` ?
+
+Une façon naïve de s'assurer que les styles sont chargés correctement dans un composant est d'intégrer les informations de style dans le composant comme suit.
+
+```tsx
+export const MyComponent = () => {
+  return (
+    <>
+      <style>.my-class { color: red; }</style>
+      My Component
+    </>
+  );
+}
+```
+
+Le problème avec cette approche est que nous allons charger les styles deux fois.
+
+1. Les styles sont insérés dans le HTML en tant que partie du SSR.
+2. Ensuite, lorsque le composant est invalidé et doit être re-rendu, les styles sont rechargés car ils sont intégrés.
+
+Ce qui est nécessaire, c'est de charger les styles indépendamment du composant. C'est à cela que sert [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles). Il y a deux scénarios :
+
+1. Le composant est rendu sur le serveur et les styles sont insérés dans le `<head>` en tant que partie du SSR.
+   - L'ajout d'une nouvelle instance d'un composant à l'application ne nécessite pas de charger les styles car ils sont déjà inclus dans le SSR.
+2. Le composant est rendu sur le client pour la première fois. Dans ce cas, le nouveau composant n'a pas de styles dans le `<head>` car le composant ne faisait pas partie du SSR.
+   - L'ajout d'un nouveau composant qui ne faisait pas partie du SSR nécessite que les styles soient chargés et insérés dans le `<head>`.

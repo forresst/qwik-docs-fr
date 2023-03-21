@@ -7,17 +7,17 @@ contributors:
 
 Pour ce tutoriel, nous souhaitons récupérer la liste des dépôts d'une organisation GitHub donnée. Pour vous aider, nous avons ajouté la fonction `getRepositories()` au bas du fichier. Votre tâche est d'utiliser la fonction `getRepositories()` pour récupérer la liste des dépôts à chaque fois que l'utilisateur met à jour l'input `org`.
 
-Qwik fournit [`useResource$()`](/docs/components/resource/index.mdx) et `<Resource>` pour vous aider à récupérer et afficher des données depuis le serveur. Lorsque vous récupérez des données, l'application peut être dans l'un des trois états suivants :
+Qwik fournit [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) et `<Resource>` pour vous aider à récupérer et afficher des données depuis le serveur. Lorsque vous récupérez des données, l'application peut être dans l'un des trois états suivants :
 
 - `pending` : les données sont en train d'être récupérées du serveur => Rend l'indicateur `chargement...`.
 - `resolved` : les données ont été récupérées avec succès du serveur => Rend les données.
 - `rejected` : les données n'ont pas pu être récupérées du serveur en raison d'une erreur => Rend l'erreur.
 
-Utilisez la fonction [`useResource$()`](/docs/components/resource/index.mdx)[`useResource$()`](/docs/components/resource/index.mdx) pour configurer la façon dont les données sont récupérées du serveur. Utilisez la fonction `<Resource>` pour afficher les données.
+Utilisez la fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) pour configurer la façon dont les données sont récupérées du serveur. Utilisez la fonction `<Resource>` pour afficher les données.
 
 ## Récupération des données
 
-Utilisez [`useResource$()`](/docs/components/resource/index.mdx) pour configurer la façon dont les données sont récupérées du serveur.
+Utilisez [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) pour configurer la façon dont les données sont récupérées du serveur.
 
 ```jsx
   const reposResource = useResource$<string[]>(({ track, cleanup }) => {
@@ -36,11 +36,11 @@ Utilisez [`useResource$()`](/docs/components/resource/index.mdx) pour configurer
   });
 ```
 
-La fonction [`useResource$()`](/docs/components/resource/index.mdx) retourne un objet `ResourceReturn`, qui est un objet de type Promise qui peut être sérialisé par Qwik. La fonction [`useResource$()`](/docs/components/resource/index.mdx) vous permet de traquer (`track`) les propriétés du store afin que la fonction [`useResource$()`](/docs/components/resource/index.mdx) puisse être réactive sur les changements du store. La fonction `cleanup` vous permet d'enregistrer un code qui doit être exécuté pour libérer les ressources de l'exécution précédente. Enfin, la fonction [`useResource$()`](/docs/components/resource/index.mdx) renvoie une promesse qui sera résolue avec la valeur.
+La fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) retourne un objet `ResourceReturn`, qui est un objet de type Promise qui peut être sérialisé par Qwik. La fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) vous permet de traquer (`track`) les propriétés du store afin que la fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) puisse être réactive sur les changements du store. La fonction `cleanup` vous permet d'enregistrer un code qui doit être exécuté pour libérer les ressources de l'exécution précédente. Enfin, la fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) renvoie une promesse qui sera résolue avec la valeur.
 
 ## Rendu des données
 
-Utilisez `<Resource>` pour afficher les données de la fonction [`useResource$()`](/docs/components/resource/index.mdx). La fonction `<Resource>` vous permet d'afficher un contenu différent selon si la ressource est `pending`, `resolved` ou `rejected`.
+Utilisez `<Resource>` pour afficher les données de la fonction [`useResource$()`](/docs/(qwik)/components/resource/index.mdx). La fonction `<Resource>` vous permet d'afficher un contenu différent selon si la ressource est `pending`, `resolved` ou `rejected`.
 
 Sur le serveur, `<Resource>` ne rend pas l'état `loading`, au lieu de cela, il met en pause le rendu jusqu'à ce que la ressource soit résolue et rendra toujours soit `resolved` soit `rejected`. (Sur le client, `<Resource>` rend tous les états, y compris `pending`).
 

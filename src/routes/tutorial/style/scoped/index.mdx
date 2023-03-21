@@ -6,7 +6,7 @@ contributors:
   - mhevery
 ---
 
-Dans les sections précédentes, nous avons discuté de la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/components/styles/index.mdx#usestyles). Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
+Dans les sections précédentes, nous avons discuté de la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles). Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
 
 Utilisez `useStylesScoped$()` pour charger et porter le style à un composant spécifique uniquement.
 

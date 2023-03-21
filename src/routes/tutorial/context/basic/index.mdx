@@ -11,8 +11,8 @@ Pour utiliser le contexte, vous avez besoin de trois éléments :
 
 - `createContextId()` : ceci crée un ID sérialisable pour le contexte. Assurez-vous que cet identifiant est unique dans votre application.
 - `useContextProvider()` : Au niveau d'un composant parent, appelez cette méthode pour publier la valeur du contexte. Tous les enfants (et petits-enfants) qui sont des descendants de ce composant seront en mesure de récupérer le contexte.
-- [`useContext()`](/docs/components/context/index.mdx#usecontext) pour récupérer le contexte et l'utiliser dans n'importe quel composant.
+- [`useContext()`](/docs/(qwik)/components/context/index.mdx#usecontext) pour récupérer le contexte et l'utiliser dans n'importe quel composant.
 
-Dans cet exemple, nous souhaitons passer le `TodosStore` au composant `<Items>`. Mettez à jour le code pour utiliser [`useContext()`](/docs/components/context/index.mdx#usecontext) pour récupérer la valeur.
+Dans cet exemple, nous souhaitons passer le `TodosStore` au composant `<Items>`. Mettez à jour le code pour utiliser [`useContext()`](/docs/(qwik)/components/context/index.mdx#usecontext) pour récupérer la valeur.
 
 Les contextes sont généralement des stores, et en tant que tels, ils doivent être sérialisables.

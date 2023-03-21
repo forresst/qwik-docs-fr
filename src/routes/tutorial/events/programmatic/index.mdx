@@ -20,6 +20,6 @@ Qwik fournit les fonctions suivantes pour attacher un écouteur :
 
 ## Comprendre le `$`
 
-La fonction `$` signale à Qwik de charger de manière différée une référence. Lors de la mise en place d'un écouteur avec `useOn`, le second argument est une [URL Qwik](../../../docs/advanced/qrl/index.mdx).
+La fonction `$` signale à Qwik de charger de manière différée une référence. Lors de la mise en place d'un écouteur avec `useOn`, le second argument est une [URL Qwik](../../../docs/(qwik)/advanced/qrl/index.mdx).
 
 Les URLs Qwik (QRL) sont des références chargées de manière différée sur votre code. Si `useOn` prenait une fonction directement plutôt qu'une QRL, il devrait s'exécuter par avance pour allouer la closure de l'écouteur. En utilisant une QRL via la fonction `$`, Qwik peut charger de manière différée la closure seulement quand l'écouteur `click` est déclenché.

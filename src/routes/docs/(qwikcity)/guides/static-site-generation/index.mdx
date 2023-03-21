@@ -1,0 +1,94 @@
+---
+title: Génération de sites statiques (SSG) Vue d'ensemble
+contributors:
+  - adamdbradley
+---
+
+# Génération de sites statiques (SSG) Vue d'ensemble
+
+La génération de sites statiques, ou plus communément appelée « SSG », est le processus de pré-rendu des pages web d'un site en fichiers HTML statiques. L'avantage est que lorsqu'un visiteur demande la page Web, la réponse est un fichier HTML pré-généré (un fichier statique), et ne nécessite pas que le HTML de la page Web soit « reconstruit » sur le navigateur du visiteur, ou créé dynamiquement par votre serveur (nous y reviendrons plus tard).
+
+De plus, en raison de l'architecture sous-jacente de Qwik, les performances des pages sont également améliorées car elles ne nécessitent pas d'étape d'« hydratation » Javascript, qui peut réduire considérablement les performances et ralentir l'interactivité de l'utilisateur. En effectuant un pré-rendu des fichiers statiques `index.html` avec SSG, et combiné avec la [resumabilité](../../../(qwik)/concepts/resumable/index.mdx) de Qwik, la génération de sites statiques offre de nombreux avantages en termes de performance par rapport aux solutions existantes.
+
+## SSG vs Rendu côté serveur (SSR)
+
+Qwik City est capable de prendre une application Qwik, peu importe si c'est une « webapp » ou un « site web », et de générer du HTML statique. Une fois qu'elle est générée en HTML, Qwik est fondamentalement capable de ne pas reconstruire l'appli en utilisant la [resumabilité](../../../(qwik)/concepts/resumable/index.mdx), puisque l'appli a déjà été générée en HTML. La génération de sites statiques (SSG) et le Rendu côté serveur (SSR) utilisent le même processus pour générer le HTML. La principale différence entre la SSG et le SSR réside toutefois dans le « moment » où le HTML est généré.
+
+Dans une configuration traditionnelle, la SSG effectue le rendu de chaque page Web au moment de la construction, tandis que le SSR effectue le rendu de chaque page Web à la demande pour chaque requête HTTP. La SSG n'a besoin de générer le HTML qu'une seule fois lors de la construction, ce qui est idéal pour les pages Web où chaque visiteur doit voir le même contenu. En revanche, le SSR est idéal lorsque la page Web peut être différente pour chaque visiteur et qu'il est nécessaire d'effectuer un rendu HTML personnalisé pour chaque requête HTTP.
+
+Par exemple, la SSG est idéale pour un blog ou un site de documentation, où tout le contenu doit être le même pour chaque visiteur. Si le SSR convient parfaitement à un blog, le fait de rendre le contenu du blog pour chaque visiteur peut représenter une charge inutile pour vos serveurs HTTP, même s'ils voient tous le même HTML.
+
+Cependant, le tableau de bord d'un compte a généralement un contenu différent pour chaque utilisateur connecté. Dans cette configuration, chaque utilisateur devrait obtenir son propre rendu HTML avec ses informations de compte, plutôt que de voir le même contenu pour tous. C'est dans ce cas que SSR est préférable.
+
+Idéalement, plus vous pouvez en faire avec la génération de sites statiques, mieux c'est, car vous aurez moins de coûts pour vos serveurs et des temps de réponse plus rapides.
+
+Avec Qwik City cependant, la décision d'utiliser la SSG ou le SSR, ne doit pas nécessairement être l'une ou l'autre. Au contraire, votre propre implémentation peut choisir d'avoir certains chemins d'accès utilisant la SSG, tandis que d'autres pages utilisent le SSR. Cela dépend entièrement de vous et de vos besoins.
+
+## Configuration de la génération de sites statiques
+
+La génération de sites statiques est créée à partir de l'adaptateur intégré, pour créer un adaptateur exécutez :
+
+```shell
+npm run qwik add
+```
+
+Sélectionnez `Adapter: Static site (.html files)`. C'est fait.
+
+### Changements
+
+L'exécution de la commande ci-dessus apportera les changements suivants à votre projet :
+
+  - Un script `build.server` sera automatiquement ajouté à votre fichier `package.json`.
+  - Un fichier `adapters/static/vite.config.ts` sera créé.
+
+Vos fichiers de construction seront générés dans le dossier `dist`.
+
+Vous pouvez construire et prévisualiser votre site statique en utilisant :
+
+```shell
+npm run preview
+```
+
+### Configuration SSG
+
+Le fichier `adapters/static/vite.config.ts` inclut également la configuration SSG, qui sera personnalisée pour chaque implémentation.
+
+#### `origin`
+
+L'URL `origin`, qui est une combinaison du schéma (protocole) et du nom d'hôte (domaine). Par exemple, `https://qwik.builder.io` a le protocole `https://` et le domaine `qwik.builder.io`. Cependant, le `origin` ne comprend pas de `pathname`.
+
+Le `origin` est utilisé pour fournir une URL complète pendant la génération de sites statiques (SSG), et pour simuler une URL complète plutôt qu'un simple `pathname`. Par exemple, afin de rendre une URL de balise canonique correcte ou des URL dans le fichier `sitemap.xml`, l'`origin` doit également être fournie également.
+
+Si le site commence aussi avec un chemin autre que `/`, veuillez utiliser l'option `basePathname` dans les options de configuration de Qwik City.
+
+#### `outDir`
+
+Le `outDir` est un répertoire de sortie du système de fichiers où les fichiers statiques doivent être écrits. Dans l'exemple ci-dessus, il utilise [fileURLToPath](https://nodejs.org/api/url.html#urlfileurltopathurl) de Node pour créer un chemin absolu du système de fichiers pour écrire les fichiers HTML statiques.
+
+### Exécution de Javascript
+
+Pour un projet Javascript, il est assez commun que le runtime de la compilation soit construit au dessus de [Node.js](https://nodejs.org/en/docs/). Cependant, le coeur de la génération de site statique de Qwik City n'est pas lié à l'utilisation de Node.js, c'est pourquoi la fonction `qwikCityGenerate()` est importée de `@builder.io/qwik-city/static/node`. En scopant la fonction generate à un runtime spécifique, comme Node.js, cela donne à Qwik City la flexibilité de générer des SSG à partir d'autres runtimes dans le futur, comme [Deno](https://deno.land/) ou [Bun](https://bun.sh/).
+
+## Routes dynamiques SSG
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
+import type { StaticGenerateHandler } from '@builder.io/qwik-city';
+
+export default component$(() => {
+  const { params } = useLocation();
+
+  return <div>Exemple: {params.id}</div>;
+});
+
+export const onStaticGenerate: StaticGenerateHandler = () => {
+  const ids = [...]; // implémentation du chargement des données d'id
+
+  return {
+    params: ids.map((id) => {
+      return { id };
+    }),
+  };
+};
+```

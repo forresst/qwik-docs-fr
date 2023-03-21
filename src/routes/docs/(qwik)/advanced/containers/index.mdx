@@ -1,0 +1,127 @@
+---
+title: Conteneurs
+contributors:
+  - the-r3aper7
+  - RATIU5
+  - adamdbradley
+  - manucorporat
+  - cunzaizhuyi
+  - Craiqser
+---
+
+# Conteneurs
+
+Chaque application Qwik est contenue dans un élément, généralement l'élément `<html>`. Cet élément devient le conteneur de l'application. Le conteneur est l'élément racine de l'application et tous les composants, l'état et les événements sont contenus à l'intérieur.
+
+```html
+<html q:container="paused" q:version="0.12.1" q:base="/build">
+  ...
+</html>
+```
+
+## Attributs du conteneur
+
+Comme les conteneurs sont implicitement rendus par le moteur d'exécution de Qwik, il n'est pas possible de définir des attributs HTML personnalisés en utilisant JSX, cependant, les APIs de rendu du SSR, comme `renderToString` et `renderToStream`, fournissent l'option `containerAttributes` pour définir des attributs personnalisés :
+
+```tsx
+renderToStream(<Root />, {
+  containerAttributes: {
+    lang: 'en',
+  },
+});
+```
+
+Le code ci-dessus rendra le HTML suivant :
+
+```html
+<html lang="en" q:container="paused" q:version="0.12.1" q:base="/build">
+  ...
+</html>
+```
+
+Dans l'exemple ci-dessus, l'attribut `lang` est ajouté à l'élément conteneur `<html>`.
+
+> Notez que cet attribut ne sera pas réactif, si l'appli a besoin de changer cette valeur dynamiquement, elle devra faire une manipulation manuelle du DOM.
+
+Avec les attributs personnalisés, Qwik rendra automatiquement les attributs `q:container`, `q:version`, `q:render` et `q:base`.
+
+- `q:container` - L'état du conteneur. Cet attribut est utilisé par le moteur d'exécution de Qwik pour déterminer si le conteneur est dans un état de pause ou non. La valeur de cet attribut est soit `paused` soit `resumed`.
+
+- `q:version` - La version du moteur d'exécution de Qwik.
+
+- `q:render` - Indique comment le conteneur a été rendu. La valeur de cet attribut est soit `ssr`, `ssr-dev`, `dom` ou `dom-dev`.
+
+## Propriétés
+
+Comme le moteur d'exécution assure l'isolation entre les conteneurs, plusieurs conteneurs peuvent coexister dans le même document, un conteneur peut même contenir un autre conteneur imbriqué, cette propriété permet aux conteneurs de décomposer une application en petites parties.
+
+- **résumé** : Chaque conteneur peut être résumé indépendamment de tous les autres composants de la page. La possibilité de résumabilité indépendante réduit encore la quantité d'état qui se désérialise lors de la reprise.
+- **mis à jour** : Chaque conteneur peut être mis à jour/remplacé à tout moment en utilisant `innerHTML`. Cela permet de mettre à jour une partie de la page sans forcer la récupération d'un document HTML complet, sans charger ou exécuter le JavaScript.
+- **compilé** : Chaque conteneur peut être compilé et déployé séparément des autres conteneurs. La compilation séparée est particulièrement utile pour les applications à grande échelle et les équipes nombreuses travaillant sur ces applications.
+- **versionné** : Chaque conteneur peut exécuter une version différente du framework Qwik. Permettant la composabilité du site web à partir de nombreux petits conteneurs.
+
+Les conteneurs peuvent être imbriqués dans une arborescence et peuvent communiquer et partager des données. La communication inter-composants nécessite que les composants aient des zones bien définies, que nous appelons protocoles de conteneurs.
+
+```html
+<html q:container="paused" q:version="0.12.1" q:base="/build">
+  <head>
+    <title>Mon application Qwik</title>
+  </head>
+  <body>
+    <header q:container="resumed" q:version="0.11.1" q:base="https://server.a/build">
+      <div>
+        <h1>Il s'agit de l'entête d'un conteneur</h1>
+      </div>
+    </header>
+
+    <footer q:container="paused" q:version="0.13.0" q:base="https://footer.server.b/">
+      <div>
+        <h1>Il s'agit d'un pied de page</h1>
+      </div>
+    </footer>
+  </body>
+</html>
+```
+
+## Conteneurs vs. composants
+
+Les conteneurs ressemblent beaucoup aux composants; quelles sont les différences ? Vous pouvez considérer un conteneur comme un composant plus restreint. Cependant, les composants peuvent faire certaines choses que les conteneurs ne peuvent pas faire.
+
+- Les conteneurs ne peuvent recevoir que des propriétés en lecture seule. Cette restriction est due au fait que les entrées des conteneurs peuvent avoir besoin d'être sérialisées pour les requêtes SSR.
+- Les conteneurs ne connaissent pas la [projection](../../components/projection/index.mdx).
+- Les conteneurs ne peuvent pas modifier l'état qui leur a été transmis.
+
+Les composants ont des restrictions :
+
+- Les composants doivent être compilés ensemble et, par conséquent, partager les mêmes artefacts de bundle et la même version de Qwik.
+- En pause, tous les composants dans le conteneur sont sérialisés ensemble (et ensuite ils sont résumés ensemble).
+
+## Que résolvent les conteneurs ?
+
+Les conteneurs permettent à plusieurs applications Qwik indépendantes de fonctionner sur la page et de se comporter comme une seule application pour l'utilisateur. Il y a deux cas d'utilisation les plus fréquents :
+
+1. Routage
+2. Architecture micro-frontend
+
+### Routage
+
+Un site typique est composé de deux parties logiques :
+
+1. La navigation qui tend à rester constante sur de nombreuses pages.
+2. « _L'outlet_ », qui est la partie de la page qui change en fonction de la route vers laquelle l'utilisateur a navigué.
+
+Nous pouvons modéliser les deux parties comme deux conteneurs, l'un pour la navigation et l'autre pour « _l'outlet_ ». Lorsque l'utilisateur navigue pour la première fois vers une route, le serveur répond avec du HTML, qui contient des conteneurs pour la navigation et « _l'outlet_ ». Lorsque l'utilisateur navigue vers la deuxième route, il y a trois façons de résoudre la navigation :
+
+1. L'approche simpliste consiste à faire un aller-retour complet et charger une page entièrement nouvelle. Le principal inconvénient est que l'application perd tous ses états sur le client.
+2. L'approche classique consiste à traiter toute navigation future en JavaScript. Nous remplaçons le composant de « _l'outlet_ » actuel par le nouveau composant de « _l'outlet_ » et laissons le nouveau composant effectuer le rendu. L'inconvénient est que nous devons charger et exécuter le JavaScript.
+3. L'approche de Qwik traite la navigation et « _l'outlet_ » comme deux conteneurs différents. La première navigation charge le HTML représentant la page complète (avec les deux conteneurs). La navigation suivante récupère le HTML uniquement pour le conteneur de « _l'outlet_ ». Cette approche offre un double avantage. La navigation est rapide (pas de chargement ni d'exécution de JavaScript), et l'application conserve son état dans le conteneur parent.
+
+### Micro-frontend
+
+Lorsqu'une application devient très vaste, il n'est pas réaliste de la considérer comme une application simple. Un meilleur modèle mental est que de nombreuses applications travaillent ensemble pour donner à l'utilisateur l'impression d'une seule application.
+
+Pour les applications de grande taille, les équipes deviennent également importantes. Ces équipes ont généralement des objectifs différents et, par conséquent, des calendriers de publication différents.
+
+Les conteneurs permettent à une grosse équipe de diviser l'application en de nombreuses parties plus petites et de traiter chaque partie comme une unité avec un calendrier de déploiement, de test et de mise à niveau de version distinct.
+
+Les équipes divisent l'application en conteneurs et définissent clairement les protocoles entre les conteneurs. Tant que les protocoles sont respectés, chaque équipe peut déployer les deux conteneurs indépendamment.s

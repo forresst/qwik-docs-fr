@@ -4,7 +4,7 @@ title: Bienvenue sur les tutoriels de Qwik
 
 ### Bienvenue sur Qwik !
 
-Qwik est un framework frontal pour construire des applications [**résumables**](../../../docs/concepts/resumable/index.mdx) qui démarrent **instantanément** sur le client. Qwik réalise ceci en se concentrant sur sa philosophie de **charger et exécuter seulement le code qui est strictement nécessaire** pour effectuer l'action déclenchée par l'utilisateur. Qwik est un framework de chargement différé à grain fin représentant une approche fondamentalement nouvelle de la construction d'applications web.
+Qwik est un framework frontal pour construire des applications [**résumables**](</docs/(qwik)/concepts/resumable/index.mdx>) qui démarrent **instantanément** sur le client. Qwik réalise ceci en se concentrant sur sa philosophie de **charger et exécuter seulement le code qui est strictement nécessaire** pour effectuer l'action déclenchée par l'utilisateur. Qwik est un framework de chargement différé à grain fin représentant une approche fondamentalement nouvelle de la construction d'applications web.
 
 ### Tutoriels de Qwik
 
@@ -12,7 +12,7 @@ Ce qui suit est un ensemble de tutoriels qui vous aideront à démarrer avec Qwi
 
 Les tutoriels sont divisés en plusieurs sections :
 
-- [Introduction à Qwik](../../../tutorial/introduction/component/index.mdx) : Une introduction rapide à Qwik où nous nous concentrons davantage sur la construction d'une application simple avec un pré-rendu côté serveur et une interactivité côté client. Ce tutoriel est conçu pour vous donner une idée de la façon dont les applications Qwik sont construites plutôt que de se concentrer sur les détails des API individuelles.
+- [Introduction](../../../tutorial/introduction/component/index.mdx) : Une introduction rapide à Qwik où nous nous concentrons davantage sur la construction d'une application simple avec un pré-rendu côté serveur et une interactivité côté client. Ce tutoriel est conçu pour vous donner une idée de la façon dont les applications Qwik sont construites plutôt que de se concentrer sur les détails des API individuelles.
 - [Composants](../../component/basic/index.mdx) : Tout sur la déclaration, la liaison et la composition des composants.
 - [Événements](../../events/basic/index.mdx) : Déclarer, lier et déclencher des événements.
 - [Stores](../../store/basic/index.mdx) : Déclaration des stores, liaison des données, réactivité et sérialisation.

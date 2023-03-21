@@ -1,0 +1,418 @@
+---
+title: Le signe dollar $
+contributors:
+  - the-r3aper7
+  - manucorporat
+  - adamdbradley
+  - saikatdas0790
+  - anthonycaron
+  - ubmit
+  - literalpie
+  - forresst
+  - mhevery
+---
+
+# The dollar `$` sign
+
+Qwik divise votre application en plusieurs petits morceaux que nous appelons symboles. Un composant peut être divisé en plusieurs symboles, donc un symbole est plus petit qu'un composant. Le découpage est effectué par l'[Optimiseur de Qwik](../optimizer/index.mdx).
+
+Le suffixe `$` est utilisé pour signaler à la fois à l'optimiseur et au développeur quand cette transformation se produit. En tant que développeur, vous devez comprendre que des règles spéciales s'appliquent chaque fois que vous voyez `$` (tout JavaScript valide n'est pas une transformation valide pour l'Optimiseur de Qwik).
+
+## Implications au moment de la compilation
+
+L'[Optimiseur](../optimizer/index.mdx) fonctionne comme un plugin Vite pendant la création du bundle. L'objectif de l'Optimiseur est de décomposer l'application en de nombreux petits morceaux chargeables de manière différée. L'Optimiseur déplace les expressions (généralement des fonctions) dans de nouveaux fichiers et laisse derrière lui une référence pointant vers l'endroit où l'expression a été déplacée.
+
+Le `$` indique à l'optimiseur les fonctions à extraire dans un fichier séparé et celles à laisser intactes. L'optimiseur ne conserve pas de liste interne de fonctions magiques, il se fie uniquement au suffixe `$` pour savoir quelles fonctions transformer. Le système est extensible et les développeurs peuvent créer leurs propres fonctions `$`, telles que `myCustomFunction$()`.
+
+### Exemple
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  console.log('render');
+  return <p onClick$={() => console.log('hello')}>Hello Qwik</p>;
+});
+```
+
+Le composant ci-dessus est découpé grâce à la syntaxe `$` en :
+
+**app.js**
+
+```js
+import { componentQrl, qrl } from '@builder.io/qwik';
+
+const App = /*#__PURE__*/ componentQrl(
+  qrl(() => import('./app_component_akbu84a8zes.js'), 'App_component_AkbU84a8zes')
+);
+
+export { App };
+```
+
+**app_component_akbu84a8zes.js**
+
+```js
+import { jsx as _jsx } from '@builder.io/qwik/jsx-runtime';
+import { qrl } from '@builder.io/qwik';
+export const App_component_AkbU84a8zes = () => {
+  console.log('render');
+  return /*#__PURE__*/ _jsx('p', {
+    onClick$: qrl(
+      () => import('./app_component_p_onclick_01pegc10cpw'),
+      'App_component_p_onClick_01pEgC10cpw'
+    ),
+    children: 'Hello Qwik',
+  });
+};
+```
+
+**app_component_p_onclick_01pegc10cpw.js**
+
+```js
+export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
+```
+
+## Règles
+
+L'optimiseur utilise `$` comme un indicateur pour extraire le code. Le développeur doit comprendre que l'extraction s'accompagne de contraintes et que des règles spéciales s'appliquent donc chaque fois que le `$` est présent. (Tout code JavaScript valide n'est pas forcément un code valide pour l'optimiseur).
+
+> La pire forme de magie de code est celle qui est invisible pour le développeur.
+
+### Expressions autorisées
+
+Le premier argument de toute fonction qui se termine par `$` a certaines restrictions :
+
+#### 1. littéraux sans identifiants locaux
+
+**Invalide**
+
+```tsx
+const foo = 'foo';
+foo$({ value: foo }); // il contient un identifiant local "foo".
+```
+
+**Invalide**
+
+```tsx
+const bar = 'bar';
+foo$(`Hello, ${bar}`); // il contient un identifiant local "bar"
+```
+
+**Invalide**
+
+```tsx
+const count = 0;
+foo$(count + 1); // il contient un identifiant local "count"
+```
+
+**Valide**
+
+```tsx
+foo$(`Hello, bar`);
+foo$({ value: 'stuff' });
+foo$(1 + 3);
+```
+
+#### 2. Identifiants importables
+
+**Invalide**
+
+```tsx
+const foo = 'foo';
+foo$(foo); // foo n'est pas exporté, il n'est donc pas importable
+```
+
+**Valide**
+
+```tsx
+export const bar = 'bar';
+foo$(bar);
+```
+
+**Valide**
+
+```tsx
+import { bar } from './bar';
+foo$(bar);
+```
+
+#### 3. Closures
+
+Pour les closures, les règles sont un peu plus souples, et les identifiants locaux peuvent être référencés et capturés.
+
+> **REGLE** : Si une fonction capture lexicalement une variable (ou un paramètre), cette variable doit être :
+>
+> 1. un `const` et
+> 2. la valeur doit être sérialisable.
+
+##### 3.1. Les variables capturées doivent être déclarées en tant que `const`.
+
+**Invalide**
+
+```tsx
+component$(() => {
+  let foo = 'value'; // n'est pas une variable const
+  return <div onClick$={() => console.log(foo)}>
+});
+```
+
+**Valide**
+
+```tsx
+component$(() => {
+  const foo = 'value';
+  return <div onClick$={() => console.log(foo)}>
+});
+```
+
+##### 3.2. Les variables locales capturées doivent être sérialisables
+
+**Invalide**
+
+```tsx
+component$(() => {
+  const foo = new MyCustomClass(12); // MyCustomClass n'est pas sérialisable
+  return <div onClick$={() => console.log(foo)}>
+});
+```
+
+**Valide**
+
+```tsx
+component$(() => {
+  const foo = { data: 12 };
+  return <div onClick$={() => console.log(foo)}>
+});
+```
+
+##### 3.3. Les variables déclarées par le module peuvent être importées
+
+> **REGLE** : Si une fonction extraite par l'Optimiseur fait référence à un symbole de niveau supérieur, ce symbole doit être importé ou exporté.
+
+**Valide**
+
+```tsx
+import { foo } from './foo';
+component$(() => {
+  console.log(foo);
+});
+```
+
+**Valide**
+
+```tsx
+export const foo = new MyCustomClass(12);
+component$(() => {
+  console.log(foo);
+});
+```
+
+**Invalide**
+
+```tsx
+// Foo est déclaré au niveau du module, mais il n'est pas exporté.
+const foo = new MyCustomClass(12);
+component$(() => {
+  console.log(foo);
+});
+```
+
+## Étude approfondie
+
+Examinons le problème hypothétique de l'action sur un événement de défilement. Vous serez peut-être tenté d'écrire le code comme ceci :
+
+```tsx
+function onScroll(fn: () => void) {
+  document.addEventListener('scroll', fn);
+}
+
+onScroll(() => alert('scroll'));
+```
+
+Le problème avec cette approche est que le gestionnaire d'événement est chargé par avance, même si l'événement de défilement ne se déclenche jamais. Ce qu'il faut, c'est un moyen de faire référence au code d'une manière permettant un chargement différé.
+
+Le développeur pourrait écrire :
+
+```tsx
+export scrollHandler = () => alert('scroll');
+
+onScroll(() => (await import('./some-chunk')).scrollHandler());
+```
+
+Cela fonctionne mais représente beaucoup de travail. Le développeur doit placer le code dans un fichier différent et coder en dur le nom du morceau. Au lieu de cela, nous utilisons l'Optimiseur pour effectuer le travail pour nous automatiquement. Mais nous avons besoin d'un moyen d'indiquer à l'Optimiseur que nous voulons effectuer un tel refactoring. Nous utilisons `$()` comme fonction de marquage pour cela.
+
+```tsx
+function onScroll(fnQrl: QRL<() => void>) {
+  document.addEventListener('scroll', async () => {
+    const fn = await fnQrl.resolve();
+    fn();
+  });
+}
+
+onScroll($(() => alert('clicked')));
+```
+
+L'Optimiseur générera :
+
+```tsx
+onScroll(qrl('./chunk-a.js', 'onScroll_1'));
+```
+
+`chunk-a.js`:
+
+```tsx
+export const onScroll_1 = () => alert('scroll');
+```
+
+Notice :
+
+1. Tout ce que le développeur a dû faire, c'est envelopper la fonction dans le `$()` pour signaler à l'Optimiseur que la fonction doit être déplacée dans un nouveau fichier et donc chargée de manière différée.
+2. La fonction `onScroll` a dû être implémentée légèrement différemment car il doit prendre en compte le fait que la `QRL` de la fonction doit être chargée avant de pouvoir être utilisée. En pratique, l'utilisation de `QRL.resolve()` est rare dans les applications Qwik car le framework Qwik fournit des API de plus haut niveau qui attendent rarement que le développeur travaille directement avec `QRL.resolve()`.
+
+Cependant, envelopper le code dans `$()` est un peu contraignant. Pour cette raison, on peut utiliser `implicit$FirstArg()` pour effectuer automatiquement le wrapping et la correspondance de type de la fonction prenant le `QRL`. La fonction passée dans `implicit$FirstArg()` doit avoir un suffixe `Qrl`, et le résultat de cette fonction doit être défini comme une valeur avec un suffixe `$`.
+
+```tsx
+const onScroll$ = implicit$FirstArg(onScrollQrl);
+
+onScroll$(() => alert('scroll'));
+```
+
+Le développeur dispose désormais d'une syntaxe simple pour indiquer qu'une fonction particulière doit être chargée de manière différée.
+
+## Extraction de symbole
+
+Supposons que vous ayez ce code :
+
+```tsx
+export const MyComp = component$(() => {
+  /* ma définition du composant */
+});
+```
+
+L'Optimiseur décompose le code en deux fichiers :
+
+Le fichier original :
+
+```tsx
+const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
+```
+
+`chunk-a.js`:
+
+```tsx
+export const MyComp_onMount = () => {
+  /* ma définition du composant */
+};
+```
+
+Le résultat de l'Optimiseur est que la méthode `onMount` de `MyComp` a été extraite dans un nouveau fichier. Il y a quelques avantages à faire cela :
+
+- Un composant Parent peut faire référence à `MyComp` sans avoir besoin des détails d'implémentation de `MyComp`.
+- L'application a maintenant plus de points d'entrée, donnant au bundler plus de moyens de découper la base du code.
+
+## Capturer la portée lexicale
+
+L'Optimiseur extrait les expressions (généralement des fonctions) dans de nouveaux fichiers et laisse derrière lui une `QRL` pointant vers l'emplacement du chargement différé.
+
+Examinons un cas simple :
+
+```tsx
+export const Greeter = component$(() => {
+  return <span>Hello World!</span>;
+});
+```
+
+cela se traduira par :
+
+```tsx
+const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
+```
+
+`chunk-a.js`:
+
+```tsx
+const Greeter_onMount = () => {
+  return qrl('./chunk-b.js', 'Greeter_onRender');
+};
+```
+
+`chunk-b.js`:
+
+```tsx
+const Greeter_onRender = () => <span>Hello World!</span>;
+```
+
+Ce qui précède concerne les cas simples où la closure de la fonction extraite ne capture aucune variable. Examinons un cas plus compliqué où la closure de la fonction extraite capture lexicalement des variables.
+
+```tsx
+export const Greeter = component$((props: { name: string }) => {
+  const salutation = 'Hello';
+
+  return (
+    <span>
+      {salutation} {props.name}!
+    </span>
+  );
+});
+```
+
+La méthode naïve d'extraction des fonctions ne fonctionnera pas.
+
+```tsx
+const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
+```
+
+`chunk-a.js`:
+
+```tsx
+const Greeter_onMount = (props) => {
+  const salutation = 'Hello';
+  return qrl('./chunk-b.js', 'Greeter_onRender');
+};
+```
+
+`chunk-b.js`:
+
+```tsx
+const Greeter_onRender = () => (
+  <span>
+    {salutation} {props.name}!
+  </span>
+);
+```
+
+Le problème est visible dans le fichier `chunk-b.js`. La fonction extraite fait référence à `salutation` et `props`, qui ne sont plus dans la portée lexicale de la fonction. Pour cette raison, le code généré doit être légèrement différent.
+
+`chunk-a.js`:
+
+```tsx
+const Greeter_onMount = (props) => {
+  const salutation = 'Hello';
+  return qrl('./chunk-b.js', 'Greeter_onRender', [salutation, props]);
+};
+```
+
+`chunk-b.js`:
+
+```tsx
+const Greeter_onRender = () => {
+  const [salutation, props] = useLexicalScope();
+
+  return (
+    <span>
+      {salutation} {props.name}!
+    </span>
+  );
+};
+```
+
+Remarquez deux changements :
+
+1. La `QRL` de `Greeter_onMount` stocke maintenant `salutation` et `props`. Cela permet de capturer les constantes à l'intérieur des closures.
+2. La closure générée `Greeter_onRender` a maintenant un préambule qui restaure `salutation` et `props` (`const [salutation, props] = useLexicalScope()`.)
+
+La capacité de l'Optimiseur (et du moteur d'exécution de Qwik) à capturer les constantes lexicalement scopées améliore significativement les fonctions qui peuvent être extraites dans les ressources chargées de manière différée. C'est un outil puissant pour décomposer des applications complexes en petits morceaux chargeables de manière différée.
+
+## Sérialisation
+
+Consultez la [sérialisation](../../concepts/resumable/index.mdx#sérialisation) pour une explication de ce qui est sérialisable.

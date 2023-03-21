@@ -71,36 +71,13 @@ export const Header = component$(() => {
         </button>
         <ul class="lg:grow lg:flex lg:justify-end lg:p-4 menu-toolkit">
           <li>
-            <a href="/docs/overview/" class={{ active: pathname.startsWith('/docs') }}>
+            <a href="/docs/" class={{ active: pathname.startsWith('/docs') }}>
               <span>Docs</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
-            <a href="/qwikcity/overview/" class={{ active: pathname.startsWith('/qwikcity') }}>
-              <span>Qwik City</span> {/* TranslatedToFrench */}
-            </a>
-          </li>
-          <li>
-            <a
-              href="/integrations/integration/overview/"
-              class={{ active: pathname.startsWith('/integrations') }}
-            >
-              <span>Intégrations</span> {/* TranslatedToFrench */}
-            </a>
-          </li>
-          <li>
-            <a href="/community/groups" class={{ active: pathname.startsWith('/community') }}>
-              <span>Communauté</span> {/* TranslatedToFrench */}
-            </a>
-          </li>
-          <li>
-            <a href="/showcase/" class={{ active: pathname.startsWith('/showcase') }}>
-              <span>Galerie</span> {/* TranslatedToFrench */}
-            </a>
-          </li>
-          <li>
-            <a href="/media/" class={{ active: pathname.startsWith('/media') }}>
-              <span>Médias</span> {/* TranslatedToFrench */}
+            <a href="/ecosystem/" class={{ active: pathname.startsWith('/ecosystem') }}>
+              <span>Écosystème</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
@@ -117,6 +94,11 @@ export const Header = component$(() => {
               class={{ active: pathname.startsWith('/tutorial') }}
             >
               <span>Tutoriel</span> {/* TranslatedToFrench */}
+            </a>
+          </li>
+          <li>
+            <a href="/playground/" class={{ active: pathname.startsWith('/playground') }}>
+              <span>Aire de jeu</span> {/* TranslatedToFrench */}
             </a>
           </li>
           <li>
