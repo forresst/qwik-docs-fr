@@ -265,7 +265,7 @@ Le composant `Link` fonctionne comme l'élément d'ancrage `<a>`, mais au lieu d
 
 > Notez que les rechargements de page complète dans Qwik sont extrêmement bon marché, d'autres frameworks abusent des liens SPA parce que, un rechargement de page complète nécessite que le JS s'hydrate et ré-exécute tout. Ce n'est pas le cas pour Qwik. Nous avons trouvé dans nos tests internes que l'utilisation de `<a>` conduit généralement aux interactions les plus rapides.
 
-Sous le capot, le composant `<Link>` utilise l'API [`useNavigate()`](/qwikcity/api/index.mdx#usenavigate) et empêche le comportement par défaut du `<a>` natif :
+Sous le capot, le composant `<Link>` utilise l'API [`useNavigate()`](/docs/(qwikcity)/api/index.mdx#usenavigate) et empêche le comportement par défaut du `<a>` natif :
 
 ```tsx
 import { component$ } from '@builder.io/qwik';

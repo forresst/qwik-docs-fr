@@ -193,21 +193,21 @@ Pour l'exemple donné, les composants Qwik seront rendus dans l'ordre suivant :
 Chaque gestionnaire de requête, tel que `onRequest`, `onGet`, `onPost`, etc., se voit passer un objet `RequestEvent` comme premier argument du gestionnaire. L'objet `RequestEvent` contient des fonctions utilitaires et des propriétés permettant d'obtenir et de définir des valeurs pour la requête et la réponse du serveur. Cet objet contient les propriétés suivantes :
 
 - `basePathname` : Le chemin de base de la requête, qui peut être configuré au moment de la construction. La valeur par défaut est `/`.
-- `cacheControl` : Convenience function to set the [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) response header.
-- `cookie` : HTTP request and response [cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). Use the `get()` method to retrieve a request cookie value. Use the `set()` method to set a response cookie value.
-- `env` : Platform provided environment variables.
-- `error` : When called, the response will immediately end with the given status code. This could be useful to end a response with `404`, and use the 404 handler in the routes directory. See [Status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) for which status code should be used.
-- `getWritableStream` : Low-level access to write to the HTTP response stream. Once `getWritableStream()` is called, the status and headers can no longer be modified and will be sent over the network.
-- `headers` : HTTP [response headers](https://developer.mozilla.org/en-US/docs/Glossary/Response_header).
-- `html` : Convenience method to send an HTML body response. The response will be automatically set the `Content-Type` header to`text/html; charset=utf-8`. An `html()` response can only be called once.
-- `json` : Convenience method to JSON stringify the data and send it in the response. The response will be automatically set the `Content-Type` header to`application/json; charset=utf-8`. A `json()` response can only be called once.
-- `locale` : Which locale the content is in. The locale value can be retrieved from selected methods using `getLocale()`.
-- `method` : HTTP request [method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) value.
-- `next` : Call the next request handler. This is useful for middleware.
-- `params` : URL path params which have been parsed from the current url pathname segments. Use `query` to instead retrieve the query string search params.
-- `parseBody` : This method will check the request headers for a `Content-Type` header and parse the body accordingly. It supports `application/json`, `application/x-www-form-urlencoded`, and `multipart/form-data` content types. If the `Content-Type` header is not set, it will return `null`.
-- `pathname` : URL pathname value. Does not include the protocol, domain, query string (search params) or hash.
-- `platform` : Platform specific data and functions.
+- `cacheControl` : Fonction pratique pour définir l'entête de réponse [Cache-Control](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Cache-Control).
+- `cookie` : Les [cookies](https://developer.mozilla.org/fr/docs/Web/HTTP/Cookies) de requête et de réponse HTTP. Utilisez la méthode `get()` pour récupérer la valeur d'un cookie de requête. Utilisez la méthode `set()` pour définir la valeur d'un cookie de réponse.
+- `env` : Variables d'environnement fournies par la plateforme.
+- `error` : Lorsqu'elle est appelée, la réponse se terminera immédiatement par le code de statut donné. Cela peut être utile pour terminer une réponse par `404`, et utiliser le gestionnaire 404 dans le répertoire des routes. Voir les [Codes de statut](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) pour savoir quel code doit être utilisé.
+- `getWritableStream` : Accès de bas niveau pour écrire dans le flux de réponse HTTP. Une fois que `getWritableStream()` est appelé, le statut et les entêtes ne peuvent plus être modifiés et seront envoyés sur le réseau.
+- `headers` : [Entêtes de réponse](https://developer.mozilla.org/fr/docs/Glossary/Response_header) HTTP.
+- `html` : Méthode pratique pour envoyer un corps de réponse HTML. La réponse définira automatiquement l'entête `Content-Type` à `text/html; charset=utf-8`. Une réponse `html()` ne peut être appelée qu'une seule fois.
+- `json` : Méthode pratique pour transformer les données en chaîne JSON et les envoyer dans la réponse. La réponse définira automatiquement l'entête `Content-Type` à `application/json; charset=utf-8`. Une réponse `json()` ne peut être appelée qu'une seule fois.
+- `locale` : Locale dans laquelle se trouve le contenu. La valeur locale peut être récupérée à partir de méthodes sélectionnées en utilisant `getLocale()`.
+- `method` : Valeur de la [méthode](https://developer.mozilla.org/fr/docs/Web/HTTP/Methods) de la requête HTTP.
+- `next` : Appelle le gestionnaire de requête suivant. Ceci est utile pour le middleware.
+- `params` : Paramètres du chemin de l'URL qui ont été analysés à partir des segments du chemin de l'URL actuelle. Utilisez `query` pour récupérer les paramètres de recherche de la chaîne de requête.
+- `parseBody` : Cette méthode vérifiera les entêtes de la requête pour un entête `Content-Type` et analysera le corps en conséquence. Elle supporte les types de contenu `application/json`, `application/x-www-form-urlencoded` et `multipart/form-data`. Si l'entête `Content-Type` n'est pas défini, elle retournera `null`.
+- `pathname` : Valeur du chemin d'accès à l'URL. Ne comprend pas le protocole, le domaine, la chaîne de requête (paramètres de recherche) ou le hachage.
+- `platform` : Données et fonctions spécifiques à la plateforme.
 - `query` : URL query string [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) value. Use `params` to instead retrieve the route params found in the url pathname.
 - `redirect` : URL to redirect to. When called, the response will immediately end with the correct redirect status and headers. See [Redirects](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections) for which status code should be used.
 - `request` : HTTP [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-- [Vue d'ensemble](</docs/(qwik)/overview/index.mdx>)
+- [Vue d'ensemble](</docs/(qwik)/index.mdx>)
 - [Démarrage](</docs/(qwik)/getting-started/index.mdx>)
 - [Qwik City](</docs/(qwikcity)/qwikcity/index.mdx>)
 - [Structure du projet](</docs/(qwikcity)/project-structure/index.mdx>)
