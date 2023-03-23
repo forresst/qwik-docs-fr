@@ -9,9 +9,9 @@ export default component$<{
   tag: 'main' | 'div';
 }>((props) => {
   if (isDev)
-  return (
-    <div>BUILDER CONTENT DISABLED IN DEV MODE TO MAKE LOCAL DEV POSSIBLE WITHOUT NETWORK</div>
-  );
+    return (
+      <div>LE CONTENU DE BUILDER EST DÉSACTIVÉ EN MODE DÉVELOPPEMENT POUR PERMETTRE LE DÉVELOPPEMENT LOCAL SANS AVOIR BESOIN DE RÉSEAU</div>
+    );
   const location = useLocation();
   const builderContentRsrc = useResource$<any>(({ cache }) => {
     const query = location.url.searchParams;
