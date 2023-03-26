@@ -101,7 +101,7 @@ export const Header = component$(() => {
               <span>Aire de jeu</span> {/* TranslatedToFrench */}
             </a>
           </li>
-{/*           <li>
+{/* AdaptedToFrench          <li>
             <DocSearch
               appId={import.meta.env.VITE_ALGOLIA_APP_ID}
               apiKey={import.meta.env.VITE_ALGOLIA_SEARCH_KEY}

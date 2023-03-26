@@ -10,7 +10,7 @@ export default component$<{
 }>((props) => {
   if (isDev)
     return (
-      <div>LE CONTENU DE BUILDER EST DÉSACTIVÉ EN MODE DÉVELOPPEMENT POUR PERMETTRE LE DÉVELOPPEMENT LOCAL SANS AVOIR BESOIN DE RÉSEAU</div>
+      <div>LE CONTENU DE BUILDER EST DÉSACTIVÉ EN MODE DÉVELOPPEMENT POUR PERMETTRE LE DÉVELOPPEMENT LOCAL SANS AVOIR BESOIN DE RÉSEAU</div> // TranslatedToFrench
     );
   const location = useLocation();
   const builderContentRsrc = useResource$<any>(({ cache }) => {
