@@ -6,7 +6,6 @@
 - [Démarrage](</docs/(qwik)/getting-started/index.mdx>)
 - [Qwik City](</docs/(qwikcity)/qwikcity/index.mdx>)
 - [Structure du projet](</docs/(qwikcity)/project-structure/index.mdx>)
-- [Aide-mémoire React](</docs/(qwik)/cheat/qwik-react/index.mdx>)
 - [FAQ](</docs/(qwik)/faq/index.mdx>)
 
 ## Composant
@@ -37,6 +36,7 @@
 - [Markdown & MDX](</docs/(qwikcity)/guides/mdx/index.mdx>)
 - [SSG](</docs/(qwikcity)/guides/static-site-generation/index.mdx>)
 - [Bonnes pratiques](</docs/(qwik)/cheat/best-practices/index.mdx>)
+- [Aide-mémoire React](</docs/(qwik)/cheat/qwik-react/index.mdx>)
 
 ## Concepts
 

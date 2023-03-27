@@ -72,6 +72,75 @@ export const PreventDefaultExample = component$(() => {
 });
 ```
 
+### Gestion d'événements synchrones
+
+Dans certains cas, il est nécessaire de gérer un événement de manière traditionnelle, car certaines API doivent être utilisées de manière synchrone. Les événements de glisser-déposer, par exemple, ne fonctionneront pas autrement.
+
+Pour ce faire, nous pouvons utiliser un `useVisibleTask` pour ajouter de manière programmatique un écouteur d'événement en utilisant directement l'API DOM.
+
+```tsx
+import { component$, useVisibleTask$ } from '@builder.io/qwik';
+
+export const DragAndDropExample = component$(() => {
+  const elementRef = useSignal<HTMLElement>()
+  useVisibleTask$(({cleanup}) => {
+    if (elementRef.value) {
+      // Utilisez l'API DOM pour ajouter un écouteur d'événement.
+      const listener = (event) => {
+        event.dataTransfer.setData('text/plain', 'Hello World');
+      };
+
+      elementRef.value.addEventListener('dragstart', listener);
+      cleanup(() => {
+        elementRef.value.removeEventListener('dragstart', listener);
+      });
+    }
+  });
+
+  return (
+    <div ref={elementRef}>
+      Drag me!
+    </div>
+  );
+});
+```
+
+> Notez que l'utilisation de `VisibleTask` pour écouter les événements est un anti-modèle dans Qwik qui ajoutera beaucoup de surcharge inutile, ne l'utilisez que lorsque vous n'avez pas d'autre choix. Dans 99% des cas, vous devriez utiliser JSX pour écouter les événements : `<div onClick$={...}>`
+
+
+## Événements et composants
+
+Les composants sont des fonctions, pas des éléments. Comme les événements DOM n'existent pas naturellement, il est possible de définir des événements personnalisés en tant que props.
+
+Voyons maintenant comment déclarer un composant enfant qui peut être utilisé avec des événements comme props.
+
+```tsx
+import { PropFunction, component$ } from '@builder.io/qwik';
+
+interface CmpButtonProps {
+  onClick$?: PropFunction<() => void>;
+}
+
+export const CmpButton = component$((props: CmpButtonProps) => {
+  return (
+    <button onClick$={props.onClick$}>
+      <Slot />
+    </button>
+  );
+});
+```
+
+En ce qui concerne Qwik, passer des évènements à un composant est équivalent à passer des props.
+
+Dans notre exemple, nous déclarons tous les props dans l'interface `CmpButtonProps`. Spécifiquement, remarquez la déclaration `onClick$: PropFunction<() => void>`.
+
+Ensuite, lorsque nous voulons utiliser `<CmpButton>`, nous pouvons faire ce qui suit :
+
+```tsx
+<CmpButton onClick$={() => store.cmpCount++}>{store.cmpCount}</CmpButton>
+```
+
+
 ## Événements de window et de document
 
 Jusqu'à présent, nous avons vu comment écouter les événements qui proviennent des éléments. Il y a des événements (par exemple, `scroll` et `mousemove`) qui nécessitent que nous les écoutions sur `window` ou `document`. Pour cette raison, Qwik autorise les préfixes `document:on` et `window:on` lors de l'écoute des événements.
@@ -105,6 +174,7 @@ Le but de `window:on`/`document:` est d'enregistrer un événement sur un emplac
 
 1. Les événements peuvent être enregistrés de manière déclarative dans votre JSX
 2. Les événements sont automatiquement nettoyés lorsque le composant est détruit (Aucune gestion et aucun nettoyage explicites ne sont nécessaires)
+
 
 ## useOn Hooks
 
@@ -200,133 +270,3 @@ export default component$(() => {
   return <KeyBoard />;
 });
 ```
-
-## Événements et composants
-
-Les composants sont des fonctions, pas des éléments. Comme les événements DOM n'existent pas naturellement, il est possible de définir des événements personnalisés en tant que props.
-
-Voyons maintenant comment déclarer un composant enfant qui peut être utilisé avec des événements comme props.
-
-```tsx
-import { PropFunction, component$ } from '@builder.io/qwik';
-
-interface CmpButtonProps {
-  onClick$?: PropFunction<() => void>;
-}
-
-export const CmpButton = component$((props: CmpButtonProps) => {
-  return (
-    <button onClick$={props.onClick$}>
-      <Slot />
-    </button>
-  );
-});
-```
-
-En ce qui concerne Qwik, passer des évènements à un composant est équivalent à passer des props.
-
-Dans notre exemple, nous déclarons tous les props dans l'interface `CmpButtonProps`. Spécifiquement, remarquez la déclaration `onClick$: PropFunction<() => void>`.
-
-Ensuite, lorsque nous voulons utiliser `<CmpButton>`, nous pouvons faire ce qui suit :
-
-```tsx
-<CmpButton onClick$={() => store.cmpCount++}>{store.cmpCount}</CmpButton>
-```
-
-## Travailler avec des QRL
-
-Examinons une variante de l'implémentation de `<CmpButton>` ci-dessus.
-
-Dans cet exemple, nous souhaitons démontrer le passage de callbacks aux composants. Pour cette raison, nous avons créé un écouteur `onDblclick$` :
-
-```tsx
-import { PropFunction, component$ } from '@builder.io/qwik';
-
-interface CmpButtonProps {
-  onClick$?: PropFunction<() => number>;
-}
-
-export const CmpButton = component$((props: CmpButtonProps) => {
-  return (
-    <button
-      onClick$={props.onClick$}
-      onDblclick$={async () => {
-        const nu = await props?.onClick$();
-        console.log('double clicked', nu);
-      }}
-    >
-      <Slot />
-    </button>
-  );
-});
-```
-
-Remarquez que nous pouvons passer la méthode `props.onClick$` directement à l'attribut `onDblclick$` tel que nous le voyons sur l'élément `<button>` (voir l'attribut `onDblclick$={props.onClick$}`).
-
-Cela s'explique par le fait que l'attribut de saisie `onClick$` ainsi que l'attribut JSX `onDblclick` sont tous deux de type `PropFunction<?>` (et ont tous deux le suffixe `$`).
-
-Cependant, il n'est pas possible de passer `props.onClick$` à `onClick$` car les types ne correspondent pas. (Il en résulterait l'erreur de type : `onClick$={props.onClick$}`).
-
-Au lieu de cela, le `$` est réservé aux closures en ligne. Dans notre exemple, nous aimerions faire `console.log("clicked")` après avoir traité le callback `props.onClick`. Nous pouvons le faire avec la méthode `props.onClick$()`.
-
-Cette méthode permettra :
-
-  1. de charger le code de manière différée
-  2. de restaurer l'état de la closure
-  3. d'appeller la closure
-
-L'opération est asynchrone et renvoie donc une promesse, que nous pouvons résoudre en utilisant l'instruction `await`.
-
-## Récupération de l'état
-
-```tsx
-import { useSignal, component$ } from '@builder.io/qwik';
-
-export const Counter = component$(() => {
-  const count = useSignal(0);
-
-  return <button onClick$={() => count.value++}>{count.value}</button>;
-});
-```
-
-A première vue, il semblerait que Qwik charge simplement de manière différée la fonction `onClick$`. Mais, en regardant de plus près, il est important de réaliser que Qwik charge de manière différée une closure plutôt qu'une fonction.
-
-> Une closure est une fonction qui capture lexicalement l'état à l'intérieur de ses variables. En d'autres termes, les closures portent l'état, alors que les fonctions ne le font pas.
->
-> Pour en savoir plus sur les closures [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures).
-
-Capturer l'état est ce qui permet à une application Qwik de reprendre là où le serveur s'est arrêté parce que la closure récupérée porte l'état de l'application avec elle.
-
-Dans notre cas, la closure `onClick$` capture `store` qui permet à l'application d'incrémenter la propriété `count` sur `click` sans avoir à ré-exécuter l'application entière.
-
-Regardons comment la capture de fermeture fonctionne dans Qwik.
-
-Le HTML généré par le code ci-dessus ressemblerait à quelque chose comme ceci :
-
-```html
-<div>
-  <button q:obj="1" on:click="./chunk-a.js#Counter_button_onClick[0]">0</button>
-</div>
-```
-
-Remarquez que l'attribut `on:click` contient trois informations :
-
-1. `./chunk-a.js` : Le fichier qui doit être chargé de manière différée.
-2. `Counter_button_onClick` : Le symbole qui doit être récupéré à partir du morceau chargé de manière différée.
-3. `[0]` : Un tableau de références de variables capturées lexicalement (état de la closure).
-
-Dans notre cas, `() => store.count++` ne capture que `store`, et donc il ne contient qu'une seule référence `0`.
-
-`0` est un index dans l'attribut `q:obj` qui contient une référence à l'objet sérialisé actuel faisant référence à `store`. (Les mécanismes et la syntaxe exacts sont des détails d'implémentation qui peuvent changer à tout moment).
-
-## Qwikloader
-
-Un petit script JavaScript connu sous le nom de Qwikloader est nécessaire pour permettre aux navigateurs de comprendre la syntaxe de l'attribut `on:click`. Le Qwikloader est petit (environ 1kb) et rapide (environ 5 ms) dans son exécution.
-
-Le script Qwikloader est intégré dans le HTML afin de pouvoir être exécuté rapidement.
-
-Lorsqu'un utilisateur interagit avec l'application, le navigateur déclenche les événements pertinents qui remontent jusqu'au DOM.
-
-A la racine du DOM, le Qwikloader écoute les événements et essaie de localiser l'attribut correspondant `on:<event>`. Si un tel attribut est trouvé, alors la valeur de l'attribut est utilisée pour résoudre l'emplacement où le code peut être téléchargé et ensuite exécuté.
-
-> Consultez [Qwikloader](../../advanced/qwikloader/index.mdx) pour plus de détails.

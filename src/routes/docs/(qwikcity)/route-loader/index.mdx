@@ -6,13 +6,13 @@ contributors:
 
 # `routeLoader$()`
 
-Les routeLoaders permettent aux données de circuler du serveur vers les composants Qwik. Pour cette raison, les routeLoaders de Qwik doivent toujours être inclus dans le contexte de **chargement de données sur le serveur qui sont ensuite consommées par un composant Qwik**, si vous voulez créer un endpoint RESTful, veuillez consulter le guide [endpoints](/docs/(qwikcity)/endpoints/index.mdx) à la place.
+Les route Loaders permettent aux données de circuler du serveur vers les composants Qwik. Pour cette raison, les routeLoaders de Qwik doivent toujours être inclus dans le contexte de **chargement de données sur le serveur qui sont ensuite consommées par un composant Qwik**, si vous voulez créer un endpoint RESTful, veuillez consulter le guide [endpoints](/docs/(qwikcity)/endpoints/index.mdx) à la place.
 
 Ils se comportent comme des fonctions RPC côté serveur qui peuvent être invoquées par les composants Qwik pendant le rendu.
 
 ## Déclaration d'un chargeur
 
-Les routeLoaders ne peuvent être déclarés que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et ils DOIVENT être exportés.
+Les route Loaders ne peuvent être déclarés que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et ils DOIVENT être exportés.
 
 ```tsx
 // src/routes/layout.tsx
@@ -41,7 +41,7 @@ import { component$ } from '@builder.io/qwik';
 
 export const useGetServerTime = routeLoader$(() => {
   return {
-    time: Date.now();
+    time: Date.now(),
   }
 });
 
@@ -71,7 +71,7 @@ import { Footer } from '../components/footer.tsx';
 
 export const useGetServerTime = routeLoader$(() => {
   return {
-    time: Date.now();
+    time: Date.now(),
   }
 });
 
@@ -79,7 +79,7 @@ export default component$(() => {
   const signal = useGetServerTime();
   return (
     <main>
-      <Slot>
+      <Slot />
       <Footer />
     </main>
   );
@@ -109,13 +109,13 @@ import { routeLoader$ } from '@builder.io/qwik-city';
 
 export const useIsLogged = routeLoader$(({cookie}) => {
   return {
-    logged: checkcookie(cookie);
+    logged: checkcookie(cookie),
   }
 });
 
 export const useGetCurrentUser = routeLoader$(({cookie}) => {
   return {
-    user: currentUserFromcookie(cookie);
+    user: currentUserFromcookie(cookie),
   }
 });
 
@@ -152,7 +152,7 @@ export const getServerTime = routeLoader$((ev) => {
   console.log('Request params:', ev.params);
 
   return {
-    time: Date.now();
+    time: Date.now(),
   }
 });
 ```

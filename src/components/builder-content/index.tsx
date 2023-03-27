@@ -8,10 +8,11 @@ export default component$<{
   model: string;
   tag: 'main' | 'div';
 }>((props) => {
-  if (isDev)
+  if (isDev) {
     return (
       <div>LE CONTENU DE BUILDER EST DÉSACTIVÉ EN MODE DÉVELOPPEMENT POUR PERMETTRE LE DÉVELOPPEMENT LOCAL SANS AVOIR BESOIN DE RÉSEAU</div> // TranslatedToFrench
     );
+  }
   const location = useLocation();
   const builderContentRsrc = useResource$<any>(({ cache }) => {
     const query = location.url.searchParams;
