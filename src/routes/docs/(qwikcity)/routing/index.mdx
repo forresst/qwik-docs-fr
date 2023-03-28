@@ -188,7 +188,7 @@ Pour l'exemple donné, les composants Qwik seront rendus dans l'ordre suivant :
 </RootLayout>
 ```
 
-## Request Event
+## Evénement de la requête
 
 Chaque gestionnaire de requête, tel que `onRequest`, `onGet`, `onPost`, etc., se voit passer un objet `RequestEvent` comme premier argument du gestionnaire. L'objet `RequestEvent` contient des fonctions utilitaires et des propriétés permettant d'obtenir et de définir des valeurs pour la requête et la réponse du serveur. Cet objet contient les propriétés suivantes :
 
@@ -208,14 +208,14 @@ Chaque gestionnaire de requête, tel que `onRequest`, `onGet`, `onPost`, etc., s
 - `parseBody` : Cette méthode vérifiera les entêtes de la requête pour un entête `Content-Type` et analysera le corps en conséquence. Elle supporte les types de contenu `application/json`, `application/x-www-form-urlencoded` et `multipart/form-data`. Si l'entête `Content-Type` n'est pas défini, elle retournera `null`.
 - `pathname` : Valeur du chemin d'accès à l'URL. Ne comprend pas le protocole, le domaine, la chaîne de requête (paramètres de recherche) ou le hachage.
 - `platform` : Données et fonctions spécifiques à la plateforme.
-- `query` : URL query string [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) value. Use `params` to instead retrieve the route params found in the url pathname.
-- `redirect` : URL to redirect to. When called, the response will immediately end with the correct redirect status and headers. See [Redirects](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections) for which status code should be used.
-- `request` : HTTP [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
-- `send` : Send a body response. The `Content-Type` response header is not automatically set when using `send()` and must be set manually. A `send()` response can only be called once.
-- `sharedMap` : Shared Map across all the request handlers. Every HTTP request will get a new instance of the shared map. The shared map is useful for sharing data between request handlers.
-- `status` : HTTP response [status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). Sets the status code when called with an argument. Always returns the status code, so calling `status()` without an argument will can be used to return the current status code.
-- `text` : Convenience method to send an text body response. The response will be automatically set the `Content-Type` header to`text/plain; charset=utf-8`. An `text()` response can only be called once.
-- `url` : HTTP request [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL).
+- `query` : Valeur de la chaîne de requête [URLSearchParams](https://developer.mozilla.org/fr/docs/Web/API/URLSearchParams). Utilisez `params` pour récupérer les paramètres de la route trouvés dans le chemin de l'url.
+- `redirect` : URL vers laquelle rediriger. Lorsqu'elle est appelée, la réponse se termine immédiatement avec le statut et les entêtes de redirection corrects. Voir les [Redirections](https://developer.mozilla.org/fr/docs/Web/HTTP/Redirections) pour savoir quel code statut doit être utilisé.
+- `request` : [Requête](https://developer.mozilla.org/fr/docs/Web/API/Request) HTTP (Request).
+- `send` : Envoie un corps de réponse. L'entête de réponse `Content-Type` n'est pas automatiquement défini lors de l'utilisation de `send()` et doit être défini manuellement. Une réponse `send()` ne peut être appelée qu'une seule fois.
+- `sharedMap` : Carte partagée par tous les gestionnaires de requêtes. Chaque requête HTTP obtiendra une nouvelle instance de la carte partagée. La carte partagée est utile pour partager des données entre les gestionnaires de requêtes.
+- `status` : [Code du statut](https://developer.mozilla.org/fr/docs/Web/HTTP/Status) de la réponse HTTP. Définit le code de statut lorsqu'il est appelé avec un argument. Renvoie toujours le code de statut, donc un appel à `status()` sans argument peut être utilisé pour renvoyer le code de statut actuel.
+- `text` : Méthode pratique pour envoyer une réponse texte du corps. La réponse définira automatiquement l'entête `Content-Type` à `text/plain ; charset=utf-8`. Une réponse de `text()` ne peut être appelée qu'une seule fois.
+- `url` : [URL](https://developer.mozilla.org/fr/docs/Web/API/URL) de la requête HTTP.
 
 ## Routage avancé
 

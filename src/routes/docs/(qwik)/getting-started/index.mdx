@@ -67,27 +67,27 @@ Nous utiliserons https://icanhazdadjoke.com comme API pour obtenir une blague al
 
 Tout commence par le service d'une page sur une route particulière. Construisons donc une application simple qui sert une blague aléatoire sur la route `/joke/`. Qwikcity (le méta-framework de Qwik) utilise le routage [basé sur les répertoires](/docs/routing/). Pour débuter :
 
-1. Create a new `index.tsx` file in the `src/routes/joke/` directory in your project. (You will need to create the `joke` directory first.)
-2. Each route's `index.tsx` file must have an `export default component$(...)` so that Qwikcity knows what content to serve. Paste the following content to `src/routes/joke/index.tsx`:
+1. Créez un nouveau fichier `index.tsx` dans le répertoire `src/routes/joke/` de votre projet. (Vous devrez d'abord créer le répertoire `joke`).
+2. Le fichier `index.tsx` de chaque route doit avoir un `export default component$(...)` pour que Qwikcity sache quel contenu servir. Collez le contenu suivant dans `src/routes/joke/index.tsx` :
   ```tsx
   import { component$ } from "@builder.io/qwik";
 
   export default component$(() => {
-    return <div class="section bright">A Joke!</div>;
+    return <div class="section bright">Une blague !</div>;
   });
   ```
-3. Navigate to `http://127.0.0.1:5173/joke/` to see your new page working.
+3. Naviguez vers `http://127.0.0.1:5173/joke/` pour voir votre nouvelle page fonctionner.
 
-NOTE:
-- Your `joke` route default component is surrounded by an existing layout. See [Layout](/docs/layout/) for more details on what layouts are and how to work with them.
-- For more details about how to author components see the [Component API](/docs/(qwik)/components/overview/) section.
+REMARQUE :
+- Le composant par défaut de votre route `joke` est entouré par une mise en page existante. Consultez [Mise en page](/docs/layout/) pour plus de détails sur ce que sont les mises en page et sur la manière de les utiliser.
+- Pour plus de détails sur la création de composants, voir la section [API des composants](/docs/(qwik)/composants/overview/).
 
 
-## Loading Data
+## Chargement des données
 
-A common thing a page does is load data to display to the user. This is performed using [route loaders](/docs/route-loader/).
+L'une des fonctions les plus courantes d'une page est de charger des données pour les afficher à l'utilisateur. Cette opération est réalisée à l'aide de [chargeurs de routes](/docs/route-loader/).
 
-1. Open `src/routes/joke/index.tsx` and add this code:
+1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
   ```tsx
   import { routeLoader$ } from "@builder.io/qwik-city";
 
@@ -102,7 +102,7 @@ A common thing a page does is load data to display to the user. This is performe
     };
   });
   ```
-2. Then add the `useDadJoke()` hook to the `default` component and use the result in the JSX:
+2. Ensuite, ajoutez le hook `useDadJoke()` au composant `default` et utilisez le résultat dans le JSX :
   ```tsx
   export default component$(() => {
     const dadJokeSignal = useDadJoke();
@@ -113,18 +113,18 @@ A common thing a page does is load data to display to the user. This is performe
     );
   });
   ```
-3. Navigate to `http://127.0.0.1:5173/` to see the application running.
+3. Naviguez vers "http://127.0.0.1:5173/" pour voir l'application fonctionner.
 
-What does the above code do?
-- The function passed to `routeLoader$` is invoked on the server eagerly before any component is rendered and is responsible for loading data.
-- The `routeLoader$` returns a use-hook (`useDadJoke`) that can be used in the component to retrieve the server data.
+Que fait le code ci-dessus ?
+- La fonction passée à `routeLoader$` est appelée sur le serveur par anticipation avant qu'un composant ne soit rendu et est responsable du chargement des données.
+- Le `routeLoader$` renvoie un use-hook (`useDadJoke`) qui peut être utilisé dans le composant pour récupérer les données du serveur.
 
-NOTE:
-- The `routeLoader$` is invoked eagerly on the server before any component is rendered, even if its use-hook is not invoked in any component.
-- The `routeLoader$` return type is inferred in the component without the need for any additional type information.
+REMARQUE :
+- Le `routeLoader$` est appelé avec anticipation sur le serveur avant qu'un composant ne soit rendu, même si son use-hook n'est pas appelé dans un composant.
+- Le type de retour du `routeLoader$` est déduit dans le composant sans avoir besoin d'informations supplémentaires sur le type.
 
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.tsx`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
 ```tsx
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
@@ -152,25 +152,25 @@ export default component$(() => {
 </details>
 
 
-## Posting Data to Server
+## Envoi de données au serveur
 
-Previously we used `routeLoader$` to send data from the server to the client. We use [`routeAction$`](/docs/action/) to post (send) data from the client back to the server.
+Précédemment, nous avons utilisé `routeLoader$` pour envoyer des données du serveur au client. Nous utilisons [`routeAction$`](/docs/action/) pour poster (envoyer) des données du client vers le serveur.
 
-NOTE: `routeAction$` is the preferred way to send data to the server because it uses the browser native form API which works even if JavaScript is disabled.
+REMARQUE : `routeAction$` est le meilleur moyen d'envoyer des données au serveur car il utilise l'API du formulaire natif du navigateur qui fonctionne même si JavaScript est désactivé.
 
-To declare an action:
+Pour déclarer une action :
 
-1. Open `src/routes/joke/index.tsx` and add this code:
+1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
   ```tsx
   import {routeAction$, Form} from "@builder.io/qwik-city";
 
   const useJokeVoteAction = routeAction$((props) => {
-    // Leave it as an exercise for the reader to implement this.
+    // Laissons au lecteur le soin de mettre cela en œuvre.
     console.log("VOTE", props);
   });
   ```
 
-2. Update the  `export default` component to use the `useJokeVoteAction` hook. This is done by adding the `<Form>`.
+2. Mettez à jour le `export default` du composant pour qu'il utilise le hook `useJokeVoteAction`. Pour ce faire, ajoutez l'élément `<Form>`.
 
   ```tsx
   export default component$(() => {
@@ -194,19 +194,19 @@ To declare an action:
   ```
 3. Navigate to `http://127.0.0.1:5173/` to see the application running.
 
-What does the above code do?
-- `routeAction$` is used to receive data.
-  - The function passed to `routeAction$` is invoked on the server whenever the form is posted.
-  - The `routeAction$` returns a use-hook (`useJokeVoteAction`) that can be used in the component post the form data.
-- `Form` is a convenience component that wraps the browser's native `<form>` element.
+Que fait le code ci-dessus ?
+- `routeAction$` est utilisé pour recevoir des données.
+- La fonction passée à `routeAction$` est appelée sur le serveur à chaque fois que le formulaire est posté.
+  - La `routeAction$` renvoie un use-hook (`useJokeVoteAction`) qui peut être utilisé dans le composant postant les données du formulaire.
+- `Form` est un composant de commodité qui enveloppe l'élément natif `<form>` du navigateur.
 
-Things to note:
-  - For validation see [zod validation](/docs/action/#zod-validation).
-  - The `routeAction$` works even if JavaScript is disabled.
-  - If JavaScript is enabled the `Form` component will prevent the browser from posting the form and instead post the data using JavaScript and emulate the browser's native form behavior without full refresh.
+À noter :
+- Pour la validation, consultez la [validation de zod](/docs/action/#validation-de-zod).
+  - La `routeAction$` fonctionne même si JavaScript est désactivé.
+- Si JavaScript est activé, le composant `Form` empêchera le navigateur d'afficher le formulaire et affichera à la place les données en utilisant JavaScript et émulera le comportement natif du navigateur sans un rafraîchissement complet.
 
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.tsx`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
 ```tsx
 import { component$ } from "@builder.io/qwik";
 import {
@@ -251,27 +251,27 @@ export default component$(() => {
 ```
 </details>
 
-## Modifying State
+## Modification de l'État
 
-Keeping track of the state and updating UI is core to what applications do. Qwik provides a `useSignal` hook to keep track of the application's state. To learn more see [state management](/docs/components/state/).
+Garder une trace de l'état et mettre à jour l'interface utilisateur est au coeur de ce que font les applications. Qwik fournit un hook `useSignal` pour garder une trace de l'état de l'application. Pour en savoir plus, voir [gestion de l'état](/docs/components/state/).
 
-To declare state:
-1. Declare the component's state using `useSignal()`.
+Pour déclarer l'état :
+1. Déclarer l'état du composant en utilisant `useSignal()`.
    ```tsx
     const isFavoriteSignal = useSignal(false);
    ```
-2. Add a button to the component that will modify the state.
+2. Ajoutez un bouton au composant qui modifiera l'état.
    ```tsx
    <button onClick={() => isFavoriteSignal.value = !isFavoriteSignal.value}>
      {isFavoriteSignal.value ? "❤️" : "🤍"}
    </button>
    ```
 
-NOTE: 
-- Clicking on the button will update the state and the UI will be updated.
+REMARQUE : 
+- En cliquant sur le bouton, l'état est mis à jour et l'interface utilisateur est actualisée.
 
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.tsx`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
 ```tsx
 import { component$, useSignal } from "@builder.io/qwik";
 import {
@@ -320,29 +320,29 @@ export default component$(() => {
 ```
 </details>
 
-## Tasks and Invoking Server Code
+## Tâches et appel au code du serveur
 
-In Qwik, a [task](/docs/components/lifecycle/#use-usetask-when-you-need-to) is work that needs to happen when a state changes. (Similar to an "effect" in other frameworks.) In this example, we will use the task to invoke code on the server.
+Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vous-avez-besoin-de) est un travail qui doit être effectué lorsqu'un état change (similaire à un « effect » dans d'autres frameworks). Dans cet exemple, nous utiliserons la tâche pour appeler du code sur le serveur.
 
-1. Create a new task that tracks the `isFavoriteSignal` state:
+1. Créez une nouvelle tâche qui traque l'état `isFavoriteSignal` :
    ```tsx
     useTask$(({ track }) => {
     });
    ```
-2. Add a `track` call to the re-executed the task on `isFavoriteSignal` state change:
+2. Ajouter un appel à `track` pour ré-exécuter la tâche sur le changement d'état de `isFavoriteSignal` :
    ```tsx
     useTask$(({ track }) => {
       track(isFavoriteSignal);
     });
    ```
-3. Add the work that you want to execute on state change:
+3. Ajoutez le traitement que vous souhaitez exécuter lors d'un changement d'état :
    ```tsx
     useTask$(({ track }) => {
       track(isFavoriteSignal);
       console.log("FAVORITE (isomorphic)", isFavoriteSignal.value);
     });
    ```
-4. If you want to have work happen on the server only, wrap it in `server$()`
+4. Si vous voulez que le traitement se fasse uniquement sur le serveur, mettez-le dans `server$()`
    ```tsx
    useTask$(({ track }) => {
      track(isFavoriteSignal);
@@ -353,13 +353,13 @@ In Qwik, a [task](/docs/components/lifecycle/#use-usetask-when-you-need-to) is w
    });
    ```
 
-NOTE:
-- Notice that the body of `useTask$` is executed on both the server and the client (isomorphic).
-- On SSR server prints `FAVORITE (isomorphic) false` and `FAVORITE (server) false`.
-- When the user interacts with favorite, the client prints `FAVORITE (isomorphic) true` and the server prints `FAVORITE (server) false`.
+REMARQUE :
+- Notez que le corps de `useTask$` est exécuté à la fois sur le serveur et sur le client (isomorphique).
+- Sur le serveur SSR, `FAVORITE (isomorphic) false` et `FAVORITE (server) false` sont affichés.
+- Lorsque l'utilisateur interagit avec favorite, le client affiche `FAVORITE (isomorphic) true` et le serveur imprime `FAVORITE (server) false`.
 
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.tsx`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
 ```tsx
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import {
@@ -415,12 +415,12 @@ export default component$(() => {
 ```
 </details>
 
-## Styling
+## Style
 
-Styling is an important part of any application. Qwik provides a way to associate and scope styles with your component.
+Le style est une partie importante de toute application. Qwik fournit un moyen d'associer et de délimiter les styles avec votre composant.
 
-To add styles:
-1. Create a new file `src/routes/joke/index.css`:
+Pour ajouter des styles :
+1. Créer un nouveau fichier `src/routes/joke/index.css` :
    ```css
    div {
      font-weight: bold;
@@ -430,23 +430,23 @@ To add styles:
      float: right;
    }
    ```
-2. import the styles in `src/routes/joke/index.tsx`:
+2. Importez les styles dans `src/routes/joke/index.tsx` :
    ```tsx
    import STYLES from "./index.css?inline";
    ```
-3. Tell the component to load the styles:
+3. Indiquez au composant de charger les styles :
    ```tsx
    useStylesScoped$(STYLES);
    ```
 
-NOTE:
-- The `?inline` query parameter tells Vite to inline the styles into the component.
-- The `useStylesScoped$` call tells Qwik to associate the styles with the component only (scoping).
-- Styles are only loaded if they are not already inlined as part of SSR and only for the first component.
+REMARQUE :
+- Le paramètre de requête `?inline` indique à Vite d'intégrer les styles dans le composant.
+- L'appel `useStylesScoped$` indique à Qwik d'associer les styles au composant uniquement (portée).
+- Les styles ne sont chargés que s'ils ne sont pas déjà intégrés dans le cadre du SSR et uniquement pour le premier composant.
 
 
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.css`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.css`:</summary>
 ```css
 div {
   font-weight: bold;
@@ -457,7 +457,7 @@ form {
 ```
 </details>
 <details>
-  <summary>CHECKPOINT: `src/routes/joke/index.tsx`:</summary>
+  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
 ```tsx
 import {
   component$,
@@ -520,32 +520,32 @@ export default component$(() => {
 ```
 </details>
 
-## Preview
+## Prévisualisation
 
-We build a very simple application that gave you an overview of key Qwik concepts and API. The application is running in dev mode, which uses hot-module-reloading (HMR) to continuously update the application while changing the code.
+Nous avons construit une application très simple qui vous a donné un aperçu des concepts clés de Qwik et de l'API. L'application fonctionne en mode dev, qui utilise le hot-module-reloading (HMR) pour mettre à jour continuellement l'application tout en changeant le code.
 
-While in dev mode:
-- Each file is loaded individually, which may cause waterfalls in the network tab.
-- There is no speculative loading of bundles, so there may be a delay on the first interaction.
+En mode développement :
+- Chaque fichier est chargé individuellement, ce qui peut provoquer des cascades dans l'onglet réseau.
+- Il n'y a pas de chargement spéculatif des bundles, il peut donc y avoir un délai lors de la première interaction.
 
-Let's create a production build to see how the application will be delivered to the user and how the above is fixed.
+Créons une version de production pour voir comment l'application sera livrée à l'utilisateur et comment le problème ci-dessus est résolu.
 
-To create a preview build:
-1. Run `npm run preview` to create a production build.
+Pour créer une version de prévisualisation :
+1. Exécutez `npm run preview` pour créer une version de production.
 
-NOTE:
-- Your application should have a production build now and be running on a different port.
-- If you interact with the application now, the network tab of the dev tools should show that the bundles are instantly delivered from the [ServiceWorker cache](/docs/advanced/speculative-module-fetching/). 
+REMARQUE :
+- Votre application devrait avoir une version de production et fonctionner sur un port différent.
+- Si vous interagissez avec l'application maintenant, l'onglet réseau des outils de développement devrait montrer que les bundles sont instantanément livrés depuis le [cache du ServiceWorker](/docs/advanced/speculative-module-fetching/). 
 
-## Review
+## Bilan
 
-Congratulations! You have made it through getting started. This overview is intentionally short to get you familiarized with different parts of Qwik. We recommended that you deep dive into the above concepts to learn more. Here are some key takeaways:
+Félicitations ! Vous avez réussi à débuter. Cette vue d'ensemble est intentionnellement courte pour vous familiariser avec les différentes parties de Qwik. Nous vous recommandons de vous plonger dans les concepts ci-dessus pour en savoir plus. Voici quelques points clés à retenir :
 
-- [Project structure](/docs/project-structure/)
-- [Directory-based](/docs/routing/) routing
-- [Component](/docs/(qwik)/components/overview/)
-- [route loaders](/docs/route-loader/)
-- [form actions](/docs/action/) (and [zod validation](/docs/action/#zod-validation))
-- [state management](/docs/components/state/)
-- [tasks](/docs/components/lifecycle/#use-usetask-when-you-need-to)
-- [ServiceWorker cache](/docs/advanced/speculative-module-fetching/)
+- [Structure du projet](/docs/project-structure/)
+- Routage [Basé sur les répertoires](/docs/routing/)
+- [Composant](/docs/(qwik)/components/overview/)
+- [Chargeurs de route](/docs/route-loader/)
+- [Actions de formulaire](/docs/action/) (et [validation de zod](/docs/action/#validation-de-zod))
+- [gestion de l'état](/docs/components/state/)
+- [tâches](/docs/components/lifecycle/#use-usetask-when-you-need-to)
+- [Cache du ServiceWorker](/docs/advanced/speculative-module-fetching/)
