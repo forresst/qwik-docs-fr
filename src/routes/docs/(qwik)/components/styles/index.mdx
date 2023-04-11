@@ -16,6 +16,33 @@ contributors:
 
 # Styles
 
+Qwik n'impose pas d'approche stylistique spécifique, vous pouvez styliser votre application Qwik en utilisant la méthode que vous préférez, telle que CSS, CSS-in-JS, modules CSS...
+
+## Modules CSS
+
+Qwik prend en charge les [Modules CSS](https://github.com/css-modules/css-modules) dès le départ grâce à [Vite](https://vitejs.dev/guide/features.html#css-modules).
+
+Pour utiliser les modules CSS, il suffit de créer un fichier `.module.css`. Par exemple, `MyComponent.module.css` et l'importer dans votre composant.
+
+```css /container/#a title="src/components/MyComponent/MyComponent.module.css"
+.container {
+  background-color: red;
+}
+```
+
+Ensuite, importez le module CSS dans votre composant.
+
+```tsx {2} /styles/ /container/#a title="src/components/MyComponent/MyComponent.tsx"
+import { component$ } from '@builder.io/qwik';
+import styles from './MyComponent.module.css';
+
+export default component$(() => {
+  return <div class={styles.container}>Hello world</div>;
+});
+```
+
+Rappelez-vous que Qwik utilise `class` au lieu de `className` pour les classes CSS.
+
 ## Styles globaux
 
 De nombreuses applis utilisent une feuille de style globale pour effectuer des réinitialisations du navigateur et/ou définir des styles globaux. C'est une bonne pratique, mais il n'est pas recommandé de l'utiliser pour le style de vos composants. Qwik est optimisé pour laisser le navigateur charger seulement les styles qui sont nécessaires pour la vue courante. Si vous utilisez une feuille de style globale, tous les styles seront chargés lors du premier chargement, même s'ils ne sont pas nécessaires pour la vue actuelle.
@@ -30,9 +57,7 @@ import './global.css';
 
 Qwik a un support CSS-in-JS de première classe utilisant [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract), qui fournit une solution css-in-js extrêmement efficace sans aucun temps d'exécution !
 
-**styles.css.ts:**
-
-```tsx
+```tsx title="style.css.ts"
 import { style } from 'styled-vanilla-extract/qwik';
 
 export const blueClass = style({
@@ -43,9 +68,7 @@ export const blueClass = style({
 });
 ```
 
-**component.tsx:**
-
-```tsx
+```tsx title="component.tsx"
 import { component$ } from '@builder.io/qwik';
 import { blueClass } from './styles.css';
 
@@ -60,7 +83,7 @@ npm run qwik add styled-vanilla-extract
 
 Veuillez consulter les [docs de notre intégration officielle](/integrations/styled-vanilla-extract/index.mdx) pour plus d'informations.
 
-**Que penser de emotion ou d'autres librairies CSS-in-JS?** Bien qu'extrêmement populaires, emotion et d'autres librairies CSS-in-JS ne sont pas le meilleur choix pour Qwik. [Elles ne sont pas optimisées pour les performances d'exécution et n'ont pas un bon support de streaming SSR](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), ce qui conduit à une dégradation des performances du serveur et du client.
+> **Que penser de emotion ou d'autres librairies CSS-in-JS?** Bien qu'extrêmement populaires, emotion et d'autres librairies CSS-in-JS ne sont pas le meilleur choix pour Qwik. [Elles ne sont pas optimisées pour les performances d'exécution et n'ont pas un bon support de streaming SSR](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), ce qui conduit à une dégradation des performances du serveur et du client.
 
 ## Composants stylisés
 
@@ -72,9 +95,7 @@ npm run qwik add styled-vanilla-extract
 
 Comme ceci :
 
-**styles.css.ts:**
-
-```tsx
+```tsx title="styles.css.ts"
 import { styled } from 'styled-vanilla-extract/qwik';
 
 export const BlueBox = styled.div`
@@ -85,9 +106,7 @@ export const BlueBox = styled.div`
 `;
 ```
 
-**component.tsx:**
-
-```tsx
+```tsx title="component.tsx"
 import { component$ } from '@builder.io/qwik';
 import { BlueBox } from './styles.css';
 
@@ -96,9 +115,73 @@ export const Cmp = component$(() => {
 });
 ```
 
-## Styles par composant
+## CSS scopé
 
-Qwik fournit un support intégré pour les styles par composant, cette technologie permet à Qwik d'injecter les styles fournis seulement si le composant est utilisé dans la page courante, ceci peut être réalisé en utilisant les hooks `useStyles$()` et `useStylesScoped$()`.
+Pour utiliser le CSS scopé, vous pouvez utiliser le hook `useStyleScoped$()` exporté de `@builder.io/qwik`.
+
+```tsx {4-8} title="src/components/MyComponent/MyComponent.tsx"
+import { component$, useStyleScoped$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  useStyleScoped$(`
+    .container {
+      background-color: red;
+    }
+  `);
+  return <div class="container">Hello world</div>;
+});
+```
+
+Vous pouvez également importer un fichier CSS externe. Pour cela, vous devez ajouter le paramètre de requête `?inline` à l'importation du fichier CSS, et passer l'exportation par défaut du fichier CSS au hook `useStyleScoped$()`.
+
+```css title="src/components/MyComponent/MyComponent.css"
+.container {
+  background-color: red;
+}
+```
+
+```tsx {3,6} title="src/components/MyComponent/MyComponent.tsx"
+import { component$, useStyleScoped$ } from '@builder.io/qwik';
+
+import styles from './MyComponent.css?inline';
+
+export default component$(() => {
+  useStyleScoped$(styles);
+  return <div class="container">Hello world</div>;
+});
+```
+
+
+### `:global()` selector
+
+L'utilisation de `useStylesScoped$` va étendre tous les sélecteurs enfants d'un jeu de règles au composant. Si vous avez besoin de styliser des composants enfants rendus par un `<Slot />`, vous devrez vous affranchir des styles scopés en utilisant le sélecteur `:global()`.
+
+```tsx
+import { useStylesScoped$, component$ } from '@builder.io/qwik';
+
+export const List = component$(() => {
+  useStylesScoped$(`
+    .list {
+      display: flex;
+
+      > :global(*nth-child(3)) {
+        width: 100%
+      }
+    }
+  `);
+
+  return (
+    <div class="list">
+      <Slot />
+    </div>;
+  );
+});
+```
+
+Cela rendra un sélecteur css de `.list.⭐️8vzca0-0 > *:nth-child(3)`, vous permettant de cibler les composants enfants. Cela pourrait être considéré comme l'équivalent de l'utilisation de `::ng-deep` dans Angular.
+
+> Attention, cela peut avoir des effets inattendus qui se répercutent en cascade sur l'arbre des composants.
+
 
 ### `useStyles$()`
 
@@ -125,60 +208,6 @@ export const CmpStyles = component$(() => {
 
 > Notez que pour importer des CSS sous forme de chaîne dans Vite, vous devez ajouter le paramètre de requête `?inline` à l'importation, comme ceci : `import styles from './code-block.css?inline';`
 
-### `useStylesScoped$`
-
-Dans les sections précédentes, nous avons abordé la façon dont les styles peuvent être chargés de manière différée lorsqu'ils sont nécessaires en utilisant le hook [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles).
-Les styles du navigateur sont globaux et s'appliquent à tous les éléments du DOM, pour cette raison, Qwik fournit également un moyen de charger les styles qui sont spécifiques à un composant spécifique. 
-Ceci est réalisé en générant une classe unique pour chaque composant et en insérant cette classe unique dans la feuille de style.
-
-```tsx
-import { useStylesScoped$, component$ } from '@builder.io/qwik';
-import styles from './code-block.css?inline';
-
-export const CmpStyles = component$(() => {
-  useStylesScoped$(styles);
-  return <span class="my-text">Some text</span>;
-});
-```
-
-```css
-// code-block.css
-.my-text {
-  color: blue;
-}
-```
-
-> Veuillez noter que vous devez ajouter `?inline` à votre importation de styles.
-
-### Sélecteur `:global()`
-
-En utilisant `useStylesScoped$`, tous les sélecteurs enfants d'un jeu de règles seront appliqués au composant. Si vous devez donner un style à des composants enfants rendus par un `<Slot />`, vous devrez vous affranchir de la portée des styles en utilisant le sélecteur `:global()`.
-
-```tsx
-import { useStylesScoped$, component$ } from '@builder.io/qwik';
-
-export const List = component$(() => {
-  useStylesScoped$(`
-    .list {
-      display: flex;
-
-      > :global(*nth-child(3)) {
-        width: 100%
-      }
-    }
-  `);
-
-  return (
-    <div class="list">
-      <Slot />
-    </div>;
-  );
-});
-```
-
-Cela rendra un sélecteur css de `.list.⭐️8vzca0-0 > *:nth-child(3)`, vous permettant de cibler les composants enfants. Cela pourrait être considéré comme l'équivalent de l'utilisation de `::ng-deep` dans Angular.
-
-> Attention, cela peut avoir des effets inattendus qui se répercutent en cascade dans votre arborescence de composants.
 
 ## Préprocesseurs
 
@@ -233,7 +262,7 @@ body {
 }
 ```
 
-Consultez notre [documentation sur l'intégration](../../../integrations/integration/tailwind) pour plus d'informations.
+Consultez notre [documentation sur l'intégration](/integrations/postcss/index.mdx) pour plus d'informations.
 
 ## Pourquoi ne pas utiliser les styles en ligne avec la balise `<style>` ?
 

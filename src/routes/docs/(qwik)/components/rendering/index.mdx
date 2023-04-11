@@ -15,79 +15,82 @@ contributors:
 
 # Le rendu
 
-Le rendu est le processus de mise à jour du DOM basé sur
+Le rendu est le processus de mise à jour du DOM basé sur les changements dans l'état de l'application et les templates des composants.
 
-1. les changements dans l'état de l'application
-2. les templates des composants.
+Qwik est unique parce qu'il sait comment rendre les templates dans le désordre de manière asynchrone et fine.
 
-Qwik est unique car il sait comment rendre les templates de manière non ordonnée et asynchrone.
-
-- **De manière non ordonné** : cela signifie que Qwik n'a pas l'obligation que le composant parent ou le composant enfant soit lui aussi rendu pour faire le rendu d'un composant.
-- **Asynchrone** : cela signifie que la fonction `render` de Qwik est consciente qu'elle peut avoir besoin de charger des composants enfants, et donc l'opération de rendu est asynchrone.
-
-Un simple exemplede compteur :
-
-```tsx
-import { component$, useSignal } from '@builder.io/qwik';
-
-export const Counter = component$(() => {
-  const count = useSignal(0);
-
-  return <button onClick$={() => count.value++}>{count.value}</button>;
-});
-```
-
-Une fois rendu, le fragment HTML peut ressembler à quelque chose comme ceci :
-
-```html
-<div>
-  <button q:obj="123" on:click="./chunk-a.js#Counter_button_click[0]">0</button>
-</div>
-```
-
-- Pour une explication de `$`, voir [`$` et les règles de l'Optimiseur](../../advanced/optimizer/index.mdx).
-- Pour une explication de `q:obj`, voir la [sérialisation](../../concepts/resumable/index.mdx).
-- Pour une explication de `on:click`, voir [qwikloader](../../advanced/qwikloader/index.mdx).
 
 ## JSX
 
-Qwik utilise JSX pour exprimer le template du composant. La description de JSX est en dehors de la portée de ce document, mais Qwik JSX devrait vous sembler très familier si vous avez déjà utilisé JSX avec d'autres frameworks. Pour cette raison, nous allons nous concentrer sur les différences de Qwik JSX.
+Tout comme React, Qwik utilise [JSX](https://facebook.github.io/jsx/) pour exprimer le template du composant. Notez que JSX n'est qu'une syntaxe, sous le capot, React et Qwik sont complètement différents. **JSX != VDOM**.
+
+Qwik présente quelques différences par rapport aux autres frameworks JSX :
+
+- Les composants sont toujours déclarés avec la fonction `component$`.
+- Les composants peuvent utiliser le crochet `useSignal` pour créer un état réactif.
+- Les gestionnaires d'événements sont déclarés avec le suffixe `$`.
+- Pour `<input>`, l'événement `onChange` est appelé `onInput$` dans Qwik.
+- Les attributs HTML sont préférés. `class` au lieu de `className`. `for` au lieu de `htmlFor`.
+
+```tsx /component$/#a /onClick$/#b /class/#c
+import { component$, useSignal } from '@builder.io/qwik';
+
+export const MyComponent = component$((props) => {
+  const count = useSignal(0);
+  return (
+    <>
+      <button
+        onClick$={() => {
+          count.value = count.value + props.step;
+        }}
+      >
+        Incrémenter de {props.step}
+      </button>
+      <main
+        class={{
+          even: count.value % 2 === 0, // classe conditionnelle
+          omode: count.value % 2 === 1,
+        }}
+      >
+        <h1>Compteur : {count.value}</h1>
+      </main>
+    </>
+  );
+});
+```
+
 
 ## Le rendu des composants enfants
 
 Qwik charge les composants de manière différée, selon les besoins. Pour minimiser le nombre de composants à charger, Qwik ne descend dans les composants enfants que si les props du composant ont changé.
 
-```tsx
+```tsx {9} /Child/#a
 import { component$, useSignal } from '@builder.io/qwik';
 
 export const Parent = component$(() => {
   const count = useSignal(0);
-  const step = useSignal(1);
 
   return (
     <>
-      <button onClick$={() => (step.value *= -1)}>direction</button>
-      <button onClick$={() => (count.value += step.value)}>{step.value}</button>
-      <Greeter name={'World_' + count.value} />
+      <button onClick$={() => (count.value += 1)}>Incrémenter</button>
+      <Child name={'World_' + count.value} />
     </>
   );
 });
 
-export const Greeter = component$((props: { name: string }) => {
+export const Child = component$((props: { name: string }) => {
   return <span>Hello {props.name}</span>;
 });
 ```
 
-Dans l'exemple ci-dessus, il y a deux boutons :
+> Dans l'exemple ci-dessus, le composant parent transmet une propriété `name` changeante au composant enfant. Le composant Enfant ne sera re-rendu que lorsque les signaux de `count` changeront.
 
-1. Cliquer sur le premier bouton change la direction du compteur (`store.step` bascule entre `+1` et `-1`.). Le changement du `store` nécessite l'exécution de la fonction `OnRender` du composant. Le JSX résultant met à jour le DOM pour afficher `+1` ou `-1`. Cependant, changer la direction ne changera pas les props sur `<Greeter name={'World_' + store.count}/>`. Pour cette raison, Qwik ne descendra pas dans le composant `<Greeter>`, et donc le template de `Greeter` n'a pas besoin d'être chargé ou exécuté. Un tel élagage agressif permet à Qwik de minimiser la quantité de code qui doit être présent pour rendre un composant.
-2. Cliquer sur le second bouton incrémente (ou décrémente) `store.count`. Cela provoque à son tour le changement des props sur `<Greeter name={'World_' + store.count}/>`. Un changement dans les props signifie que Qwik va aussi descendre et rendre `<Greeter>`. Cependant, il est possible que Qwik n'ait pas de référence au composant enfant. Dans ce cas, Qwik va charger de manière différée le composant et continuer le rendu une fois que la fonction de rendu du composant sera disponible.
 
-### Rendu avec `.map()`
+### Rendu d'une liste d'éléments
 
-Dans de nombreux cas, vous voudrez rendre des composants en mappant un tableau dans la fonction de rendu avec `data.map()`. Dans ces cas, il est nécessaire de fournir une clé au premier enfant de la fonction de mappage.
+Dans de nombreux cas, vous voudrez rendre des composants en mappant un tableau dans la fonction de rendu avec `items.map()`. Chaque élément de la liste doit avoir une propriété `key` unique transmise au premier enfant de la fonction de mappage. La propriété `key` doit être une chaîne de caractères ou un nombre et doit être unique dans la liste.
 
-```tsx
+```tsx {6} /data.map/ /key/#a
 import { component$ } from '@builder.io/qwik';
 
 export const Parent = component$(() => {
@@ -103,22 +106,52 @@ export const Parent = component$(() => {
 });
 ```
 
-> note: it is not recommended to use the array's index as the key unless you can guarantee that the data for a given key will always be the same. It is always preferred to use some unique identifier from the data as the key.
+> **Remarque :** il n'est pas recommandé d'utiliser l'index du tableau comme clé, sauf si vous pouvez garantir que les données correspondant à une clé donnée seront toujours les mêmes. Il est toujours préférable d'utiliser un identifiant unique des données comme clé.
+
+### Rendu conditionnel
+
+Le rendu conditionnel s'effectue à l'aide de l'[opérateur ternaire](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) `?`, de l'opérateur `&&` ou simplement à l'aide d'instructions `if`.
+
+```tsx
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  const show = useSignal(false);
+  return (
+    <>
+      <button onClick$={() => show.value = !show.value}>Basculer</button>
+      {show.value ? <h1>Visible</h1> : <h1>Caché</h1>}
+      {show.value && <div>Ne s'affiche que lorsqu'il est visible</div>}
+    </>
+  );
+});
+```
 
 ### `dangerouslySetInnerHTML`
 
 Qwik offre un attribut sur les éléments HTML appelé `dangerouslySetInnerHTML` comme un remplacement pour appeler `innerHTML` sur le DOM. En raison des possibilités de cross-site-scripting (XSS) lors du rendu de contenu non digne de confiance, vous devez utiliser cet attribut pour vous rappeler que cette opération peut être dangereuse.
 
 ```tsx
-<div dangerouslySetInnerHTML={content}></div>
+<div dangerouslySetInnerHTML={htmlString}></div>
 ```
 
-## `render()` est asynchrone
+## Rendu asynchrone
 
-Les exemples ci-dessus montrent pourquoi le processus de rendu doit être asynchrone. Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.
+Il est important que la chaîne du rendu puisse charger de manière différée les composants enfants. Le chargement différé est une opération asynchrone, par conséquent, le rendu doit être asynchrone. En pratique, cela signifie que la fonction `render()` renvoie une promesse.
 
 La plupart des frameworks de la génération actuelle ont un processus `render()` synchrone. Le rendu synchrone ne peut pas facilement gérer le chargement asynchrone du code, donc le rendu synchrone nécessite que tous les composants dépendants soient par avance présents avant que le rendu puisse commencer.
 
-## Mise en mémoire des mises à jour du DOM
+## Rendu groupé
 
-La nature asynchrone de `render()` signifie que les utilisateurs peuvent voir un rendu intermédiaire de l'interface utilisateur pendant le chargement des composants. Voir un état intermédiaire n'est pas souhaitable, par conséquent, Qwik mettra en mémoire toutes les mises à jour du DOM et ne purgera les opérations du DOM que lorsque tous les composants auront été chargés et leurs fonctions JSX exécutées. Ainsi, l'interface utilisateur sera mise à jour comme une opération atomique, et l'utilisateur ne verra pas les étapes intermédiaires.
+Chaque fois que l'état de l'application change, Qwik planifie une opération de rendu. L'opération de rendu sera programmée pour s'exécuter après une macro-tâche (par exemple `setTimeout(0)`). Cela permet à l'application de regrouper plusieurs changements d'état en une seule opération de rendu.
+
+De plus, en raison de la nature asynchrone de Qwik, toutes les écritures du DOM sont mises en mémoire tampon et ne sont vidées qu'une fois que tous les composants ont été chargés et que leurs fonctions JSX ont été exécutées. Le résultat est que l'interface utilisateur sera mise à jour comme une opération atomique, et l'utilisateur ne verra pas les étapes intermédiaires, même si l'application est lente à rendre.
+
+L'objectif final est de permettre un rendu performant et cohérent, même dans le contexte d'un état changeant rapidement et d'un réseau lent.
+
+## Réactivité fine
+
+Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l'état seront mis à jour. Il s'agit d'un gain de performance important pour deux raisons :
+
+1. Moins de code à exécuter signifie que les mises à jour de l'application s'effectuent plus rapidement.
+2. Moins de code à exécuter signifie souvent que le code ne doit pas être chargé au démarrage de l'application (ou jamais).

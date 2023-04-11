@@ -37,9 +37,7 @@ export default component$(() => {
 
 Le composant ci-dessus est découpé grâce à la syntaxe `$` en :
 
-**app.js**
-
-```js
+```js title="app.js"
 import { componentQrl, qrl } from '@builder.io/qwik';
 
 const App = /*#__PURE__*/ componentQrl(
@@ -49,9 +47,7 @@ const App = /*#__PURE__*/ componentQrl(
 export { App };
 ```
 
-**app_component_akbu84a8zes.js**
-
-```js
+```js title="app_component_akbu84a8zes.js"
 import { jsx as _jsx } from '@builder.io/qwik/jsx-runtime';
 import { qrl } from '@builder.io/qwik';
 export const App_component_AkbU84a8zes = () => {
@@ -66,9 +62,7 @@ export const App_component_AkbU84a8zes = () => {
 };
 ```
 
-**app_component_p_onclick_01pegc10cpw.js**
-
-```js
+```js title="app_component_p_onclick_01pegc10cpw.js"
 export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 ```
 
@@ -87,8 +81,8 @@ Le premier argument de toute fonction qui se termine par `$` a certaines restric
 **Invalide**
 
 ```tsx
-const foo = 'foo';
-foo$({ value: foo }); // il contient un identifiant local "foo".
+const bar = 'bar';
+foo$({ value: bar }); // il contient un identifiant local "bar".
 ```
 
 **Invalide**
@@ -258,9 +252,7 @@ L'Optimiseur générera :
 onScroll(qrl('./chunk-a.js', 'onScroll_1'));
 ```
 
-`chunk-a.js`:
-
-```tsx
+```tsx title="chunk-a.js"
 export const onScroll_1 = () => alert('scroll');
 ```
 
@@ -297,9 +289,7 @@ Le fichier original :
 const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
 ```
 
-`chunk-a.js`:
-
-```tsx
+```tsx title="chunk-a.js"
 export const MyComp_onMount = () => {
   /* ma définition du composant */
 };
@@ -328,17 +318,13 @@ cela se traduira par :
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
 ```
 
-`chunk-a.js`:
-
-```tsx
+```tsx title="chunk-a.js"
 const Greeter_onMount = () => {
   return qrl('./chunk-b.js', 'Greeter_onRender');
 };
 ```
 
-`chunk-b.js`:
-
-```tsx
+```tsx title="chunk-b.js"
 const Greeter_onRender = () => <span>Hello World!</span>;
 ```
 
@@ -362,18 +348,14 @@ La méthode naïve d'extraction des fonctions ne fonctionnera pas.
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
 ```
 
-`chunk-a.js`:
-
-```tsx
+```tsx title="chunk-a.js"
 const Greeter_onMount = (props) => {
   const salutation = 'Hello';
   return qrl('./chunk-b.js', 'Greeter_onRender');
 };
 ```
 
-`chunk-b.js`:
-
-```tsx
+```tsx title="chunk-b.js"
 const Greeter_onRender = () => (
   <span>
     {salutation} {props.name}!
@@ -383,18 +365,14 @@ const Greeter_onRender = () => (
 
 Le problème est visible dans le fichier `chunk-b.js`. La fonction extraite fait référence à `salutation` et `props`, qui ne sont plus dans la portée lexicale de la fonction. Pour cette raison, le code généré doit être légèrement différent.
 
-`chunk-a.js`:
-
-```tsx
+```tsx title="chunk-a.js"
 const Greeter_onMount = (props) => {
   const salutation = 'Hello';
   return qrl('./chunk-b.js', 'Greeter_onRender', [salutation, props]);
 };
 ```
 
-`chunk-b.js`:
-
-```tsx
+```tsx title="chunk-b.js"
 const Greeter_onRender = () => {
   const [salutation, props] = useLexicalScope();
 

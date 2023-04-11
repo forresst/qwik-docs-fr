@@ -10,8 +10,7 @@ Parfois, vous souhaitez rediriger un utilisateur de la page actuelle vers une au
 
 Disons qu'un utilisateur essaie d'accéder à une page de tableau de bord mais qu'il ne s'est pas encore connecté. Nous voulons qu'il soit redirigé vers une page de connexion afin qu'il puisse s'authentifier.
 
-```tsx
-// Fichier : src/routes/dashboard.js
+```tsx title="src/routes/dashboard.tsx"
 import { component$ } from '@builder.io/qwik';
 import { checkAuthorization } from '../auth'; // Your authorization code
 import type { DashboardData } from '../types'; // Your types

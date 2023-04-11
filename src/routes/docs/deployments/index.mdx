@@ -1,0 +1,37 @@
+---
+title: Déploiements
+contributors:
+  - adamdbradley
+  - samijaber
+  - reemardelarosa
+---
+
+# Déploiements
+
+Lorsqu'il est temps de déployer votre application, Qwik est livré avec une intégration prête à l'emploi qui rend cela très facile !
+
+```shell
+npm run qwik add
+```
+
+## Adaptateurs et middleware
+
+Le middleware de Qwik City est un code qui connecte le framework de rendu du serveur (tel que Cloudflare, Netlify, Vercel, Express etc.) avec le meta-framework de Qwik City.
+
+## Construction de la production
+
+Lorsqu'une nouvelle intégration est ajoutée au projet, un script `build.server` est ajouté au fichier `package.json`. Ce script est utilisé pour construire le projet pour la production.
+
+La seule chose que vous devez faire est d'exécuter la commande suivante :
+
+```shell
+npm run build
+```
+
+> Sous le capot, le script `build` exécutera les scripts `build.server` et `build.client`.
+
+## Avancé
+
+L'utilitaire `requestHandler()` est ce que chacun des bundles ci-dessus utilise afin de traduire leur requête/réponse dans un format standard pour Qwik City. Cette fonction peut être utilisée pour fournir un middleware pour des frameworks de serveur spécifiques.
+
+S'il y a un middleware manquant et que vous souhaitez l'ajouter, jetez un oeil à la façon dont l'utilitaire `requestHandler()` est utilisé pour gérer les requêtes pour chacun des codes sources de middleware ci-dessus. Mieux encore, nous serions ravis d'avoir vos contributions au middleware ! [Les PR sont les bienvenues](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware) !

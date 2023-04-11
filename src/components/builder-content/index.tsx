@@ -1,24 +1,21 @@
 import { component$, Resource, useResource$ } from '@builder.io/qwik';
-import { isDev } from '@builder.io/qwik/build';
 import { useLocation } from '@builder.io/qwik-city';
 import { getBuilderSearchParams, getContent, RenderContent } from '@builder.io/sdk-qwik';
+import { QWIK_MODEL } from '../../constants';
 
 export default component$<{
   apiKey: string;
   model: string;
   tag: 'main' | 'div';
 }>((props) => {
-  if (isDev) {
-    return (
-      <div>LE CONTENU DE BUILDER EST DÉSACTIVÉ EN MODE DÉVELOPPEMENT POUR PERMETTRE LE DÉVELOPPEMENT LOCAL SANS AVOIR BESOIN DE RÉSEAU</div> // TranslatedToFrench
-    );
-  }
   const location = useLocation();
   const builderContentRsrc = useResource$<any>(({ cache }) => {
     const query = location.url.searchParams;
     const render =
       typeof query.get === 'function' ? query.get('render') : (query as { render?: string }).render;
-    const isSDK = render === 'sdk';
+    const contentId =
+      props.model === QWIK_MODEL ? render?.match(/^([\w\d]{32})$/)?.pop() : undefined;
+    const isSDK = render === 'sdk' || !!contentId;
     cache('immutable');
     if (isSDK) {
       return getCachedValue(
@@ -28,7 +25,13 @@ export default component$<{
           options: getBuilderSearchParams(query),
           userAttributes: {
             urlPath: location.url.pathname,
+            site: 'qwik.builder.io',
           },
+          ...(contentId && {
+            query: {
+              id: contentId,
+            },
+          }),
         },
         getContent
       );
@@ -76,12 +79,8 @@ export function getCachedValue<T>(
   });
   const cacheValue = CACHE.get(keyString);
   if (cacheValue && cacheValue.timestamp + cacheTime > now) {
-    // eslint-disable-next-line no-console
-    isDev && console.log('cache hit', keyString);
     return cacheValue.content;
   } else {
-    // eslint-disable-next-line no-console
-    isDev && console.log('cache miss', keyString);
     const content = factory(key);
     CACHE.set(keyString, { timestamp: now, content });
     return content;

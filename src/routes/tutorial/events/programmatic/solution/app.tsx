@@ -6,5 +6,5 @@ export default component$(() => {
     $(() => alert('Hello World!'))
   );
 
-  return <div>Composant App. Cliquez-moi.</div>;
+  return <p>Composant App. Cliquez-moi.</p>;
 });

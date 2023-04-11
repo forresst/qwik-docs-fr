@@ -11,6 +11,7 @@ contributors:
   - kerbelp
   - shairez
 ---
+import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 # Contexte
 
@@ -22,83 +23,47 @@ L'API du contexte de Qwik est composée de 3 méthodes, importables depuis `@bui
 - [`useContextProvider(ctx: ContextId, value: VALUE): void`](#usecontextprovider)
 - [`useContext(ctx: ContextId): VALUE`](#usecontext)
 
-### Exemple
-
-Créons un contexte global qui contient l'état du thème utilisé par l'utilisateur et qui peut être accédé par n'importe quel composant dans l'arbre des composants. Ici, le fichier `root.tsx` agira comme le composant `Parent` et les autres fichiers/pages seront les composants `Child`.
-
-En même temps, le composant Child effectue le rendu d'un bouton et d'une balise `h2`, créant ainsi un abonnement réactif qui sera rendu à nouveau lorsque le Child modifiera la valeur dans le gestionnaire de clic : `<button onClick$={() => { themeStore.theme = 'dark' }}>`.
-
-```tsx
-// fichier : src/root.tsx
+<CodeSandbox src="/src/routes/demo/context/minimal/index.tsx" style={{ height: '6em' }}>
+```tsx /createContextId/#a /useContext/#b /useContextProvider/#c
+import { type Signal, component$, useSignal } from '@builder.io/qwik';
 import {
-  component$,
-  useSignal,
   useContext,
   useContextProvider,
   createContextId,
-  useStylesScoped$
 } from '@builder.io/qwik';
 
-export type Theme = 'dark' | 'light';
-
-// Crée un nouveau descripteur de contexte
-export const ThemeContext = createContextId<Theme>('io.builder.qwik.docs.theme-context');
+export const ThemeContext = createContextId<Signal<string>>(
+  'docs.theme-context'
+);
 
 export default component$(() => {
-  // Création d'un stockage réactif 
-  const themeStore = useSignal<Theme>('dark');
-
-  // Attribution d'une valeur (état) au contexte (ThemeContext)
-  useContextProvider(ThemeContext, themeStore)
-
-  return (
-    // configuration par défaut
-    ...
-  );
-});
-
-// fichier : src/components/header/header.tsx
-export default component$(() => {
-
-  // Obtenir une référence de l'état en utilisant le ThemeContext
-  const theme = useContext(ThemeContext);
-
-  useStylesScoped$(`
-    .dark {
-      color: white;
-      background: black;
-    };
-    .white {
-      color: black;
-      background: white;
-    }
-  `);
-
+  const theme = useSignal('dark');
+  useContextProvider(ThemeContext, theme);
   return (
     <>
-      <h1 class={theme.value}>
-        {theme.value === 'dark' ? 'Bienvenue dans le côté obscur' : 'Ce composant est avec le thème clair'}
-      </h1>
       <button
-        onClick$={() => {
-          theme.value == 'light'
-            ? (theme.value = 'dark')
-            : (theme.value = 'light');
-        }}
+        onClick$={() =>
+          (theme.value = theme.value == 'dark' ? 'light' : 'dark')
+        }
       >
-        Changer le thème
+        Flip
       </button>
+      <Child />
     </>
   );
 });
 
+const Child = component$(() => {
+  const theme = useContext(ThemeContext);
+  return <div>Le thème est {theme.value}</div>;
+});
 ```
+</CodeSandbox>
 
-Examinons de plus près toutes les API concernées :
 
-## API
+Dans l'exemple ci-dessus, nous créons un `ContextId` avec le nom `docs.theme-context` et nous l'utilisons pour fournir un `useSignal` au composant `Parent`. Le composant `Child` utilise alors la méthode `useContext` pour obtenir le `useSignal` et rendre la valeur.
 
-### `createContextId()`
+## `createContextId()`
 
 Cette méthode est utilisée pour créer un nouveau `ContextId`.
 
@@ -110,23 +75,21 @@ export interface GenericType {
 export const QwikCityContext = createContextId<GenericType>(name: string): ContextId<GenericType>;
 ```
 
-#### Paramètres
+### Paramètres
 
 - `name` : c'est une chaîne unique donnée à `createContextId` comme identifiant du contexte. Cela évitera les conflits lorsqu'il y a plusieurs contextes. Il est conseillé d'utiliser une convention de nommage comme `io.builder.qwik.city`.
 
-#### Retours
+### Retours
 
 Remarquez que la valeur retournée par `createContextId()` ne contient aucun état, c'est un objet immuable c'est-à-dire `{ id : 'io.builder.qwik.city' }`. Elle est seulement utilisée pour décrire le nom et le type du contexte, comme une adresse ou un identifiant.
 
 Puisqu'il ne contient aucun état, il est possible de l'appeler et d'en faire un singleton, exporté dans un module partagé.
 
-### `useContextProvider()`
+## `useContextProvider()`
 
-- Cette méthode est utilisée pour créer un Contexte pour un composant spécifique et ses descendants, en utilisant le `ContextId` comme identifiant clé du contexte.
+Cette méthode est utilisée pour créer un Contexte pour un composant spécifique et ses descendants, en utilisant le `ContextId` comme identifiant clé du contexte.
 
-- Comme toutes les méthodes [`use-`](/docs/(qwik)/components/lifecycle/index.mdx#use-method-rules), elle est utilisée à la racine du [`component$()`](/docs/(qwik)/components/overview/index.mdx#component).
-
-```tsx
+```tsx {9, 10, 11} /QwikCityContext/#a /PlainArrayContext/#b /AppNameContext/#c title="src/components/Parent.tsx"
 import { component$, useStore, useContextProvider } from '@builder.io/qwik';
 
 export const Parent = component$(() => {
@@ -136,34 +99,30 @@ export const Parent = component$(() => {
   });
 
   useContextProvider(QwikCityContext, qwikCityObject);
-
   useContextProvider(PlainArrayContext, [1, 2, 3])
-
   useContextProvider(AppNameContext, "My Qwik App")
 
   return (
-    <>
-      <Children />
-    </>
+    <Children />
   );
 });
 ```
 
-#### Paramètres
+### Paramètres
 
 - `ContextId` : Un Contexte précédemment créé doit être fourni qui servira d'identifiant pour les données fournies (deuxième paramètre).
 
 - `data` : vous pouvez fournir n'importe quel type de données comme celles de Qwik useSignal, useStore, Array, Objects.
 
-#### Mises en garde
+### Mises en garde
 
 - La valeur fournie ne sera pas disponible globalement dans l'ensemble de l'arbre de rendu, mais seulement pour les composants descendants de l'arbre.
 
-### `useContext()`
+## `useContext()`
 
 Cette méthode est utilisée pour obtenir la valeur de `Context` qui est **fourni** par le composant parent.
 
-```tsx
+```tsx {4,5,6} /useContext/ /QwikCityContext/#a /PlainArrayContext/#b /AppNameContext/#c title="src/components/Children.tsx"
 import { component$, useContext } from '@builder.io/qwik';
 
 export const Children = component$(() => {
@@ -172,9 +131,7 @@ export const Children = component$(() => {
   const appName = useContext(AppNameContext);
 
   return (
-    <>
-      <div>Les composants enfants peuvent utiliser n'importe laquelle des valeurs fournies, telles que {appName}</div>
-    </>
+    <div>Les composants enfants peuvent utiliser n'importe laquelle des valeurs fournies, telles que {appName}</div>
   );
 });
 ```

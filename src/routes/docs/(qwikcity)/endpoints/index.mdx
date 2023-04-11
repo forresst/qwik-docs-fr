@@ -12,132 +12,329 @@ contributors:
 
 Les endpoints sont des fichiers `index.ts` dans le répertoire `src/routes` qui n'exportent pas de composant `default`. À la place, il exporte une fonction `onRequest`, `onGet`, `onPost`, `onPut`, `onDelete`, `onPatch`, `onHead`, qui sera utilisée pour traiter la requête entrante.
 
-L'utilisation principale des endpoints est de créer une API RESTful pour votre application, ou un gestionnaire HTTP qui est rendu par Qwik.
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
 
-```ts
-import type { RequestHandler } from '@builder.io/qwik-city';
-
-// Appelé par chaque requête HTTP (quelle que soit la méthode)
-export const onRequest: RequestHandler = async (ev) => { ... }
-
-// Appelé lorsque la méthode HTTP est POST
-export const onPost: RequestHandler = async (ev) => { ... }
-
-// Appelé lorsque la méthode HTTP est PUT
-export const onPut: RequestHandler = async (ev) => { ... }
-
-// Appelé lorsque la méthode HTTP est PATCH
-export const onPatch: RequestHandler = async (ev) => { ... }
-
-// Appelé lorsque la méthode HTTP est DELETE
-export const onDelete: RequestHandler = async (ev) => { ... }
+// Called when the HTTP method is GET
+export const onGet = async (requestEvent: RequestEvent) => {
+  // Respond with a JSON object
+  requestEvent.json(200, { hello: 'world' });
+}
 ```
 
-Ces fonctions sont exécutées en fonction de la [méthode HTTP](https://developer.mozilla.org/fr/docs/Web/HTTP/Methods) utilisée pour cette route.
+Les endpoints sont utiles lorsque vous devez exposer une API externe, par exemple une API RESTful ou une API GraphQL, par une entité externe telle qu'une application mobile ou un service tiers.
+
+```ts
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+// Appelé par chaque requête HTTP (quelle que soit la méthode)
+export const onRequest = async (requestEvent: RequestEvent) => { ... }
+
+// Appelé lorsque la méthode HTTP est GET
+export const onGet = async (requestEvent: RequestEvent) => { ... }
+
+// Appelé lorsque la méthode HTTP est POST
+export const onPost = async (requestEvent: RequestEvent) => { ... }
+
+// Appelé lorsque la méthode HTTP est PUT
+export const onPut = async (requestEvent: RequestEvent) => { ... }
+
+// Appelé lorsque la méthode HTTP est PATCH
+export const onPatch: = async (requestEvent: RequestEvent) => { ... }
+
+// Appelé lorsque la méthode HTTP est DELETE
+export const onDelete = async (requestEvent: RequestEvent) => { ... }
+```
+
+## Endpoints vs server$
+
+Les endpoints sont des API de bas niveau qui donnent aux développeurs un contrôle total sur la réponse HTTP. Ils ne sont recommandés que lorsque vous devez créer une API qui sera consommée par une entité externe telle qu'une application mobile ou un service tiers.
+
+Les fonctions `server$` sont généralement une meilleure option lorsque vous avez besoin d'exécuter du code sur le serveur et de renvoyer une réponse à l'application. Les fonctions `server$` sont fortement typées et fournissent une API plus pratique pour renvoyer des données.
 
 ## Contrôle de la réponse brute
 
-Les endpoints sont des routes qui ne rendent aucune page Qwik, mais qui vous permettent d'avoir un contrôle total sur la réponse HTTP. Du changement du code de statut à l'ajout d'entêtes, et même l'envoi d'un corps de réponse brut.
+Les endpoints donnent aux développeurs un contrôle total sur la réponse HTTP. Cela permet aux endpoints de mettre en œuvre des API RESTful, JSON, XML, des API GraphQL, des proxies inversées ou tout autre type d'API.
+
+Toutes les fonctions de endpoint reçoivent un objet `RequestEvent`, qui contient la requête HTTP et les informations de réponse.
+
+```ts
+export interface RequestEvent {
+  /**
+   * Entêtes de réponse HTTP.
+   *
+   * https://developer.mozilla.org/fr/docs/Glossary/Response_header
+   */
+  readonly headers: Headers;
+
+  /**
+   * Cookie de requête et de réponse HTTP. Utilisez la méthode `get()` pour récupérer la valeur d'un cookie de requête.
+   * Utilisez la méthode `set()` pour définir la valeur d'un cookie de réponse.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/HTTP/Cookies
+   */
+  readonly cookie: Cookie;
+
+  /**
+   * Méthode de requête HTTP.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/HTTP/Methods
+   */
+  readonly method: string;
+
+  /**
+   * Chemin d'accès à l'URL. Ne comprend pas le protocole, le domaine, la chaîne de requête (paramètres de recherche) ou le hachage.
+   *
+   * https://developer.mozilla.org/en-US/docs/Web/API/URL/pathname
+   */
+  readonly pathname: string;
+
+  /**
+   * Les paramètres du chemin de l'URL qui ont été analysés à partir des segments du chemin de l'URL actuelle.
+   * Utilisez `query` pour récupérer les paramètres de recherche de la chaîne de requête.
+   */
+  readonly params: Readonly<Record<string, string>>;
+
+  /**
+   * Chaînes de requête d'URL (paramètres de recherche d'URL).
+   * Utilisez `params` pour récupérer les paramètres de la route trouvés dans le chemin de l'URL.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/API/URLSearchParams
+   */
+  readonly query: URLSearchParams;
+
+  /**
+   * URL de la requête HTTP.
+   */
+  readonly url: URL;
+
+  /**
+   * Le chemin de base de la requête, qui peut être configuré au moment de la construction.
+   * La valeur par défaut est `/`.
+   */
+  readonly basePathname: string;
+
+  /**
+   * Informations sur la requête HTTP.
+   */
+  readonly request: Request;
+
+  /**
+   * Données et fonctions spécifiques de la plateforme
+   */
+  readonly platform: PLATFORM;
+
+  /**
+   * Variables d'environnement fournies par la plateforme.
+   */
+  readonly env: EnvGetter;
+
+  /**
+   * Carte partagée par tous les gestionnaires de requêtes. Chaque requête HTTP obtiendra une nouvelle instance de
+   * la carte partagée. La carte partagée est utile pour partager des données entre les gestionnaires de requêtes.
+   */
+  readonly sharedMap: Map<string, any>;
+
+  /**
+   * Cette méthode vérifiera les entêtes de la requête pour une entête `Content-Type` et analysera le corps en conséquence.
+   * Elle supporte les types de contenu `application/json`, `application/x-www-form-urlencoded`, et `multipart/form-data`.
+   *
+   * Si l'entête `Content-Type` n'est pas défini, il retournera `null`.
+   */
+  readonly parseBody: () => Promise<unknown>;
+
+  /**
+   * Méthode pratique pour définir l'entête Cache-Control.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Cache-Control
+   */
+  readonly cacheControl: (cacheControl: CacheControl) => void;
+
+  /**
+   * Code de statut de la réponse HTTP. Définit le code de statut lorsqu'il est appelé à l'aide d'un
+   * argument. Renvoie toujours le code de statut, de sorte que l'appel à `status()` sans
+   * argument peut être utilisé pour renvoyer le code de statut actuel.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/HTTP/Status
+   */
+  readonly status: (statusCode?: number) => number;
+
+  /**
+   * La locale dans laquelle se trouve le contenu.
+   *
+   * La valeur locale peut être récupérée à partir de méthodes sélectionnées en utilisant `getLocale()` :
+   */
+  readonly locale: (local?: string) => string;
+
+  /**
+   * URL de redirection. Lorsqu'elle est appelée, la réponse
+   * se terminera immédiatement avec le statut et les entêtes de redirection corrects.
+   *
+   * https://developer.mozilla.org/fr/docs/Web/HTTP/Redirections
+   */
+  readonly redirect: (statusCode: RedirectCode, url: string) => RedirectMessage;
+
+  /**
+   * Lorsqu'elle est appelée, la réponse se termine immédiatement par
+   * code d'état donné. Cela peut être utile pour terminer une réponse par `404`,
+   * et utiliser le gestionnaire 404 dans le répertoire routes.
+   * Voir https://developer.mozilla.org/fr/docs/Web/HTTP/Status
+   * pour savoir quel code de statut doit être utilisé.
+   */
+  readonly error: (statusCode: number, message: string) => ErrorResponse;
+
+  /**
+   * Méthode pratique pour envoyer une réponse sous forme de corps de texte. La réponse sera automatiquement
+   * "text/plain ; charset=utf-8" dans l'en-tête `Content-Type`.
+   * Une réponse `text()` ne peut être appelée qu'une seule fois.
+   */
+  readonly text: (statusCode: number, text: string) => AbortMessage;
+
+  /**
+   * Méthode pratique pour envoyer une réponse HTML. La réponse sera automatiquement
+   * définit l'entête `Content-Type` à `text/html ; charset=utf-8`.
+   *  Une réponse `html()` ne peut être appelée qu'une seule fois.
+   */
+  readonly html: (statusCode: number, html: string) => AbortMessage;
+
+  /**
+   * Méthode pratique permettant d'insérer une chaîne JSON dans les données et de l'envoyer dans la réponse.
+   * La réponse définira automatiquement l'entête `Content-Type` à
+   * `application/json ; charset=utf-8`. Une réponse `json()` ne peut être appelée qu'une seule fois.
+   */
+  readonly json: (statusCode: number, data: any) => AbortMessage;
+
+  /**
+   * Envoyer un corps de réponse. L'entête de réponse `Content-Type` n'est pas automatiquement défini
+   * lors de l'utilisation de `send()` et doit être défini manuellement. Une réponse `send()` ne peut être appelée qu'une seule fois.
+   */
+  readonly send: SendMethod;
+
+  /**
+   * Accès de bas niveau pour écrire dans le flux de réponse HTTP. Une fois que `getWritableStream()` est appelé,
+   * le statut et les entêtes ne peuvent plus être modifiés et seront envoyés sur le réseau.
+   */
+  readonly getWritableStream: () => WritableStream<Uint8Array>;
+
+  readonly next: () => Promise<void>;
+}
+```
+
+### JSON GET Endpoint
+
+La création d'un endpoint JSON est aussi simple que d'appeler la méthode `json(status, object)`. La méthode `json()` définira automatiquement l'entête `Content-Type` à `application/json ; charset=utf-8` et JSON stringifiera les données.
+
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+interface ProductData {
+  skuId: string;
+  price: number;
+  description: string;
+}
+
+export const onGet = async (requestEvent: RequestEvent) => {
+  // Get the product from the database
+  const product: ProductData = await database.get(requestEvent.params.skuId);
+
+  // Send the product as JSON
+  requestEvent.json(200, product);
+};
+```
 
 ### Modification du code d'état
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+Les endpoints peuvent modifier manuellement le code de statut HTTP de la réponse, en utilisant la méthode `status()`.
 
-export const onGet: RequestHandler = async ({ status }) => {
-  throw status(404);
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onGet = async (requestEvent: RequestEvent) => {
+  requestEvent.status(404);
 };
 ```
 
 ### Ajout d'entêtes de réponse
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+Les endpoints peuvent ajouter manuellement des entêtes à la réponse, en utilisant la propriété `headers`.
 
-export const onPost: RequestHandler = async ({ headers }) => {
-  headers.set('X-My-Custom-Header', 'Hello World');
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onPost: RequestHandler = async (requestEvent: RequestEvent) => {
+  requestEvent.headers.set('X-My-Custom-Header', 'Hello World');
 };
 ```
 
 ### Configuration d'un cookie
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+Les endpoints peuvent lire et définir manuellement des cookies, en utilisant la propriété `cookie`. Cela peut être utile pour définir un cookie de session, tel qu'un jeton JWT, ou un cookie pour suivre un utilisateur.
 
-export const onGet: RequestHandler = async ({ cookie }) => {
-  cookie.set('my-cookie', 'Hello World');
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onGet = async (requestEvent: RequestEvent) => {
+  // Read a cookie
+  requestEvent.cookie.get('my-cookie');
+
+  // Set a cookie
+  requestEvent.cookie.set('my-cookie', 'Hello World');
 };
 ```
 
-### Modification de l'entête cache-control
-
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
-
-export const onGet: RequestHandler = async ({ cacheControl }) => {
-  cacheControl({
-    maxAge: 31536e3,
-    public: true,
-    immutable: true,
-    staleWhileRevalidate: 31536e3,
-  });
-};
-```
-
-### Envoi d'un corps JSON
-
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
-
-export const onGet: RequestHandler = async ({ json }) => {
-  json(200, { hello: 'world' });
-};
-```
 
 ### Envoi d'un corps de texte
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+La création d'un endpoint texte est aussi simple que d'appeler la méthode `text(status, string)`. La méthode `text()` définira automatiquement l'entête `Content-Type` à `text/plain ; charset=utf-8`.
 
-export const onGet: RequestHandler = async ({ text }) => {
-  text(200, 'Hello World');
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onGet = async (requestEvent: RequestEvent) => {
+  requestEvent.text(200, 'Hello World');
 };
 ```
 
 ### Envoi d'une réponse RAW
 
+La création d'un endpoint brut est aussi simple que d'appeler la méthode `send(Response)`. La méthode `send()` prend un objet `Response` standard, qui peut être créé en utilisant le constructeur `Response`.
+
 ```tsx
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-export const onGet: RequestHandler = async ({ send }) => {
+export const onGet: RequestHandler = async (requestEvent: RequestEvent) => {
   const response = new Response('Hello World', {
     status: 200,
     headers: {
       'Content-Type': 'text/plain',
     },
   });
-  send(response);
+  requestEvent.send(response);
 };
 ```
 
 ### Création d'un reverse proxy à l'aide d'un fetch
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+Un proxy inverse peut être créé en utilisant la méthode `fetch()` pour envoyer une requête à un autre serveur, puis en utilisant la méthode `send()` pour renvoyer la réponse au client.
 
-export const onGet: RequestHandler = async ({ send }) => {
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onGet = async (requestEvent: RequestEvent) => {
   const response = await fetch('https://example.com');
-  send(response);
+  requestEvent.send(response);
 };
 ```
 
 ### Création manuelle d'une réponse stream
 
-```tsx
-import type { RequestHandler } from '@builder.io/qwik-city';
+Les endpoints peuvent écrire manuellement dans le flux de réponse HTTP, en utilisant la méthode `getWritableStream()`. Cela peut être utile pour créer un point d'accès en continu, comme un point d'accès aux événements envoyés par le serveur.
 
-export const onGet: RequestHandler = async ({ getWritableStream }) => {
-  const writableStream = getWritableStream();
+```tsx
+import type { RequestEvent } from '@builder.io/qwik-city';
+
+export const onGet: RequestHandler = async (requestEvent: RequestEvent) => {
+  const writableStream = requestEvent.getWritableStream();
   const writer = writableStream.getWriter();
   writer.write('Hello World');
   await wait(100);
@@ -147,27 +344,5 @@ export const onGet: RequestHandler = async ({ getWritableStream }) => {
   await wait(100);
   writer.write('END');
   writer.close();
-};
-```
-
-### Endpoint GET JSON
-
-```ts
-// File: src/routes/product/[skuId]/index.ts
-import type { RequestHandler } from '@builder.io/qwik-city';
-
-interface ProductData {
-  skuId: string;
-  price: number;
-  description: string;
-}
-
-export const onGet: RequestHandler = async ({ json, params }) => {
-  // put your DB access here, we are hard coding a response for simplicity.
-  json(200, {
-    skuId: params.skuId,
-    price: 123.45,
-    description: `Description for ${params.skuId}`,
-  });
 };
 ```

@@ -15,8 +15,7 @@ Dans certains cas, nous devons parfois faire en sorte que le répertoire de sort
 
 Habituellement, avec Vite.js, nous procédons comme suit :
 
-```js
-// vite.config.js
+```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
 import { qwikCity } from '@builder.io/qwik-city/vite';
@@ -51,7 +50,7 @@ Cependant, il sera écrasé par les paramètres de QwikVite() donc rien ne se pa
 
 Donc, au lieu de changer les paramètres dans Vite.js directement, nous avons juste besoin de changer les paramètres dans QwikVite() comme ceci :
 
-```ts
+```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
 import { qwikCity } from '@builder.io/qwik-city/vite';

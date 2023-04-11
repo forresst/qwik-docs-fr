@@ -4,6 +4,7 @@ contributors:
   - zanettin
   - manucorporat
   - cunzaizhuyi
+  - cayter
 ---
 
 # Vite
@@ -19,7 +20,7 @@ Après avoir échafaudé un nouveau projet Qwik, vous trouverez un fichier `vite
 
 Qwik est livré avec deux plugins qui permettent d'utiliser facilement Vite avec Qwik et Qwik City.
 
-```js
+```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
 import { qwikCity } from '@builder.io/qwik-city/vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
@@ -111,7 +112,7 @@ client?: {
 
 #### `ssr`
 
-```js 
+```js
 ssr?: {
     /**
      * Le point d'entrée pour le moteur de rendu SSR. Ce fichier doit exporter
@@ -232,6 +233,15 @@ mdxPlugins?: MdxPlugins;
 * MDX Options https://mdxjs.com/
 */
 mdx?: any;
+```
+
+#### `platform`
+
+```js
+/**
+* L'objet plateforme qui peut être utilisé pour simuler les liens Cloudflare.
+*/
+platform?: Record<string, unknown>;
 ```
 
 ## Dépannage

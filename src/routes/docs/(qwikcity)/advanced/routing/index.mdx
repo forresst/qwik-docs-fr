@@ -4,6 +4,7 @@ contributors:
   - adamdbradley
   - cunzaizhuyi
 ---
+
 # Routage avancé
 
 ## Gestion de la page 404
@@ -22,7 +23,7 @@ Au lieu d'afficher la réponse 404 générique (ennuyeuse), il est possible de f
 
 Pour créer une page 404 personnalisée, ajoutez un fichier `404.tsx` au répertoire racine `src/routes`.
 
-```
+```bash
 src/
 └── routes/
     ├── 404.tsx            # 404 personnalisé
@@ -34,7 +35,7 @@ Dans l'exemple ci-dessus, la page `404.tsx` utilisera aussi la mise en page `lay
 
 De plus, l'utilisation du routage basé sur le répertoire de Qwik City permet de créer des pages 404 personnalisées sur des chemins différents. Par exemple, si `src/routes/account/404.tsx` était aussi ajouté à la structure, alors la page 404 personnalisée du compte serait seulement appliquée aux routes `/account/*`, alors que toutes les autres 404s utiliseraient la page racine `404.tsx`.
 
-```
+```bash
 src/
 └── routes/
     ├── account/
@@ -57,9 +58,9 @@ Dans cet exemple, `id` est utilisé comme une clé pour charger les données du 
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
-import { loader$ } from '@builder.io/qwik-city';
+import { routeLoader$ } from '@builder.io/qwik-city';
 
-export const useProductLoader = loader$(async ({ params, status }) => {
+export const useProductLoader = routeLoader$(async ({ params, status }) => {
   // Exemple d'appel de base de données utilisant le paramètre id
   // La base de données peut renvoyer null si le produit n'est pas trouvé
   const data = await productDatabase.get(params.id);
@@ -103,7 +104,7 @@ En entourant tout nom de répertoire de parenthèses, comme `(name)`, le nom du 
 
 Par exemple, disons qu'une appli a placé toutes les routes _account_ ensemble dans un répertoire, cependant, `/account/` pourrait être supprimé de l'URL pour des URL plus propres et plus courtes. Dans l'exemple ci-dessous, remarquez que les chemins sont dans le répertoire `src/routes/(account)/`. Cependant, les chemins URL excluent `(account)/`.
 
-```
+```bash
 src/
 └── routes/
     └── (account)/             # Remarquez les parenthèses
@@ -120,7 +121,7 @@ Il arrive que des routes connexes doivent avoir des mises en page radicalement d
 
 Qwik City définit la convention que les mises en page sont dans `src/routes` et le nom du fichier commence avec `layout`. C'est pourquoi le layout par défaut est nommé `layout.tsx`. Un fichier nommé commence également par `layout` suivi d'un tiret `-` et d'un nom unique, tel que `layout-narrow.tsx`.
 
-```
+```bash
 src/
 └── routes/
     ├── contact/
@@ -157,7 +158,7 @@ src/
 
 La plupart du temps, il est souhaitable d'imbriquer les mises en page les unes dans les autres. Le contenu d'une page peut être imbriqué dans de nombreuses mises en page d'habillage, qui sont déterminées par la structure du répertoire.
 
-```
+```bash
 src/
 └── routes/
     ├── layout.tsx           # Mise en page parent
@@ -188,8 +189,7 @@ Dans ce cas, les mises en page s'imbriqueront les unes dans les autres avec la p
 └────────────────────────────────────────────────┘
 ```
 
-```tsx
-// Fichier : src/routes/layout.tsx
+```tsx title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -201,8 +201,7 @@ export default component$(() => {
 });
 ```
 
-```tsx
-// Fichier : src/routes/about/layout.tsx
+```tsx title="src/routes/about/layout.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -214,8 +213,7 @@ export default component$(() => {
 });
 ```
 
-```tsx
-// Fichier : src/routes/about/index.tsx
+```tsx title="src/routes/about/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {

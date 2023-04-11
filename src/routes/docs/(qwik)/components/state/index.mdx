@@ -21,59 +21,54 @@ contributors:
   - XiaoChengyin
   - gkatsanos
   - adamdbradley
+  - mhevery
 ---
+
+import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 # État
 
-La gestion de l'état est une partie importante de toute appli. Dans Qwik, nous pouvons différencier deux types d'état, réactif et statique.
+La gestion de l'état est une partie importante de toute appli. Dans Qwik, nous pouvons différencier deux types d'état, réactif et statique :
 
-L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombre, un objet, un tableau... n'importe quoi. L'état réactif, quant à lui, est créé avec `useSignal()` ou `useStore()`.
+1. L'état statique est tout ce qui peut être sérialisé : une chaîne, un nombre, un objet, un tableau... n'importe quoi.
+2. L'état réactif, quant à lui, est créé avec `useSignal()` ou `useStore()`.
 
-Il est important de noter que l'état dans Qwik n'est pas nécessairement l'état du composant local, mais plutôt l'état de l'appli qui peut être instancié par n'importe quel composant.
+Il est important de noter que l'état dans Qwik n'est pas nécessairement un état du composant local, mais plutôt un état de l'appli qui peut être instancié par n'importe quel composant.
 
 ## `useSignal()`
 
-`const signal = useSignal(initialState)` est un hook qui crée un signal réactif. Il prend une valeur initiale et renvoie un signal réactif.
+Utilisez `useSignal()` pour créer un signal réactif (une forme d'état). La fonction `useSignal()` prend une valeur initiale et renvoie un signal réactif.
 
 Le signal réactif renvoyé par `useSignal()` consiste en un objet avec une seule propriété (par exemple : `signal.value`). Si vous modifiez la propriété `value` de l'objet, tout composant qui en dépend sera mis à jour.
 
-### Exemple
-
-Cet exemple montre comment `useSignal()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
-
-```tsx
+<CodeSandbox src="/src/routes/demo/state/counter-signal/index.tsx" style={{ height: '6em' }}>
+```tsx {4} /count/
 import { component$, useSignal } from '@builder.io/qwik';
 
 export default component$(() => {
   const count = useSignal(0);
 
   return (
-    <>
-      <button onClick$={() => count.value++}>Incrémenter</button>
-      Compteur : {count.value}
-    </>
+    <button onClick$={() => count.value++}>
+      Incrémenter {count.value}
+    </button>
   );
 });
 ```
+</CodeSandbox>
 
-Le simple fait d'accéder à la propriété `count.value` entraînera la mise à jour du composant si count change. Par exemple, lorsque la propriété est modifiée dans le gestionnaire de clic du bouton.
+L'exemple ci-dessus montre comment `useSignal()` peut être utilisé dans un composant de type compteur pour suivre le décompte. La modification de la propriété `count.value` entraînera la mise à jour automatique du composant. Par exemple, lorsque la propriété est modifiée dans le gestionnaire de clic sur le bouton, comme dans l'exemple ci-dessus.
 
 ## `useStore()`
 
-Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale. On peut se représenter un store comme un signal à valeurs multiples, ou à un objet constitué de plusieurs signaux.
+Fonctionne de manière très similaire à `useSignal()`, mais prend un objet comme valeur initiale. On peut se représenter un store comme un signal à valeurs multiples ou à un objet constitué de plusieurs signaux.
 
-`const store = useStore(initialStateObject)` est un hook qui crée un objet réactif. Il prend un état initial, et retourne un objet réactif.
+Utilisez le hook `useStore(initialStateObject)` pour créer un objet réactif. Il prend un objet initial (ou une fonction factory), et retourne un objet réactif.
 
-L'objet réactif renvoyé par [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) est comme n'importe quel autre objet, mais il est réactif. Si vous modifiez une propriété de l'objet, tout composant qui dépend de cette propriété sera mis à jour.
+> **REMARQUE** Pour que la réactivité fonctionne comme prévu, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faire `let { count } = useStore({ count : 0 })` et ensuite muter `count` ne déclenchera pas la mise à jour des composants qui dépendent de la propriété.
 
-> **REMARQUE**
-> Pour que la réactivité fonctionne comme prévu, assurez-vous de garder une référence sur l'objet réactif et pas seulement sur ses propriétés. Par exemple, faire `let { count } = useStore({ count : 0 })` et ensuite muter `count` ne déclenchera pas la mise à jour des composants qui dépendent de la propriété.
-
-### Exemple
-
-Cet exemple montre comment `useStore()` est utilisé dans l'exemple Counter pour garder la trace du compteur.
-
-```tsx
+<CodeSandbox src="/src/routes/demo/state/counter-store/index.tsx" style={{ height: '6em' }} >
+```tsx {4} /state/ /count/#a
 import { component$, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -81,21 +76,21 @@ export default component$(() => {
 
   return (
     <>
-      <button onClick$={() => state.count++}>Increment</button>
-      Compteur: {state.count}
+      <button onClick$={() => state.count++}>Incrémenter</button>
+      <div>Compteur: {state.count}</div>
     </>
   );
 });
 ```
+</CodeSandbox>
 
-Le simple fait d'accéder à la propriété `state.count` entraînera la mise à jour du composant si count change. Par exemple, lorsque la propriété est modifiée dans le gestionnaire de clic du bouton.
+L'exemple ci-dessus montre comment `useStore()` peut être utilisé dans un composant de type compteur pour garder une trace de count.
 
 ### Valeurs récursives
 
-Par défaut, [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) ne traque que les champs de premier niveau de votre store, ce qui signifie que pour que toute mise à jour soit enregistrée, vous devez mettre à jour les valeurs du champ de premier niveau.
+Par défaut, [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) ne traque que les propriétés de premier niveau de votre store, ce qui signifie que pour qu'une mise à jour soit enregistrée, vous devez mettre à jour les valeurs de la propriété de premier niveau.
 
-CET EXEMPLE NE FONCTIONNERA PAS :
-
+<CodeSandbox src="/src/routes/demo/state/counter-store-no-track/index.tsx" style={{ height: '10em' }}>
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
@@ -107,20 +102,28 @@ export default component$(() => {
   return (
     <>
       <p>{store.nested.fields.are}</p>
-      <button onClick$={() => (store.nested.fields.are = 'tracked')}>Click me</button>
+      <button onClick$={() => (store.nested.fields.are = 'tracked')}>
+        En me cliquant, cela ne fonctionne pas
+      </button>
+      <br />
+      <button onClick$={() => (store.nested = { fields: { are: 'tracked' } })}>
+        Cliquez-moi, cela fonctionne
+      </button>
     </>
   );
 });
 ```
+</CodeSandbox>
 
 Pour que les mises à jour soient enregistrées avec la stratégie de traçage par défaut, nous devons mettre à jour le champ "nested" de premier niveau comme suit :
 
 ```ts
-store.nested = { fields: { are: { "tracked" } } }
+store.nested = { fields: { are: 'tracked' } };
 ```
 
-Pour que le premier exemple fonctionne, nous pouvons passer un deuxième argument à `useStore()`, et lui demander d'utiliser la récursion pour suivre toutes les valeurs de notre magasin, quelle que soit leur profondeur.
+Pour faire fonctionner le premier exemple, nous pouvons passer un second argument à `useStore()`, et lui dire d'utiliser la récursivité pour suivre toutes les valeurs de notre store, quelle que soit leur profondeur.
 
+<CodeSandbox src="/src/routes/demo/state/counter-store-deep/index.tsx" style={{ height: '10em' }}>
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
@@ -135,194 +138,367 @@ export default component$(() => {
   return (
     <>
       <p>{store.nested.fields.are}</p>
-      <button onClick$={() => (store.nested.fields.are = 'tracked')}>Click me</button>
-    </>
-  );
-});
-```
-
-Maintenant, le composant sera mis à jour comme prévu. Cela permettra également de suivre les valeurs individuelles dans les tableaux !
-
-```tsx
-import { component$, useStore } from '@builder.io/qwik';
-
-export default component$(() => {
-  const store = useStore(
-    {
-      letters: ['A', 'B', 'C'],
-    },
-    { deep: true }
-  );
-
-  return (
-    <>
-      {store.letters.map((letter) => (
-        <p>{letter}</p>
-      ))}
-      <button
-        onClick$={() => {
-          store.letters[2] = 'Z';
-        }}
-      >
-        Click me
+      <button onClick$={() => (store.nested.fields.are = 'tracked')}>
+        En me cliquant, le store fonctionne parce qu'il est profondément surveillé
+      </button>
+      <br />
+      <button onClick$={() => (store.nested = { fields: { are: 'tracked' } })}>
+        Cliquez-moi, cela fonctionne encore
       </button>
     </>
   );
 });
 ```
+</CodeSandbox>
 
-## Transmission d'un store à d'autres composants
+Maintenant, le composant sera mis à jour comme prévu. Cela permettra également de suivre les valeurs individuelles dans les tableaux !
 
-Une des fonctionnalités intéressantes de Qwik est que l'état peut être passé à d'autres composants, et ils peuvent à la fois lire et écrire dessus, permettant aux données de circuler à travers l'arborescence dans toutes les directions.
+## État calculé
 
-Il y a deux façons de passer l'état à d'autres composants : avec des props ou avec le contexte.
+L'état calculé est dérivé de l'état existant.
 
-### Utilisation des props
+Dans Qwik, il y a deux façons de créer des valeurs calculées, chacune avec un cas d'utilisation différent (par ordre de préférence) :
 
-La façon la plus simple de passer l'état à d'autres composants est de le passer comme props. C'est la façon dont vous le feriez dans React, et cela fonctionne aussi dans Qwik.
+1. `useComputed$()` : `useComputed$()` est la méthode préférée pour créer des valeurs calculées. Elle est utilisée lorsque la valeur calculée peut être dérivée de manière synchrone à partir de l'état de la source (état actuel de l'application). Par exemple, la création d'une version en minuscules d'une chaîne de caractères ou la combinaison du prénom et du nom de famille en un nom complet.
+2. [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) : `useResource$()` est utilisé lorsque la valeur calculée est asynchrone ou que l'état provient de l'extérieur de l'application. Par exemple, la récupération de la météo actuelle (état externe) en fonction de la localisation actuelle (état interne de l'application).
 
-```tsx
-import { component$, useStore } from '@builder.io/qwik';
+La manière d'envisager ce qui précède est qu'ils observent l'état existant, et lorsque l'état change, la valeur calculée est recalculée. Le résultat est une nouvelle valeur calculée qui est un signal renvoyé par `useComputed$()` ou `useResource$()`.
 
-export const Parent = component$(() => {
-  const userData = useStore({
-    count: 0,
-  });
+En plus des deux manières de créer des valeurs calculées décrites ci-dessus, il existe également une manière de niveau inférieur ([`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) et [`useVisibleTask$()`](/docs/components/tasks/#usevisibletask)) pour modifier/créer un état à la suite d'un changement de saisies. Cette méthode ne produit pas de nouveau signal, mais modifie plutôt l'état existant ou produit un effet secondaire.
+
+### `useComputed$()`
+
+Utilisez `useComputed$` pour créer une valeur calculée qui peut être dérivée de manière synchrone à partir de l'état existant de l'application.
+
+<CodeSandbox src="/src/routes/demo/state/computed/index.tsx" style={{ height: '8em' }}>
+```tsx {5} /useComputed$/
+import { component$, useComputed$, useSignal } from '@builder.io/qwik';
+
+export default component$(() => {
+  const name = useSignal('Qwik');
+  const capitalizedName = useComputed$(() => name.value.toUpperCase());
 
   return (
     <>
-      <Child userData={userData} />
-    </>
-  );
-});
-
-export const Child = component$(({ userData }) => {
-  return (
-    <>
-      <button onClick$={() => userData.count++}>Increment</button>
-      Compteur : {userData.count}
+      <input type="text" bind:value={name} />
+      <div>Nom : {name.value}</div>
+      <div>Nom en capitales : {capitalizedName.value}</div>
     </>
   );
 });
 ```
+</CodeSandbox>
 
-### Utilisation du contexte
+> **REMARQUE** Comme `useComputed$()` est synchrone, il n'est pas nécessaire de traquer explicitement les signaux de saisie.
 
-L'API du contexte est un moyen pour transmettre l'état aux composants sans avoir à le transmettre à travers les props (c'est-à-dire qu'elle évite les problèmes de drilling de prop). Automatiquement, tous les composants descendants de l'arborescence peuvent obtenir une référence à l'état avec un accès en lecture/écriture.
+### `useResource$()`
 
-Consultez l'[API de contexte](../context/index.mdx) pour plus d'informations.
+Utilisez `useResource$()` pour créer une valeur calculée qui est dérivée de manière asynchrone ou qui nécessite un état externe (comme la communication avec un endpoint REST).
 
-```tsx
-export const CTX = createContextId('stuff');
+> **Remarque :** La chose importante à comprendre à propos de `useResource$` est qu'il s'exécute lors du rendu initial du composant (tout comme `useTask$`). Souvent, il est souhaitable de commencer à récupérer les données sur le serveur dans le cadre de la requête HTTP initiale, avant que le composant ne soit rendu. Récupérer les données dans le cadre du SSR est une manière plus commune et préférée de charger les données et est fait à travers l'API [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) à la place. `useResource$` est plus une API de bas niveau qui est utile lorsque vous voulez récupérer des données dans le navigateur.
+>
+> Comme tous les hooks `use-`, il doit être appelé dans le contexte de [`component$()`](/docs/(qwik)/components/overview/index.mdx#component), et toutes les [règles des hooks s'appliquent](/docs/(qwik)/components/tasks/index.mdx).
+>
+> A bien des égards, `useResource$` est similaire à `useTask$` Les grandes différences sont les suivantes :
+>
+> - `useResource$` permet de renvoyer une "value".
+> - `useResource$` ne bloque pas le rendu pendant que la ressource est en cours de résolution.
+>
+> Consultez [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) pour récupérer les données au début de la requête HTTP initiale.
 
-export const Stores = component$(() => {
-  const userData = useStore({
-    count: 0,
+
+<CodeSandbox src="/src/routes/demo/state/resource/index.tsx" style={{ height: '8em' }}>
+```tsx {11} /useResource$/
+import {
+  component$,
+  Resource,
+  useResource$,
+  useSignal,
+} from '@builder.io/qwik';
+
+export default component$(() => {
+  const prNumber = useSignal('3576');
+
+  const prTitle = useResource$(async ({ track }) => {
+    track(() => prNumber.value); // Nécessité d'un suivi explicite des entrées
+    const response = await fetch(
+      `https://api.github.com/repos/BuilderIO/qwik/pulls/${prNumber.value}`
+    );
+    const data = await response.json();
+    return (data.title || data.message || 'Error') as string;
   });
-
-  useContextProvider(CTX, userData);
 
   return (
     <>
-      <Child />
+      <input type="number" bind:value={prNumber} />
+      <h1>
+        PR#{prNumber}:
+        <Resource
+          value={prTitle}
+          onPending={() => <>Chargement...</>}
+          onResolved={(title) => <>{title}</>}
+        />
+      </h1>
     </>
   );
+});
+```
+</CodeSandbox>
+
+Bien qu'il soit possible d'utiliser `useResource$()` sans le composant `<Resource>`, il est fourni pour des raisons de commodité. Le composant `<Resource>` affiche automatiquement un contenu de remplacement pendant que la ressource est calculée.
+
+**REMARQUE** : Lors de l'exécution du SSR, le composant `<Resource>` interrompt le rendu jusqu'à ce que la ressource soit résolue. Ainsi, le rendu du SSR ne sera pas accompagné de l'indicateur de chargement.
+
+
+**Exemple avancé**
+
+Un exemple plus complet de récupération de données avec `AbortController`, `track` et `cleanup`. Cet exemple permet de récupérer une liste de blagues en fonction de la requête tapée par l'utilisateur,
+en réagissant automatiquement aux changements de la requête, y compris en interrompant les requêtes en cours.
+
+<CodeSandbox src="/src/routes/demo/state/resource-joke/index.tsx" style={{ height: '40em' }}>
+```tsx {11} /useResource$/
+import {
+  component$,
+  useResource$,
+  Resource,
+  useSignal,
+} from '@builder.io/qwik';
+
+export default component$(() => {
+  const query = useSignal('busy');
+  const jokes = useResource$<{ value: string }[]>(
+    async ({ track, cleanup }) => {
+      track(() => query.value);
+      // Une bonne pratique consiste à utiliser `AbortController` pour interrompre la récupération des données si
+      // une nouvelle requête arrive. Nous créons un nouveau `AbortController` et enregistrons une fonction `cleanup`
+      // qui est appelée lorsque cette fonction est réexécutée.
+      const controller = new AbortController();
+      cleanup(() => controller.abort());
+
+      if (query.value.length < 3) {
+        return [];
+      }
+
+      const url = new URL('https://api.chucknorris.io/jokes/search');
+      url.searchParams.set('query', query.value);
+
+      const resp = await fetch(url, { signal: controller.signal });
+      const json = (await resp.json()) as { result: { value: string }[] };
+
+      return json.result;
+    }
+  );
+
+  return (
+    <>
+      Requête : <input bind:value={query} />
+      <button>recherche</button>
+      <Resource
+        value={jokes}
+        onPending={() => <>chargement...</>}
+        onResolved={(jokes) => (
+          <ul>
+            {jokes.map((joke) => (
+              <li>{joke.value}</li>
+            ))}
+          </ul>
+        )}
+      />
+    </>
+  );
+});
+```
+</CodeSandbox>
+
+Comme nous le voyons dans l'exemple ci-dessus, `useResource$()` renvoie un objet `ResourceReturn<T>` qui fonctionne comme une promesse réactive, contenant les données et l'état de la ressource.
+
+L'état `resource.loading` peut être l'un des suivants :
+
+- `false` - les données ne sont pas encore disponibles.
+- `true` - les données sont disponibles. (Résolu ou rejeté).
+
+Le callback passé à [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) s'exécute juste après que les callbacks [`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) se soient terminés. Veuillez vous référer à la section [Cycle de vie](../tasks/index.mdx#lifecycle) pour plus de détails.
+
+### `<Resource />`
+
+`<Resource />` est un composant destiné à être utilisé avec `useResource$()` qui rend un contenu différent selon que la ressource est en attente, résolue ou rejetée.
+
+```tsx
+<Resource
+  value={weatherResource}
+  onPending={() => <div>Chargement...</div>}
+  onRejected={() => <div>Échec du chargement de la météo</div>}
+  onResolved={(weather) => {
+    return <div>Température : {weather.temp}</div>;
+  }}
+/>
+```
+
+Il faut noter que `<Resource />` n'est pas nécessaire quand on utilise `useResource$()`. C'est juste un moyen pratique de rendre l'état de la ressource.
+
+
+Cet exemple montre comment `useResource$` est utilisé pour effectuer un appel à l'API [agify.io](https://agify.io/). Cela permet de deviner l'âge d'une personne en se basant sur le nom saisi par l'utilisateur, et de le mettre à jour à chaque fois que l'utilisateur saisit le nom.
+
+<CodeSandbox src="/src/routes/demo/state/resource-agify/index.tsx" style={{ height: '8em' }}>
+```tsx {11} /useResource$/
+import {
+  component$,
+  useSignal,
+  useResource$,
+  Resource,
+} from '@builder.io/qwik';
+
+export default component$(() => {
+  const name = useSignal<string>();
+
+  const ageResource = useResource$<{
+    name: string;
+    age: number;
+    count: number;
+  }>(async ({ track, cleanup }) => {
+    track(() => name.value);
+    const abortController = new AbortController();
+    cleanup(() => abortController.abort('cleanup'));
+    const res = await fetch(`https://api.agify.io?name=${name.value}`, {
+      signal: abortController.signal,
+    });
+    return res.json();
+  });
+
+  return (
+    <div>
+      <div>Entrez votre nom, et je devinerai votre âge !</div>
+      <input
+        onInput$={(e: Event) =>
+          (name.value = (e.target as HTMLInputElement).value)
+        }
+      />
+      <Resource
+        value={ageResource}
+        onPending={() => <div>Chargement...</div>}
+        onRejected={() => <div>Échec de la transmission des données</div>}
+        onResolved={(ageGuess) => {
+          return (
+            <div>
+              {name.value && (
+                <>
+                  {ageGuess.name} {ageGuess.age} ans
+                </>
+              )}
+            </div>
+          );
+        }}
+      />
+    </div>
+  );
+});
+```
+</CodeSandbox>
+
+## Transmission de l'état
+
+L'une des fonctionnalités intéressantes de Qwik est que l'état peut être transmis à d'autres composants. L'écriture dans le store ne rendra que les composants qui lisent depuis ce store.
+
+Il y a deux façons de transmettre l'état à d'autres composants :
+
+1. transmettre l'état au composant enfant explicitement en utilisant les props,
+2. ou transmettre l'état implicitement par le biais du contexte.
+
+### Utilisation des props
+
+La manière la plus simple de transmettre l'état à d'autres composants est de le faire passer par des props.
+
+<CodeSandbox src="/src/routes/demo/state/passing-props/index.tsx" style={{ height: '6em' }}>
+```tsx {9} /userData=/
+import { component$, useStore } from '@builder.io/qwik';
+
+export default component$(() => {
+  const userData = useStore({ count: 0 });
+  return <Child userData={userData} />;
+});
+
+interface ChildProps {
+  userData: { count: number };
+}
+export const Child = component$<ChildProps>(({ userData }) => {
+  return (
+    <>
+      <button onClick$={() => userData.count++}>Incrémenter</button>
+      <div>Compteur : {userData.count}</div>
+    </>
+  );
+});
+```
+</CodeSandbox>
+
+### Utilisation du contexte
+
+L'API du contexte est un moyen de transmettre l'état aux composants sans avoir à le faire passer par des props (c'est-à-dire qu'elle évite les problèmes de drill des props). Automatiquement, tous les composants descendants de l'arbre peuvent accéder à une référence à l'état avec un accès en lecture/écriture.
+
+Consultez l'[API du contexte](../context/index.mdx) pour plus d'informations.
+
+<CodeSandbox src="/src/routes/demo/state/passing-context/index.tsx" style={{ height: '6em' }}>
+```tsx /userData/ /export const CTX = createContextId<{ count: number }>('stuff');/ /useContextProvider(CTX, userData);/ /const userData = useContext(CTX);/
+import {
+  component$,
+  createContextId,
+  useContext,
+  useContextProvider,
+  useStore,
+} from '@builder.io/qwik';
+
+// Declare a context ID
+export const CTX = createContextId<{ count: number }>('stuff');
+
+export default component$(() => {
+  const userData = useStore({ count: 0 });
+
+  // Provide the store to the context under the context ID
+  useContextProvider(CTX, userData);
+
+  return <Child />;
 });
 
 export const Child = component$(() => {
   const userData = useContext(CTX);
   return (
     <>
-      <button onClick$={() => userData.count++}>Increment</button>
-      Compteur : {userData.count}
+      <button onClick$={() => userData.count++}>Incrémenter</button>
+      <div>Compteur : {userData.count}</div>
     </>
   );
 });
 ```
-
-## Valeurs calculées
-
-Les valeurs calculées sont des valeurs qui sont dérivées d'autres valeurs. Elles sont utiles lorsque vous avez une valeur qui est dérivée d'autres valeurs, et que vous voulez la maintenir en synchronisation avec les autres valeurs.
-
-Dans Qwik il y a deux façons de créer des valeurs calculées, en utilisant [`useTask$()`](/docs/(qwik)/components/lifecycle/index.mdx#usetask) ou [`useResource$()`](/docs/(qwik)/components/resource/index.mdx).
-
-La principale différence entre les deux est que [`useTask$()`](/docs/(qwik)/components/lifecycle/index.mdx#usetask) permet les effets de bord et l'exécution est sérialisée, tandis que [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) est asynchrone et plusieurs appels `useResource$()` peuvent se produire en parallèle.
-
-`useTask$()` est généralement utilisé pour calculer l'état intermédiaire, alors que [`useResource$()`](/docs/(qwik)/components/resource/index.mdx) a une meilleure ergonomie pour calculer l'état final, utilisé pour le rendu. Voyons quelques exemples :
-
-### Exemple de [`useTask$()`](/docs/(qwik)/components/lifecycle/index.mdx#usetask)
-
-```tsx
-import { component$, useStore, useTask$ } from '@builder.io/qwik';
-
-export default component$(() => {
-  const state = useStore({
-    count: 0,
-    doubleCount: 0,
-  });
-
-  useTask$(({ track }) => {
-    track(() => state.count);
-    state.doubleCount = state.count * 2;
-  });
-
-  return (
-    <>
-      <button onClick$={() => state.count++}>Increment</button>
-      Compteur : {state.count}
-      Compteur * 2 : {state.doubleCount}
-    </>
-  );
-});
-```
-
-### Exemple de [`useResource$()`](/docs/(qwik)/components/resource/index.mdx)
-
-```tsx
-import { component$, useStore, useResource$ } from '@builder.io/qwik';
-
-export default component$(() => {
-  const state = useStore({
-    count: 0,
-  });
-
-  const doubleCount = useResource$(({ track }) => {
-    track(() => state.count);
-    return state.count * 2;
-  });
-
-  return (
-    <>
-      <button onClick$={() => state.count++}>Increment</button>
-      Compteur : {state.count}
-      Compteur * 2 : {doubleCount.promise}
-    </>
-  );
-});
-```
-
-Les notions de [`useWatch()`](../lifecycle/index.mdx#usetask) et de [`useResource()`](../resource/index.mdx) sont expliquées en détail dans leurs sections respectives.
-
-## Réactivité
-
-Grâce à la réactivité fine de Qwik, seuls les composants qui dépendent de l'état seront mis à jour. C'est un énorme gain de performance, car seuls les composants qui ont besoin d'être mis à jour le seront.
+</CodeSandbox>
 
 ## `noSerialize()`
 
-Parfois, vous souhaitez stocker une valeur dans l'état, mais vous ne voulez pas qu'elle soit sérialisée. Ceci est utile pour stocker des valeurs qui ne sont pas sérialisables, comme les fonctions ou les classes.
+Qwik s'assure que l'état de l'application est toujours sérialisable. Ceci est important pour s'assurer que les applications Qwik ont une capacité de [résumabilité](/docs/(qwik)/concepts/resumable/index.mdx). Il est parfois nécessaire de stocker des données qui ne peuvent pas être sérialisées. Par exemple, une référence à une bibliothèque tierce telle que [Monaco editor](https://microsoft.github.io/monaco-editor/). Dans une telle situation, utilisez `noSerialize()` pour marquer la valeur comme non sérialisable.
 
-```tsx
-import { component$, useStore, noSerialize, useVisibleTask$ } from '@builder.io/qwik';
+Si une valeur est marquée comme non sérialisable, elle ne survivra pas aux événements de sérialisation tels que la reprise de l'application sur le client à partir du serveur SSR. Dans une telle situation, la valeur sera mise à `undefined` et c'est au développeur de réinitialiser la valeur sur le client.
 
-export const App = component$(() => {
-  const state = useStore({
-    monacoInstance: null,
+<CodeSandbox src="/src/routes/demo/state/no-serialize/index.tsx" style={{ height: '8em' }}>
+```tsx /noSerialize/
+import {
+  component$,
+  useStore,
+  noSerialize,
+  useVisibleTask$,
+} from '@builder.io/qwik';
+import Monaco from './monaco';
+
+export default component$(() => {
+  const store = useStore<{ monacoInstance: Monaco | undefined }>({
+    // Ne pas initialiser sur le serveur
+    monacoInstance: undefined,
   });
 
   useVisibleTask$(() => {
-    // Monaco n'est pas sérialisable, donc nous ne pouvons pas le stocker dans l'état en utilisant `noSerialize()`
-    state.monacoInstance = noSerialize(new Monaco());
+    // Monaco n'est pas sérialisable, nous ne pouvons donc pas le sérialiser dans le cadre du SSR.
+    // Nous pouvons cependant l'instancier sur le client une fois que le composant est visible
+    setTimeout(() => (state.monacoInstance = noSerialize(new Monaco())), 1000);
   });
-  return <></>;
+  return <div>{store.monacoInstance ? 'Monaco est chargé' : 'chargement...'}</div>;
 });
 ```
+</CodeSandbox>

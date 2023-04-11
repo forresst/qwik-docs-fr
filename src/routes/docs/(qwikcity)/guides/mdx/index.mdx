@@ -15,7 +15,7 @@ Une autre façon de créer du contenu est d'utiliser les fichiers `.mdx` ([Markd
 
 Supposons que vous avez vos routes configurées comme ceci :
 
-```
+```bash
 src/
 └── routes/
     └── some/
@@ -23,9 +23,8 @@ src/
             └── index.mdx    # https://example.com/some/path
 ```
 
-```Markdown
+```Markdown title="src/routes/some/path/index.mdx"
 ---
-# Fichier : src/routes/some/path/index.mdx
 title: Hello World Title
 ---
 
@@ -39,7 +38,7 @@ Le composant ci-dessus sera rendu à l'adresse `https://example.com/some/path`.
 
 [MDX](https://mdxjs.com/) est une opportunité créative pour vous afin de créer rapidement du nouveau contenu (« Qwikly » 🙂) et si vous avez besoin de plus d'interaction sur votre page, vous pouvez intégrer de façon transparente vos composants Qwik comme ceci :
 
-```
+```bash
 src/
 ├── components/
 │   └──  counter.tsx
@@ -49,9 +48,8 @@ src/
             └── index.mdx    # https://example.com/some/path
 ```
 
-```Markdown
+```Markdown title="src/routes/some/path/index.mdx"
 ---
-# Fichier : src/routes/some/path/index.mdx
 title: Hello World Title
 ---
 import { Counter } from "../../../components/counter/counter";
@@ -62,8 +60,7 @@ This is a simple hello world component.
 
 ```
 
-```tsx
-// Fichier : src/components/counter/counter.tsx
+```tsx title="src/components/counter/counter.tsx"
 import { component$, useSignal } from '@builder.io/qwik';
 
 export const Counter = component$(() => {
@@ -91,7 +88,7 @@ Qwik City inclut 3 plugins par défaut.
 
 Ces plugins peuvent être désactivés indépendamment de la manière suivante :
 
-```tsx
+```tsx title="vite.config.js"
 import { defineConfig } from 'vite';
 import { qwikCity } from '@builder.io/qwik-city/vite';
 // Voir ci-dessous
@@ -137,7 +134,7 @@ En définissant `og:title` ou `og:description` à `true`, les propriétés exté
 
 L'exemple ci-dessus génère le code HTML suivant.
 
-```HTML
+```html
 <title>My Title</title>
 <meta name="description" content="Ma Description" />
 

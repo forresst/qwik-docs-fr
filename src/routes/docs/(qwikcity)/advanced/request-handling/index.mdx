@@ -11,7 +11,6 @@ Chaque fichier `layout.ts` et `index.ts` du répertoire `src/routes` a la possib
 
 Qwik City implémente un système de middleware basé sur la hiérarchie du répertoire `src/routes`. Le système middleware est utilisé pour gérer les requêtes et les réponses HTTP, et est disponible pour les pages, les mises en page, et les [endpoints](/docs/(qwikcity)/endpoints/index.mdx).
 
-````tsx
 Chaque route a la possibilité d'ajouter des gestionnaires de requête et de réponse HTTP, permettant aux développeurs de [récupérer](../retrieve/index.mdx) et de [modifier](../modify/index.mdx) des données. Les gestionnaires peuvent également être utilisés par les [endpoints](../endpoints/index.mdx), qui répondent uniquement avec des données plutôt qu'avec le code HTML d'une page.
 
 Cette fonctionnalité vous permet de traiter n'importe quel événement de requête, d'avoir des effets secondaires sur le pipeline de requête, juste avant de rendre le composant et de répondre avec un contenu personnalisé. Elle est disponible pour les pages, les mises en page et les routes de endpoint, mais pas pour les composants ordinaires.
@@ -34,7 +33,7 @@ export const onGet: RequestHandler<ProductData> = async ({ params }) => {
     description: `Description pour ${params.skuId}`,
   };
 };
-````
+```
 
 ## Evénement de requête
 

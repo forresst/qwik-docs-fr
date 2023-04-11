@@ -1,0 +1,59 @@
+---
+title: Qwik City and PostCSS
+keywords: 'styles, styling'
+contributors:
+  - manucorporat
+  - manuelsanchezweb
+  - manuelsanchez2
+  - the-r3aper7
+---
+
+# PostCSS
+
+[PostCSS](https://postcss.org/) permet aux développeurs d'écrire du CSS moderne tout en conservant une compatibilité ascendante et en améliorant les performances. Il analyse le code CSS et le fait passer par une série de plugins qui peuvent modifier, optimiser et étendre le CSS avant de produire le résultat final. [Site Web de PostCSS](https://postcss.org/)
+
+## Utilisation
+
+Vous pouvez ajouter PostCSS à votre projet en utilisant le script de starter Qwik suivant :
+
+```shell
+npm run qwik add postcss
+```
+
+Cela créera un nouveau fichier `postcss.config.js` à la racine du projet avec les dépendances et la configuration suivantes.
+
+- [Autoprefixer](https://github.com/postcss/autoprefixer)
+- [PostCSS Preset Env](https://preset-env.cssdb.org/)
+
+```ts title="postcss.config.js"
+module.exports = {
+  plugins: {
+    autoprefixer: {},
+    "postcss-preset-env": {
+      stage: 3,
+      features: {
+        "nesting-rules": true,
+      },
+    },
+  },
+}
+```
+
+Si vous souhaitez ajouter un nouveau plugin comme [CssNano] (https://cssnano.co/), exécutez la commande suivante et mettez à jour le fichier `postcss.config.js`.
+
+```shell
+npm install cssnano --save-dev
+```
+
+```ts title="postcss.config.js"
+module.exports = {
+  plugins: {
+    /* previous plugin configuration */
+    "cssnano": {
+      preset: "default"
+    }
+  },
+}
+```
+
+Pour plus de documentation, consultez les [Docs PostCSS](https://postcss.org/docs/)

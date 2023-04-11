@@ -1,0 +1,54 @@
+---
+title: Qwik City et Partytown
+keywords: 'third party scripts, google analytics, 3rd party, scripts, performance'
+contributors:
+  - manucorporat
+  - leifermendez
+  - shairez
+  - pamenary
+  - reemardelarosa
+---
+
+# Partytown
+
+Les scripts tiers ralentissent considérablement le chargement initial de votre page en bloquant le fil d'exécution principal.
+
+Partytown est un outil qui vous permet de différer les scripts tiers tels que Google Analytics, Facebook Pixel, etc. du thread principal en utilisant un web worker.
+Pour plus d'informations sur cet outil, consultez la [doc de Partytown](https://partytown.builder.io/).
+
+## Utilisation
+
+Vous pouvez ajouter Partytown facilement en utilisant le script starter Qwik suivant :
+
+```shell
+npm run qwik add partytown
+```
+
+La commande précédente met à jour votre appli et définit la configuration correcte dans `vite.config.ts`.
+
+Elle ajoute également de nouveaux fichiers dans votre dossier `components`.
+
+```tsx title="src/root.tsx"
+import { QwikPartytown } from './components/partytown/partytown';
+
+export default component$(() => {
+  return (
+    <QwikCityProvider>
+      <head>
+        <meta charSet="utf-8" />
+        <QwikPartytown forward={['dataLayer.push']} />
+        <script
+          async
+          type="text/partytown"
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
+        />
+      </head>
+      <body lang="en"></body>
+    </QwikCityProvider>
+  );
+});
+```
+
+## Avancé
+
+Pour configurer Partytown avec davantage d'options, veuillez consulter la [Documentation de Partytown](https://partytown.builder.io/configuration).

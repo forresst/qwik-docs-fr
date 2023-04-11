@@ -6,77 +6,50 @@ contributors:
 
 # `routeLoader$()`
 
-Les route Loaders permettent aux données de circuler du serveur vers les composants Qwik. Pour cette raison, les routeLoaders de Qwik doivent toujours être inclus dans le contexte de **chargement de données sur le serveur qui sont ensuite consommées par un composant Qwik**, si vous voulez créer un endpoint RESTful, veuillez consulter le guide [endpoints](/docs/(qwikcity)/endpoints/index.mdx) à la place.
+Les chargeurs de routes chargent les données dans le serveur afin qu'elles soient disponibles pour être utilisées dans les composants Qwik. Ils se comportent comme des fonctions RPC côté serveur qui peuvent être invoquées par les composants Qwik pendant le rendu.
 
-Ils se comportent comme des fonctions RPC côté serveur qui peuvent être invoquées par les composants Qwik pendant le rendu.
+Les chargeurs de routes ne peuvent être déclarés que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et ils DOIVENT être exportés.
 
-## Déclaration d'un chargeur
-
-Les route Loaders ne peuvent être déclarés que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et ils DOIVENT être exportés.
-
-```tsx
-// src/routes/layout.tsx
-import { routeLoader$ } from '@builder.io/qwik-city';
-
-export const getProductData = routeLoader$(() => {
-  return {
-    product: {
-      name: 'Qwik City',
-      price: 100,
-    },
-  };
-});
-```
-
-> Les routeLoaders ne sont pas des endpoints, il s'agit d'un canal de communication interne entre le serveur et les composants Qwik. De plus, les routeLoaders doivent retourner une valeur JSON sérialisable.
-
-## Utilisation d'un routeLoader
-
-Les routeLoaders peuvent être utilisés par n'importe quel composant de l'application, tant que le chargeur est déclaré dans un fichier `layout.tsx` ou `index.tsx` qui fait partie de la route existante.
-
-```tsx
-// src/routes/index.tsx
-import { routeLoader$ } from '@builder.io/qwik-city';
+```tsx /routeLoader$/ /useProductData/#a title="src/routes/product/[productId]/index.tsx"
 import { component$ } from '@builder.io/qwik';
+import { routeLoader$ } from '@builder.io/qwik-city';
 
-export const useGetServerTime = routeLoader$(() => {
-  return {
-    time: Date.now(),
-  }
+export const useProductDetails = routeLoader$(async (requestEvent) => {
+  // Ce code ne s'exécute que sur le serveur, après chaque navigation.
+  const res = await fetch(`https://.../products/${requestEvent.params.productId}`);
+  const product = await res.json();
+  return product;
 });
 
 export default component$(() => {
-  // Récupérer un signal réactif des données du chargeur
-  const signal = useGetServerTime(); // Signal<{time: number}>
-  return (
-    <div>
-      Heure du serveur : {signal.value.time}
-    </div>
-  );
+  // Récupération d'un signal réactif des données du chargeur
+  const signal = useProductDetails(); // ReadonlySignal<Product>
+  return <div>Product name: {signal.value.product.name}</div>;
 });
 ```
 
-> Le `useGetServerTime()` récupère les données du loader, mais ne l'exécute pas plusieurs fois. Les routeLoaders s'exécutent par anticipation au début de la requête afin de fournir une faible latence. Pour cette raison, ils ne sont autorisés que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et ils DOIVENT être exportés.
+Les chargeurs de routes sont parfaits pour récupérer des données d'une base de données ou d'une API. Par exemple, vous pouvez les utiliser pour récupérer des données d'un CMS, d'une API météo, ou d'une liste d'utilisateurs depuis votre base de données.
+
+> Vous ne devriez pas utiliser un `routeLoader$` pour créer une API REST, pour cela vous feriez mieux d'utiliser un [Endpoint](/docs/(qwikcity)/endpoints/index.mdx), qui vous permet d'avoir un contrôle étroit sur les entêtes et le corps de la réponse.
 
 ## Plusieurs routeLoaders
 
 Plusieurs routeLoaders sont autorisés dans l'ensemble de l'application et peuvent être utilisés dans n'importe quel composant Qwik. **Vous pouvez même déclarer plusieurs routeLoaders dans le même fichier**.
 
-**Fichier : `src/routes/layout.tsx`**
 
-```tsx
+```tsx title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { Footer } from '../components/footer.tsx';
 
-export const useGetServerTime = routeLoader$(() => {
-  return {
-    time: Date.now(),
-  }
+export const useProductData = routeLoader$(async () => {
+  const res = await fetch('https://.../product');
+  const product = (await res.json()) as Product;
+  return product;
 });
 
 export default component$(() => {
-  const signal = useGetServerTime();
+  const signal = useProductData();
   return (
     <main>
       <Slot />
@@ -86,47 +59,45 @@ export default component$(() => {
 });
 ```
 
-**Fichier : `src/components/footer.tsx`**
-
-```tsx
+```tsx title="src/components/footer.tsx"
 import { component$ } from '@builder.io/qwik';
 
 // Importe le chargeur depuis la mise en page
-import { useGetServerTime } from '../routes/layout.tsx';
+import { useProductData } from '../routes/layout.tsx';
 
 export const Footer = component$(() => {
   // Consomme les données du chargeur
-  const signal = useGetServerTime();
-  return <footer>Server time: {signal.value.time}</footer>;
+  const signal = useProductData();
+  return <footer>Product name: {signal.value.product.name}</footer>;
 });
 ```
 
-**Fichier : `src/routes/admin/index.tsx`**
+L'exemple ci-dessus montre l'utilisation de `useProductData()` dans deux composants différents à travers des fichiers différents. Il s'agit d'un comportement intentionnel.
 
-```tsx
+```tsx title="src/routes/admin/index.tsx"
 import { component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 
-export const useIsLogged = routeLoader$(({cookie}) => {
+export const useLoginStatus = routeLoader$(async ({cookie}) => {
   return {
-    logged: checkcookie(cookie),
+    isUserLoggedIn: checkCookie(cookie);
   }
 });
 
-export const useGetCurrentUser = routeLoader$(({cookie}) => {
+export const useCurrentUser = routeLoader$(async ({cookie}) => {
   return {
-    user: currentUserFromcookie(cookie),
+    user: currentUserFromCookie(cookie);
   }
 });
 
 export default component$(() => {
-  const logged = useIsLogged();
-  const user = useGetCurrentUser();
+  const loginStatus = useLoginStatus();
+  const currentUser = useCurrentUser();
   return (
     <section>
       <h1>Admin</h1>
-      {logged.value.logged ? (
-        <p>Bienvenue {user.value.user.name}</p>
+      {loginStatus.value.isUserLoggedIn ? (
+        <p>Welcome {currentUser.value.user.name}</p>
       ) : (
         <p>Vous n'êtes pas connecté</p>
       )}
@@ -135,30 +106,36 @@ export default component$(() => {
 });
 ```
 
-## Contexte de routeLoader
+L'exemple ci-dessus montre deux `routeLoader$` utilisés dans le même fichier. Un chargeur générique `useLoginStatus` est utilisé pour vérifier si l'utilisateur est connecté, et un chargeur plus spécifique `useCurrentUser` est utilisé pour récupérer les données de l'utilisateur.
 
-Tout comme les gestionnaires de requêtes tels que `onRequest` et `onGet`, les routeLoaders ont accès à l'objet `RequestEvent` qui contient des informations sur la requête en cours.
+## RequestEvent
+
+Tout comme les gestionnaires de requêtes tels que `onRequest` et `onGet`, les `routeLoader$` ont accès à l'objet `RequestEvent` qui contient des informations sur la requête et la réponse HTTP en cours.
 
 Ces informations sont utiles lorsque le chargeur doit renvoyer des données de manière conditionnelle en fonction de la requête, ou lorsqu'il doit modifier manuellement le statut, les entêtes ou le corps de la réponse.
 
-```tsx
+```tsx /requestEvent/ title="src/routes/product/[user]/index.tsx"
 import { routeLoader$ } from '@builder.io/qwik-city';
 
-export const getServerTime = routeLoader$((ev) => {
-  console.log('Request headers:', ev.headers);
-  console.log('Request cookies:', ev.cookie);
-  console.log('Request url:', ev.url);
-  console.log('Request method:', ev.method);
-  console.log('Request params:', ev.params);
+export const useProductRecommendations = routeLoader$(async (requestEvent) => {
+  console.log('Request headers:', requestEvent.headers);
+  console.log('Request cookies:', requestEvent.cookie);
+  console.log('Request url:', requestEvent.url);
+  console.log('Request method:', requestEvent.method);
+  console.log('Request params:', requestEvent.params);
 
-  return {
-    time: Date.now(),
-  }
+  // Utilise les détails de la requête pour obtenir des données personnalisées
+  const res = fetch(`https://.../recommendations?user=${requestEvent.params.user}`);
+  const recommendedProducts = (await res.json()) as Product[];
+
+  return recommendedProducts;
 });
 ```
 
-## Quand utiliser un routeLoader ?
+## Considérations sur la performance
 
-Un routeLoader doit être utilisé lorsque vous avez besoin de fournir des données côté serveur à vos composants Qwik. Par exemple, si vous avez besoin de récupérer des données d'une base de données ou d'une API, vous pouvez utiliser un routeLoader pour le faire.
+Les chargeurs de route sont exécutés sur le serveur, après chaque navigation. Cela signifie qu'ils sont exécutés à chaque fois qu'un utilisateur navigue vers une page dans SPA ou MPA, et qu'ils sont exécutés même si l'utilisateur navigue vers la même page.
 
-Vous ne devriez pas utiliser un routeLoader pour créer une API REST, pour cela il vaut mieux utiliser un [Endpoint](/docs/(qwikcity)/endpoints/index.mdx), qui vous permet d'avoir un contrôle précis sur les entêtes et le corps de la réponse.
+Les chargeurs s'exécutent après les gestionnaires des middlewares Qwik (`onRequest`, `onGet`, `onPost`, etc), et avant que les composants Qwik ne soient rendus, ce qui permet de commencer à récupérer les données dès que possible, réduisant ainsi le temps de latence.
+
+

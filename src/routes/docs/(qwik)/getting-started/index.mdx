@@ -18,13 +18,16 @@ contributors:
   - mhevery
 ---
 
+import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
+
 # Démarrage avec Qwik
 
-Qwik est un nouveau type de framework qui est [résumable](../concepts/resumable/index.mdx) (pas de JS et pas d'hydratation), construit pour le Edge et [familier pour les développeurs React](../cheat/qwik-react/index.mdx).
+Qwik est un nouveau type de framework qui est [résumable](../concepts/resumable/index.mdx) (pas de JS et pas d'hydratation), construit pour le Edge et [familier pour les développeurs React](/docs/guides/qwik-react/).
 
 Si vous souhaitez jouer immédiatement, essayez nos aires de jeux dans le navigateur :
-- [Stackblitz Qwik + Vite](https://qwik.new)
-- [Exemples de terrains de jeux](/examples/reactivity/counter/)
+
+- [Stackblitz Qwik](https://qwik.new) (Intégration complète de Qwik + Qwikcity)
+- [Exemples de terrains de jeux](/examples/reactivity/counter/) (Qwik uniquement (pas de routage))
 
 ## Prérequis
 
@@ -32,7 +35,7 @@ Si vous souhaitez commencer à utiliser Qwik localement, vous aurez besoin des �
 
 - [Node.js v16.8](https://nodejs.org/en/download/) ou supérieur
 - Votre IDE préféré ([vscode](https://code.visualstudio.com/) est recommandé)
-- Commencez par lire [Pensez Qwik](../think-qwik/index.mdx)
+- Vous pouvez également lire [Pensez Qwik](../think-qwik/index.mdx)
 
 ## Création d'une appli à l'aide du CLI
 
@@ -43,7 +46,7 @@ Lancez le CLI de Qwik dans votre shell. Choisissez le gestionnaire de paquets qu
 ```shell
 npm create qwik@latest
 pnpm create qwik@latest
-yarn create qwik
+yarn create qwik@latest
 ```
 
 Le CLI vous guidera à travers un menu interactif pour définir le nom du projet, sélectionner l'un des _starters_ et vous demandera si vous voulez installer les dépendances. Pour en savoir plus sur les fichiers générés, lisez la [structure du projet](/docs/projet-structure/).
@@ -63,75 +66,80 @@ Pour vous familiariser avec Qwik, nous avons créé un tutoriel d'application tr
 Nous utiliserons https://icanhazdadjoke.com comme API pour obtenir une blague aléatoire. Nous allons créer une application simple qui affichera une blague aléatoire et un bouton pour obtenir une nouvelle blague.
 
 
-## Créer une route
+## 1. Créer une route
 
 Tout commence par le service d'une page sur une route particulière. Construisons donc une application simple qui sert une blague aléatoire sur la route `/joke/`. Qwikcity (le méta-framework de Qwik) utilise le routage [basé sur les répertoires](/docs/routing/). Pour débuter :
 
 1. Créez un nouveau fichier `index.tsx` dans le répertoire `src/routes/joke/` de votre projet. (Vous devrez d'abord créer le répertoire `joke`).
 2. Le fichier `index.tsx` de chaque route doit avoir un `export default component$(...)` pour que Qwikcity sache quel contenu servir. Collez le contenu suivant dans `src/routes/joke/index.tsx` :
-  ```tsx
-  import { component$ } from "@builder.io/qwik";
 
-  export default component$(() => {
-    return <div class="section bright">Une blague !</div>;
-  });
-  ```
+<CodeSandbox src="/src/routes/demo/getting-started/01-route/index.tsx" style={{ height: '6em' }}>
+```tsx {3-5}
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  return <div class="section bright">Une blague !</div>;
+});
+```
+</CodeSandbox>
+
 3. Naviguez vers `http://127.0.0.1:5173/joke/` pour voir votre nouvelle page fonctionner.
 
-REMARQUE :
-- Le composant par défaut de votre route `joke` est entouré par une mise en page existante. Consultez [Mise en page](/docs/layout/) pour plus de détails sur ce que sont les mises en page et sur la manière de les utiliser.
-- Pour plus de détails sur la création de composants, voir la section [API des composants](/docs/(qwik)/composants/overview/).
+> REMARQUE :
+>
+> - Le composant par défaut de votre route `joke` est entouré par une mise en page existante. Consultez [Mise en page](/docs/layout/) pour plus de détails sur ce que sont les mises en page et sur la manière de les utiliser.
+> - Pour plus de détails sur la création de composants, voir la section [API des composants](/docs/(qwik)/composants/overview/).
 
-
-## Chargement des données
+## 2. Chargement des données
 
 L'une des fonctions les plus courantes d'une page est de charger des données pour les afficher à l'utilisateur. Cette opération est réalisée à l'aide de [chargeurs de routes](/docs/route-loader/).
 
 1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
-  ```tsx
-  import { routeLoader$ } from "@builder.io/qwik-city";
 
-  const useDadJoke = routeLoader$(async () => {
-    const response = await fetch("https://icanhazdadjoke.com/", {
-      headers: { Accept: "application/json" },
-    });
-    return (await response.json()) as {
-      id: string;
-      status: number;
-      joke: string;
-    };
+```tsx {3-8} /routeLoader\$/
+import { routeLoader$ } from '@builder.io/qwik-city';
+
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
   });
-  ```
+  return response.json();
+});
+```
+
 2. Ensuite, ajoutez le hook `useDadJoke()` au composant `default` et utilisez le résultat dans le JSX :
-  ```tsx
-  export default component$(() => {
-    const dadJokeSignal = useDadJoke();
-    return (
-      <div class="section bright">
-        <div>{dadJokeSignal.value.joke}</div>
-      </div>
-    );
-  });
-  ```
+
+```tsx {2,5} /dadJokeSignal/
+export default component$(() => {
+  const dadJokeSignal = useDadJoke();
+  return (
+    <div class="section bright">
+      <div>{dadJokeSignal.value.joke}</div>
+    </div>
+  );
+});
+```
+
 3. Naviguez vers "http://127.0.0.1:5173/" pour voir l'application fonctionner.
 
 Que fait le code ci-dessus ?
+
 - La fonction passée à `routeLoader$` est appelée sur le serveur par anticipation avant qu'un composant ne soit rendu et est responsable du chargement des données.
 - Le `routeLoader$` renvoie un use-hook (`useDadJoke`) qui peut être utilisé dans le composant pour récupérer les données du serveur.
 
-REMARQUE :
-- Le `routeLoader$` est appelé avec anticipation sur le serveur avant qu'un composant ne soit rendu, même si son use-hook n'est pas appelé dans un composant.
-- Le type de retour du `routeLoader$` est déduit dans le composant sans avoir besoin d'informations supplémentaires sur le type.
+> REMARQUE :
+>
+> - Le `routeLoader$` est appelé avec anticipation sur le serveur avant qu'un composant ne soit rendu, même si son use-hook n'est pas appelé dans un composant.
+> - Le type de retour du `routeLoader$` est déduit dans le composant sans avoir besoin d'informations supplémentaires sur le type.
 
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
-```tsx
-import { component$ } from "@builder.io/qwik";
-import { routeLoader$ } from "@builder.io/qwik-city";
+<CodeSandbox src="/src/routes/demo/getting-started/02-loading-data/index.tsx" style={{ height: '6em' }}>
+```tsx /routeLoader$/ /useDadJoke/
+import { component$ } from '@builder.io/qwik';
+import { routeLoader$ } from '@builder.io/qwik-city';
 
-const useDadJoke = routeLoader$(async () => {
-  const response = await fetch("https://icanhazdadjoke.com/", {
-    headers: { Accept: "application/json" },
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
   });
   return (await response.json()) as {
     id: string;
@@ -149,10 +157,9 @@ export default component$(() => {
   );
 });
 ```
-</details>
+</CodeSandbox>
 
-
-## Envoi de données au serveur
+## 3. Envoi de données au serveur
 
 Précédemment, nous avons utilisé `routeLoader$` pour envoyer des données du serveur au client. Nous utilisons [`routeAction$`](/docs/action/) pour poster (envoyer) des données du client vers le serveur.
 
@@ -161,63 +168,59 @@ REMARQUE : `routeAction$` est le meilleur moyen d'envoyer des données au serve
 Pour déclarer une action :
 
 1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
-  ```tsx
-  import {routeAction$, Form} from "@builder.io/qwik-city";
 
-  const useJokeVoteAction = routeAction$((props) => {
-    // Laissons au lecteur le soin de mettre cela en œuvre.
-    console.log("VOTE", props);
-  });
-  ```
+
+```tsx /routeAction\$/
+import { routeAction$, Form } from '@builder.io/qwik-city';
+
+export const useJokeVoteAction = routeAction$((props) => {
+  // Laissons au lecteur le soin de mettre cela en œuvre.
+  console.log('VOTE', props);
+});
+```
 
 2. Mettez à jour le `export default` du composant pour qu'il utilise le hook `useJokeVoteAction`. Pour ce faire, ajoutez l'élément `<Form>`.
 
-  ```tsx
-  export default component$(() => {
-    const dadJokeSignal = useDadJoke();
-    const favoriteJokeAction = useJokeVoteAction();
-    return (
-      <div class="section bright">
-        <div>{dadJokeSignal.value.joke}</div>
-        <Form action={favoriteJokeAction}>
-          <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
-          <button name="vote" value="up">
-            👍
-          </button>
-          <button name="vote" value="down">
-            👎
-          </button>
-        </Form>
-      </div>
-    );
-  });
-  ```
-3. Navigate to `http://127.0.0.1:5173/` to see the application running.
+```tsx {3,7-11} /favoriteJokeAction/
+export default component$(() => {
+  const dadJokeSignal = useDadJoke();
+  const favoriteJokeAction = useJokeVoteAction();
+  return (
+    <div class="section bright">
+      <div>{dadJokeSignal.value.joke}</div>
+      <Form action={favoriteJokeAction}>
+        <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
+        <button name="vote" value="up">👍</button>
+        <button name="vote" value="down">👎</button>
+      </Form>
+    </div>
+  );
+});
+```
+
+3. Naviguez vers "http://127.0.0.1:5173/" pour voir l'application fonctionner.
 
 Que fait le code ci-dessus ?
+
 - `routeAction$` est utilisé pour recevoir des données.
 - La fonction passée à `routeAction$` est appelée sur le serveur à chaque fois que le formulaire est posté.
   - La `routeAction$` renvoie un use-hook (`useJokeVoteAction`) qui peut être utilisé dans le composant postant les données du formulaire.
 - `Form` est un composant de commodité qui enveloppe l'élément natif `<form>` du navigateur.
 
 À noter :
+
 - Pour la validation, consultez la [validation de zod](/docs/action/#validation-de-zod).
   - La `routeAction$` fonctionne même si JavaScript est désactivé.
 - Si JavaScript est activé, le composant `Form` empêchera le navigateur d'afficher le formulaire et affichera à la place les données en utilisant JavaScript et émulera le comportement natif du navigateur sans un rafraîchissement complet.
 
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
-```tsx
-import { component$ } from "@builder.io/qwik";
-import {
-  routeLoader$,
-  Form,
-  routeAction$,
-  server$,
-} from "@builder.io/qwik-city";
-const useDadJoke = routeLoader$(async () => {
-  const response = await fetch("https://icanhazdadjoke.com/", {
-    headers: { Accept: "application/json" },
+<CodeSandbox src="/src/routes/demo/getting-started/03-posting-data/index.tsx" style={{ height: '8em' }}>
+```tsx {21,25-29} /favoriteJokeAction/
+import { component$ } from '@builder.io/qwik';
+import { routeLoader$, Form, routeAction$ } from '@builder.io/qwik-city';
+
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
   });
   return (await response.json()) as {
     id: string;
@@ -225,76 +228,12 @@ const useDadJoke = routeLoader$(async () => {
     joke: string;
   };
 });
-const useJokeVoteAction = routeAction$((props) => {
-  console.log("VOTE", props);
+
+export const useJokeVoteAction = routeAction$((props) => {
+  console.log('VOTE', props);
 });
+
 export default component$(() => {
-  const dadJokeSignal = useDadJoke();
-  const favoriteJokeAction = useJokeVoteAction();
-  return (
-    <div class="section bright">
-      <div>
-        {dadJokeSignal.value.joke}
-      </div>
-      <Form action={favoriteJokeAction}>
-        <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
-        <button name="vote" value="up">
-          👍
-        </button>
-        <button name="vote" value="down">
-          👎
-        </button>
-      </Form>
-    </div>
-  );
-});
-```
-</details>
-
-## Modification de l'État
-
-Garder une trace de l'état et mettre à jour l'interface utilisateur est au coeur de ce que font les applications. Qwik fournit un hook `useSignal` pour garder une trace de l'état de l'application. Pour en savoir plus, voir [gestion de l'état](/docs/components/state/).
-
-Pour déclarer l'état :
-1. Déclarer l'état du composant en utilisant `useSignal()`.
-   ```tsx
-    const isFavoriteSignal = useSignal(false);
-   ```
-2. Ajoutez un bouton au composant qui modifiera l'état.
-   ```tsx
-   <button onClick={() => isFavoriteSignal.value = !isFavoriteSignal.value}>
-     {isFavoriteSignal.value ? "❤️" : "🤍"}
-   </button>
-   ```
-
-REMARQUE : 
-- En cliquant sur le bouton, l'état est mis à jour et l'interface utilisateur est actualisée.
-
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
-```tsx
-import { component$, useSignal } from "@builder.io/qwik";
-import {
-  routeLoader$,
-  Form,
-  routeAction$,
-  server$,
-} from "@builder.io/qwik-city";
-const useDadJoke = routeLoader$(async () => {
-  const response = await fetch("https://icanhazdadjoke.com/", {
-    headers: { Accept: "application/json" },
-  });
-  return (await response.json()) as {
-    id: string;
-    status: number;
-    joke: string;
-  };
-});
-const useJokeVoteAction = routeAction$((props) => {
-  console.log("VOTE", props);
-});
-export default component$(() => {
-  const isFavoriteSignal = useSignal(false);
   const dadJokeSignal = useDadJoke();
   const favoriteJokeAction = useJokeVoteAction();
   return (
@@ -302,75 +241,45 @@ export default component$(() => {
       <div>{dadJokeSignal.value.joke}</div>
       <Form action={favoriteJokeAction}>
         <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
-        <button name="vote" value="up">
-          👍
-        </button>
-        <button name="vote" value="down">
-          👎
-        </button>
+        <button name="vote" value="up">👍</button>
+        <button name="vote" value="down">👎</button>
       </Form>
-      <button
-        onClick$={() => (isFavoriteSignal.value = !isFavoriteSignal.value)}
-      >
-        {isFavoriteSignal.value ? "❤️" : "🤍"}
-      </button>
     </div>
   );
 });
 ```
-</details>
+</CodeSandbox>
 
-## Tâches et appel au code du serveur
+## 4. Modification de l'État
 
-Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vous-avez-besoin-de) est un travail qui doit être effectué lorsqu'un état change (similaire à un « effect » dans d'autres frameworks). Dans cet exemple, nous utiliserons la tâche pour appeler du code sur le serveur.
+Garder une trace de l'état et mettre à jour l'interface utilisateur est au coeur de ce que font les applications. Qwik fournit un hook `useSignal` pour garder une trace de l'état de l'application. Pour en savoir plus, voir [gestion de l'état](/docs/components/state/).
 
-1. Créez une nouvelle tâche qui traque l'état `isFavoriteSignal` :
-   ```tsx
-    useTask$(({ track }) => {
-    });
+Pour déclarer l'état :
+
+1. Déclarer l'état du composant en utilisant `useSignal()`.
+   ```tsx /useSignal/
+   const isFavoriteSignal = useSignal(false);
    ```
-2. Ajouter un appel à `track` pour ré-exécuter la tâche sur le changement d'état de `isFavoriteSignal` :
-   ```tsx
-    useTask$(({ track }) => {
-      track(isFavoriteSignal);
-    });
-   ```
-3. Ajoutez le traitement que vous souhaitez exécuter lors d'un changement d'état :
-   ```tsx
-    useTask$(({ track }) => {
-      track(isFavoriteSignal);
-      console.log("FAVORITE (isomorphic)", isFavoriteSignal.value);
-    });
-   ```
-4. Si vous voulez que le traitement se fasse uniquement sur le serveur, mettez-le dans `server$()`
-   ```tsx
-   useTask$(({ track }) => {
-     track(isFavoriteSignal);
-     console.log("FAVORITE (isomorphic)", isFavoriteSignal.value);
-     server$(() => {
-      console.log("FAVORITE (server)", isFavoriteSignal.value);
-     })();
-   });
+2. Ajoutez un bouton au composant qui modifiera l'état.
+   ```tsx /isFavoriteSignal/
+   <button 
+    onClick$={() => {
+      isFavoriteSignal.value = !isFavoriteSignal.value
+    }}>
+     {isFavoriteSignal.value ? '❤️' : '🤍'}
+   </button>
    ```
 
-REMARQUE :
-- Notez que le corps de `useTask$` est exécuté à la fois sur le serveur et sur le client (isomorphique).
-- Sur le serveur SSR, `FAVORITE (isomorphic) false` et `FAVORITE (server) false` sont affichés.
-- Lorsque l'utilisateur interagit avec favorite, le client affiche `FAVORITE (isomorphic) true` et le serveur imprime `FAVORITE (server) false`.
+REMARQUE : En cliquant sur le bouton, l'état est mis à jour et l'interface utilisateur est actualisée.
 
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
-```tsx
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import {
-  routeLoader$,
-  Form,
-  routeAction$,
-  server$,
-} from "@builder.io/qwik-city";
-const useDadJoke = routeLoader$(async () => {
-  const response = await fetch("https://icanhazdadjoke.com/", {
-    headers: { Accept: "application/json" },
+<CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/04-state/index.tsx" style={{ height: '10em' }}>
+```tsx /isFavoriteSignal/
+import { component$, useSignal } from '@builder.io/qwik';
+import { routeLoader$, Form, routeAction$ } from '@builder.io/qwik-city';
+
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
   });
   return (await response.json()) as {
     id: string;
@@ -378,18 +287,107 @@ const useDadJoke = routeLoader$(async () => {
     joke: string;
   };
 });
-const useJokeVoteAction = routeAction$((props) => {
-  console.log("VOTE", props);
+
+export const useJokeVoteAction = routeAction$((props) => {
+  console.log('VOTE', props);
 });
+
+export default component$(() => {
+  const isFavoriteSignal = useSignal(false);
+  const dadJokeSignal = useDadJoke();
+  const favoriteJokeAction = useJokeVoteAction();
+
+  return (
+    <div class="section bright">
+      <div>{dadJokeSignal.value.joke}</div>
+      <Form action={favoriteJokeAction}>
+        <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
+        <button name="vote" value="up">👍</button>
+        <button name="vote" value="down">👎</button>
+      </Form>
+      <button
+        onClick$={() => (isFavoriteSignal.value = !isFavoriteSignal.value)}
+      >
+        {isFavoriteSignal.value ? '❤️' : '🤍'}
+      </button>
+    </div>
+  );
+});
+```
+</CodeSandbox>
+
+## 5. Tâches et appel au code du serveur
+
+Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vous-avez-besoin-de) est un travail qui doit être effectué lorsqu'un état change (similaire à un « effect » dans d'autres frameworks). Dans cet exemple, nous utiliserons la tâche pour appeler du code sur le serveur.
+
+1. Créez une nouvelle tâche qui traque l'état `isFavoriteSignal` :
+   ```tsx /useTask\$/
+   useTask$(({ track }) => {});
+   ```
+2. Ajouter un appel à `track` pour ré-exécuter la tâche sur le changement d'état de `isFavoriteSignal` :
+   ```tsx /track/
+   useTask$(({ track }) => {
+     track(()=> isFavoriteSignal.value);
+   });
+   ```
+3. Ajoutez le traitement que vous souhaitez exécuter lors d'un changement d'état :
+   ```tsx {3}
+   useTask$(({ track }) => {
+     track(()=> isFavoriteSignal.value);
+     console.log('FAVORITE (isomorphic)', isFavoriteSignal.value);
+   });
+   ```
+4. Si vous voulez que le traitement se fasse uniquement sur le serveur, mettez-le dans `server$()`
+   ```tsx /server\$/ {4-6}
+   useTask$(({ track }) => {
+     track(()=> isFavoriteSignal.value);
+     console.log('FAVORITE (isomorphic)', isFavoriteSignal.value);
+     server$(() => {
+       console.log('FAVORITE (server)', isFavoriteSignal.value);
+     })();
+   });
+   ```
+
+REMARQUE :
+
+- Notice that the body of `useTask$` is executed on both the server and the client (isomorphic).
+- On SSR server prints `FAVORITE (isomorphic) false` and `FAVORITE (server) false`.
+- When the user interacts with favorite, the client prints `FAVORITE (isomorphic) true` and the server prints `FAVORITE (server) true`.
+
+<CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/05-tasks/index.tsx" style={{ height: '10em' }}>
+```tsx {28-34}
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+import {
+  routeLoader$,
+  Form,
+  routeAction$,
+  server$,
+} from '@builder.io/qwik-city';
+
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
+  });
+  return (await response.json()) as {
+    id: string;
+    status: number;
+    joke: string;
+  };
+});
+
+export const useJokeVoteAction = routeAction$((props) => {
+  console.log('VOTE', props);
+});
+
 export default component$(() => {
   const isFavoriteSignal = useSignal(false);
   const dadJokeSignal = useDadJoke();
   const favoriteJokeAction = useJokeVoteAction();
   useTask$(({ track }) => {
-    track(isFavoriteSignal);
-    console.log("FAVORITE (isomorphic)", isFavoriteSignal.value);
+    track(() => isFavoriteSignal.value);
+    console.log('FAVORITE (isomorphic)', isFavoriteSignal.value);
     server$(() => {
-      console.log("FAVORITE (server)", isFavoriteSignal.value);
+      console.log('FAVORITE (server)', isFavoriteSignal.value);
     })();
   });
   return (
@@ -397,84 +395,72 @@ export default component$(() => {
       <div>{dadJokeSignal.value.joke}</div>
       <Form action={favoriteJokeAction}>
         <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
-        <button name="vote" value="up">
-          👍
-        </button>
-        <button name="vote" value="down">
-          👎
-        </button>
+        <button name="vote" value="up">👍</button>
+        <button name="vote" value="down">👎</button>
       </Form>
       <button
         onClick$={() => (isFavoriteSignal.value = !isFavoriteSignal.value)}
       >
-        {isFavoriteSignal.value ? "❤️" : "🤍"}
+        {isFavoriteSignal.value ? '❤️' : '🤍'}
       </button>
     </div>
   );
 });
 ```
-</details>
+</CodeSandbox>
 
-## Style
+## 6. Style
 
 Le style est une partie importante de toute application. Qwik fournit un moyen d'associer et de délimiter les styles avec votre composant.
 
 Pour ajouter des styles :
+
 1. Créer un nouveau fichier `src/routes/joke/index.css` :
+
    ```css
    div {
      font-weight: bold;
    }
- 
+
    form {
      float: right;
    }
    ```
+
 2. Importez les styles dans `src/routes/joke/index.tsx` :
-   ```tsx
-   import STYLES from "./index.css?inline";
-   ```
+    ```tsx
+    import STYLES from "./index.css?inline";
+    ```
 3. Indiquez au composant de charger les styles :
    ```tsx
    useStylesScoped$(STYLES);
    ```
 
 REMARQUE :
+
 - Le paramètre de requête `?inline` indique à Vite d'intégrer les styles dans le composant.
 - L'appel `useStylesScoped$` indique à Qwik d'associer les styles au composant uniquement (portée).
 - Les styles ne sont chargés que s'ils ne sont pas déjà intégrés dans le cadre du SSR et uniquement pour le premier composant.
 
-
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.css`:</summary>
-```css
-div {
-  font-weight: bold;
-}
-form {
-  float: right;
-}
-```
-</details>
-<details>
-  <summary>POINT DE VÉRIFICATION : `src/routes/joke/index.tsx`:</summary>
-```tsx
+<CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/06-styling/index.tsx" style={{ height: '10em' }}>
+```tsx /useStylesScoped\$/
 import {
   component$,
   useSignal,
   useStylesScoped$,
   useTask$,
-} from "@builder.io/qwik";
+} from '@builder.io/qwik';
 import {
   routeLoader$,
   Form,
   routeAction$,
   server$,
-} from "@builder.io/qwik-city";
-import STYLES from "./index.css?inline";
-const useDadJoke = routeLoader$(async () => {
-  const response = await fetch("https://icanhazdadjoke.com/", {
-    headers: { Accept: "application/json" },
+} from '@builder.io/qwik-city';
+import STYLES from './index.css?inline';
+
+export const useDadJoke = routeLoader$(async () => {
+  const response = await fetch('https://icanhazdadjoke.com/', {
+    headers: { Accept: 'application/json' },
   });
   return (await response.json()) as {
     id: string;
@@ -482,19 +468,21 @@ const useDadJoke = routeLoader$(async () => {
     joke: string;
   };
 });
+
 const useJokeVoteAction = routeAction$((props) => {
-  console.log("VOTE", props);
+  console.log('VOTE', props);
 });
+
 export default component$(() => {
   useStylesScoped$(STYLES);
   const isFavoriteSignal = useSignal(false);
   const dadJokeSignal = useDadJoke();
   const favoriteJokeAction = useJokeVoteAction();
   useTask$(({ track }) => {
-    track(isFavoriteSignal);
-    console.log("FAVORITE (isomorphic)", isFavoriteSignal.value);
+    track(() => isFavoriteSignal.value);
+    console.log('FAVORITE (isomorphic)', isFavoriteSignal.value);
     server$(() => {
-      console.log("FAVORITE (server)", isFavoriteSignal.value);
+      console.log('FAVORITE (server)', isFavoriteSignal.value);
     })();
   });
   return (
@@ -502,38 +490,37 @@ export default component$(() => {
       <div>{dadJokeSignal.value.joke}</div>
       <Form action={favoriteJokeAction}>
         <input type="hidden" name="jokeID" value={dadJokeSignal.value.id} />
-        <button name="vote" value="up">
-          👍
-        </button>
-        <button name="vote" value="down">
-          👎
-        </button>
+        <button name="vote" value="up">👍</button>
+        <button name="vote" value="down">👎</button>
       </Form>
       <button
         onClick$={() => (isFavoriteSignal.value = !isFavoriteSignal.value)}
       >
-        {isFavoriteSignal.value ? "❤️" : "🤍"}
+        {isFavoriteSignal.value ? '❤️' : '🤍'}
       </button>
     </div>
   );
 });
 ```
-</details>
+</CodeSandbox>
 
-## Prévisualisation
+## 7. Prévisualisation
 
 Nous avons construit une application très simple qui vous a donné un aperçu des concepts clés de Qwik et de l'API. L'application fonctionne en mode dev, qui utilise le hot-module-reloading (HMR) pour mettre à jour continuellement l'application tout en changeant le code.
 
 En mode développement :
+
 - Chaque fichier est chargé individuellement, ce qui peut provoquer des cascades dans l'onglet réseau.
 - Il n'y a pas de chargement spéculatif des bundles, il peut donc y avoir un délai lors de la première interaction.
 
 Créons une version de production pour voir comment l'application sera livrée à l'utilisateur et comment le problème ci-dessus est résolu.
 
 Pour créer une version de prévisualisation :
+
 1. Exécutez `npm run preview` pour créer une version de production.
 
 REMARQUE :
+
 - Votre application devrait avoir une version de production et fonctionner sur un port différent.
 - Si vous interagissez avec l'application maintenant, l'onglet réseau des outils de développement devrait montrer que les bundles sont instantanément livrés depuis le [cache du ServiceWorker](/docs/advanced/speculative-module-fetching/). 
 
@@ -541,9 +528,10 @@ REMARQUE :
 
 Félicitations ! Vous avez réussi à débuter. Cette vue d'ensemble est intentionnellement courte pour vous familiariser avec les différentes parties de Qwik. Nous vous recommandons de vous plonger dans les concepts ci-dessus pour en savoir plus. Voici quelques points clés à retenir :
 
+
 - [Structure du projet](/docs/project-structure/)
 - Routage [Basé sur les répertoires](/docs/routing/)
-- [Composant](/docs/(qwik)/components/overview/)
+- [Composant](/docs/(qwik)/components/overview/index.mdx)
 - [Chargeurs de route](/docs/route-loader/)
 - [Actions de formulaire](/docs/action/) (et [validation de zod](/docs/action/#validation-de-zod))
 - [gestion de l'état](/docs/components/state/)

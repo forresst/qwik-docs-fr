@@ -13,57 +13,113 @@ contributors:
   - Pika-Pool
 ---
 
+import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
+
 # Événements
 
-Pour qu'une application web soit interactive, il faut pouvoir répondre aux événements de l'utilisateur. Cela se fait en enregistrant des fonctions de callback dans le template JSX.
+Pour qu'une application web soit interactive, il faut pouvoir répondre aux événements de l'utilisateur. Cela se fait en enregistrant des fonctions de callback dans le template JSX. Les gestionnaires d'événements sont enregistrés à l'aide de l'attribut `on{EventName}$`. Par exemple, l'attribut `onClick$` est utilisé pour écouter les événements `click`.
+
+```tsx /onClick$/
+<button onClick$={() => alert('CLIQUÉ !')}>Cliquez-moi !</button>
+```
+
+## Gestionnaire en ligne
 
 Dans l'exemple suivant, l'attribut `onClick$` de l'élément `<button>` est utilisé pour informer Qwik qu'un callback `() => store.count++` doit être exécuté chaque fois que l'évènement `click` est déclenché par le `<button>`.
 
-Notez que `onClick$` se termine par [`$`](todo/correct-link). C'est une indication pour l'[Optimizer](/docs/(qwik)/advanced/optimizer) et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique une zone de chargement différée à cet endroit. Le code associé au gestionnaire `click` ne sera pas chargé avant que l'utilisateur ne déclenche l'événement `click`.
-
-```tsx
+<CodeSandbox src="/src/routes/demo/state/counter-signal/index.tsx" style={{ height: '6em' }}>
+```tsx {7} /onClick$/
 import { component$, useSignal } from '@builder.io/qwik';
 
-export const Counter = component$(() => {
+export default component$(() => {
   const count = useSignal(0);
 
-  return <button onClick$={() => count.value++}>{count.value}</button>;
+  return (
+    <button onClick$={() => count.value++}>
+      Incrémenter {count.value}
+    </button>
+  );
 });
 ```
+</CodeSandbox>
 
-Dans une application réelle, l'écouteur peut faire référence à du code complexe. En créant une zone de chargement différé (avec le `$`), Qwik peut faire un tree-shake de tout le code derrière l'écouteur du click et retarder son chargement jusqu'à ce que l'utilisateur clique sur le bouton.
+Notez que `onClick$` se termine par [`$`](/docs/advanced/dollar/). C'est une indication pour l'[Optimiseur](/docs/(qwik)/advanced/optimizer) et le développeur qu'une transformation spéciale a lieu à cet endroit. La présence du suffixe `$` implique une zone de chargement différée à cet endroit. Le code associé au gestionnaire `click` ne sera pas chargé avant que l'utilisateur ne déclenche l'événement `click`, cependant, il sera [chargé dans le cache du navigateur](docs/advanced/speculative-module-fetching/) par anticipation afin de ne pas causer de retard lors des premières interactions.
 
-Une autre option est de passer des [`QRL`](/docs/(qwik)/advanced/qrl/) comme valeurs pour les écouteurs d'évènements. Par exemple, l'exemple ci-dessus pourrait également être écrit de la manière suivante :
+> Dans une application réelle, l'écouteur peut faire référence à du code complexe. En créant une zone de chargement différé (avec le `$`), Qwik peut faire un tree-shake de tout le code derrière l'écouteur du click et retarder son chargement jusqu'à ce que l'utilisateur clique sur le bouton.
 
-```tsx
+## Réutilisation des gestionnaires d'événements
+
+Si nous voulons réutiliser le même gestionnaire d'événement pour plusieurs éléments ou événements, nous devons extraire le gestionnaire d'événement dans une [`QRL`](/docs/(qwik)/advanced/qrl/) et la passer à l'écouteur d'événement. Pour ce faire, nous devons importer `$` de `@builder.io/qwik` et y intégrer le gestionnaire d'événement.
+
+Par exemple, l'exemple ci-dessus pourrait également être écrit de la manière suivante :
+
+<CodeSandbox src="/src/routes/demo/events/extracted-handler/index.tsx" style={{ height: '6em' }}>
+```tsx {5} /increment/#a
 import { component$, useSignal, $ } from '@builder.io/qwik';
 
-export const Counter = component$(() => {
+export default component$(() => {
   const count = useSignal(0);
-  const incrementCount = $(() => count.value++);
-
-  return <button onClick$={incrementCount}>{count.value}</button>;
+  const increment = $(() => count.value++);
+  return (
+    <>
+      <button onClick$={increment}>Incrémenter</button>
+      <div>Compteur : {count.value}</div>
+    </>
+  );
 });
 ```
+</CodeSandbox>
 
-## Prevent default
 
-En raison de la nature asynchrone de Qwik, une exécution du gestionnaire d'événement peut être retardée parce que l'implémentation n'a pas encore été chargée.
+> **Remarque :** Si vous extrayez le gestionnaire d'événement, vous devez l'envelopper manuellement dans le `$(...handler...)` pour qu'il puisse être attaché de manière différée.
 
-Cela introduit un problème lorsque le gestionnaire d'événement a besoin d'empêcher le comportement par défaut de l'événement. Le traditionnel `event.preventDefault()` ne fonctionnera pas, donc utilisez plutôt l'attribut `preventdefault:{eventName}` de Qwik :
+## Objet d'événement
 
-```tsx
+Le premier argument du gestionnaire d'événement est l'objet `Event`. Cet objet contient des informations sur l'événement qui a déclenché le gestionnaire. Par exemple, l'objet `Event` pour un événement `click` contient des informations sur la position de la souris et l'élément qui a été cliqué. Vous pouvez consulter la [documentation MDN pour en savoir plus sur chaque événement DOM](https://developer.mozilla.org/fr/docs/Web/API/Event).
+
+<CodeSandbox src="/src/routes/demo/events/mouse-position/index.tsx" style={{ height: '6em' }}>
+```tsx /event/
+import { component$, useSignal } from '@builder.io/qwik';
+
+export default component$(() => {
+  const position = useSignal<{ x: number; y: number }>();
+  return (
+    <div
+      onClick$={(event) => (position.value = { x: event.x, y: event.y })}
+      style="height: 100vh"
+    >
+      <div>
+        Clique à la position : ({position.value?.x}, {position.value?.y})
+      </div>
+    </div>
+  );
+});
+```
+</CodeSandbox>
+
+## Événements asynchrones
+
+En raison de la nature asynchrone de Qwik, l'exécution du gestionnaire d'un événement peut être retardée parce que l'implémentation n'a pas encore été chargée dans la VM JavaScript. En raison de la nature asynchrone du traitement des événements dans Qwik, les API suivantes sur un objet `Event` ne fonctionneront pas :
+
+- `event.preventDefault()`
+- `event.currentTarget`
+
+### Prevent default
+
+Parce que la gestion des événements est asynchrone, vous ne pouvez pas utiliser `event.preventDefault()`. Pour résoudre ce problème, Qwik introduit une manière déclarative d'empêcher le prevent default grâce à l'attribut `preventdefault:{eventName}`.
+
+<CodeSandbox src="/src/routes/demo/events/preventdefault/index.tsx" style={{ height: '6em' }}>
+```tsx {7}
 import { component$ } from '@builder.io/qwik';
 
-export const PreventDefaultExample = component$(() => {
+export default component$(() => {
   return (
     <a
       href="/about"
       preventdefault:click // Cela empêchera le comportement par défaut de l'événement "click".
-      onClick$={(event) => {
-        // PreventDefault ne fonctionnera pas ici, car le gestionnaire est distribué de manière asynchrone.
-        // event.preventDefault();
-        singlePageNavigate('/about');
+      onClick$={() => {
+        // event.PreventDefault() ne fonctionnera pas ici, car le gestionnaire est distribué de manière asynchrone.
+        alert('Faire autre chose pour simuler la navigation...');
       }}
     >
       Aller à la page d'accueil
@@ -71,202 +127,158 @@ export const PreventDefaultExample = component$(() => {
   );
 });
 ```
+</CodeSandbox>
+
+### Event target
+
+Parce que la gestion des événements est asynchrone, vous ne pouvez pas utiliser `event.currentTarget`. Pour résoudre ce problème, les gestionnaires de Qwik fournissent une `currentTarget` comme second argument.
+
+<CodeSandbox src="/src/routes/demo/events/target/index.tsx" style={{ height: '10em' }}>
+```tsx /currentTarget/
+import { component$, useSignal } from '@builder.io/qwik';
+
+export default component$(() => {
+  const currentElm = useSignal<HTMLElement|null>(null);
+  const targetElm = useSignal<HTMLElement|null>(null);
+
+  return (
+    <div onClick$={(event, currentTarget) => {
+      currentElm.value = currentTarget;
+      targetElm.value = event.target as HTMLElement;
+    }}>
+      Cliquez sur n'importe quel texte <code>target</code> et <code>currentElm</code> de l'événement.
+      <hr/>
+      <span>Hello <b>World</b>!</span>
+      <hr/>
+      <ul>
+        <li>currentElm : {currentElm.value?.tagName}</li>
+        <li>target : {targetElm.value?.tagName}</li>
+      </ul>
+    </div>
+  );
+});
+```
+</CodeSandbox>
+
+> **Remarque :** `currentTarget` dans le DOM pointe vers l'élément auquel l'écouteur d'événement a été attaché. Dans l'exemple ci-dessus, il s'agit toujours de l'élément `<DIV>`.
 
 ### Gestion d'événements synchrones
 
-Dans certains cas, il est nécessaire de gérer un événement de manière traditionnelle, car certaines API doivent être utilisées de manière synchrone. Les événements de glisser-déposer, par exemple, ne fonctionneront pas autrement.
+Dans certains cas, il est nécessaire de gérer un événement de manière traditionnelle, car certaines API doivent être utilisées de manière synchrone. Par exemple, l'événement `dragstart` doit être traité de manière synchrone et ne peut donc pas être combiné avec l'exécution différé du code de Qwik.
 
 Pour ce faire, nous pouvons utiliser un `useVisibleTask` pour ajouter de manière programmatique un écouteur d'événement en utilisant directement l'API DOM.
 
-```tsx
-import { component$, useVisibleTask$ } from '@builder.io/qwik';
+<CodeSandbox src="/src/routes/demo/events/synchronous/index.tsx" style={{ height: '10em' }}>
+```tsx {7-20}
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 
-export const DragAndDropExample = component$(() => {
-  const elementRef = useSignal<HTMLElement>()
-  useVisibleTask$(({cleanup}) => {
-    if (elementRef.value) {
-      // Utilisez l'API DOM pour ajouter un écouteur d'événement.
-      const listener = (event) => {
-        event.dataTransfer.setData('text/plain', 'Hello World');
-      };
+export default component$(() => {
+  const draggableRef = useSignal<HTMLElement>();
+  const dragStatus = useSignal('');
 
-      elementRef.value.addEventListener('dragstart', listener);
+  useVisibleTask$(({ cleanup }) => {
+    if (draggableRef.value) {
+      // Utilise l'API DOM pour ajouter un récepteur d'événements.
+      const dragstart = () => (dragStatus.value = 'dragstart');
+      const dragend = () => (dragStatus.value = 'dragend');
+
+      draggableRef.value!.addEventListener('dragstart', dragstart);
+      draggableRef.value!.addEventListener('dragend', dragend);
       cleanup(() => {
-        elementRef.value.removeEventListener('dragstart', listener);
+        draggableRef.value!.removeEventListener('dragstart', dragstart);
+        draggableRef.value!.removeEventListener('dragend', dragend);
       });
     }
   });
 
   return (
-    <div ref={elementRef}>
-      Drag me!
+    <div>
+      <div draggable ref={draggableRef}>
+        Faites-moi glisser !
+      </div>
+      <div>{dragStatus.value}</div>
     </div>
   );
 });
 ```
+</CodeSandbox>
 
-> Notez que l'utilisation de `VisibleTask` pour écouter les événements est un anti-modèle dans Qwik qui ajoutera beaucoup de surcharge inutile, ne l'utilisez que lorsque vous n'avez pas d'autre choix. Dans 99% des cas, vous devriez utiliser JSX pour écouter les événements : `<div onClick$={...}>`
+> **REMARQUE** L'utilisation de `VisibleTask` pour écouter les événements est un anti-modèle dans Qwik parce qu'il provoque une exécution anticipée du code dans le navigateur, ce qui va à l'encontre de la [resumabilité] (/docs/(qwik)/concepts/resumable/index.mdx). Ne l'utilisez que lorsque vous n'avez pas d'autre choix. La plupart du temps, vous devriez utiliser JSX pour écouter les événements : `<div onClick$={...}>` ou les méthodes événementielles `useOn(...)` si vous avez besoin d'écouter de manière programmatique.
 
+## `PropFunction`
 
-## Événements et composants
-
-Les composants sont des fonctions, pas des éléments. Comme les événements DOM n'existent pas naturellement, il est possible de définir des événements personnalisés en tant que props.
-
-Voyons maintenant comment déclarer un composant enfant qui peut être utilisé avec des événements comme props.
+Lors de la création de vos composants, il est souvent utile de passer ce qui ressemble à des gestionnaires d'événements, (même si ce ne sont pas des événements DOM, seulement des callbacks.) Les délimitations des composants dans Qwik doivent être sérialisables, et les fonctions ne sont pas sérialisables à moins qu'elles ne soient converties en QRL à l'aide d'un optimiseur. Cela se fait par le suffixe `$`. Les QRL sont asynchrones et nous devons donc indiquer à TypeScript que la fonction ne peut pas être appelée de manière synchrone, ce que nous faisons avec le type `PropFunction` .
 
 ```tsx
-import { PropFunction, component$ } from '@builder.io/qwik';
+<CmpButton onClick={() => alert('CLIQUÉ !')}>Cliquez-moi !</CmpButton>
+```
 
-interface CmpButtonProps {
+Ce qui précède n'est pas possible car `onClick` est une fonction qui n'est pas sérialisable. A la place, nous devons dire à l'Optimiseur de convertir notre fonction en une QRL. Cela se fait en nommant la propriété avec le suffixe `$` comme dans cet exemple.
+
+<CodeSandbox src="/src/routes/demo/events/prop-function/index.tsx" style={{ height: '10em' }}>
+```tsx
+import { type PropFunction, component$, Slot } from '@builder.io/qwik';
+
+export default component$(() => {
+  return <CmpButton onClick$={() => alert('CLIQUÉ !')}>Cliquez-moi !</CmpButton>;
+});
+
+export const CmpButton = component$<{
+  // Il est important d'indiquer à TypeScript qu'il s'agit d'une opération asynchrone.
   onClick$?: PropFunction<() => void>;
-}
-
-export const CmpButton = component$((props: CmpButtonProps) => {
+}>(({ onClick$ }) => {
   return (
-    <button onClick$={props.onClick$}>
+    <button onClick$={onClick$}>
       <Slot />
     </button>
   );
 });
 ```
+</CodeSandbox>
 
-En ce qui concerne Qwik, passer des évènements à un composant est équivalent à passer des props.
+## Événements de windows et document
 
-Dans notre exemple, nous déclarons tous les props dans l'interface `CmpButtonProps`. Spécifiquement, remarquez la déclaration `onClick$: PropFunction<() => void>`.
+Jusqu'à présent, nous avons discuté de la manière d'écouter les événements provenant des éléments. Il y a des événements (par exemple, `scroll` et `mousemove`) qui requièrent que nous les écoutions sur `window` ou sur `document`. Pour cette raison, Qwik autorise les préfixes `document:on` et `window:on` lors de l'écoute d'événements.
 
-Ensuite, lorsque nous voulons utiliser `<CmpButton>`, nous pouvons faire ce qui suit :
+Le but du préfixe `window:on`/`document:` est d'enregistrer un événement à un emplacement courant du DOM du composant mais de lui faire recevoir des événements de `window`/`document`. Il y a deux avantages à cela :
 
+1. Les événements peuvent être enregistrés de manière déclarative dans votre JSX.
+2. Les événements sont automatiquement nettoyés lorsque le composant est détruit (aucune gestion ni nettoyage explicite n'est nécessaire).
+
+## Hook `useOn[|window|document]`
+
+- `useOn()` : écoute les événements sur l'élément racine du composant actuel.
+- `useOnWindow()` : écoute les événements sur l'objet `window`.
+- `useOnDocument()` : écouter les événements sur l'objet `document`.
+
+Le hook `useOn[|window|document]()` ajoutera un récepteur d'événement basé sur le DOM au niveau du composant de manière programmatique. Ceci est souvent utile lorsque vous souhaitez créer vos propres hooks d'utilisation ou si vous ne connaissez pas le nom de l'événement au moment de la compilation.
+
+<CodeSandbox src="/src/routes/demo/events/use-on/index.tsx" style={{ height: '10em' }}>
 ```tsx
-<CmpButton onClick$={() => store.cmpCount++}>{store.cmpCount}</CmpButton>
-```
+import { $, component$, useOnDocument, useStore } from '@builder.io/qwik';
 
-
-## Événements de window et de document
-
-Jusqu'à présent, nous avons vu comment écouter les événements qui proviennent des éléments. Il y a des événements (par exemple, `scroll` et `mousemove`) qui nécessitent que nous les écoutions sur `window` ou `document`. Pour cette raison, Qwik autorise les préfixes `document:on` et `window:on` lors de l'écoute des événements.
-
-```tsx
-import { component$, useSignal } from '@builder.io/qwik';
-
-export const EventExample = component$(() => {
-  const scroll = useSignal(0);
-  const mouse = useSignal({ x: 0, y: 0 });
-  const clickCount = useSignal(0);
-
-  return (
-    <button
-      window:onScroll$={(e) => (scroll.value = window.scrollY)}
-      document:onMouseMove$={(e) => {
-        const { x, y } = e;
-        mouse.value = { x, y };
-      }}
-      onClick$={() => clickCount.value++}
-    >
-      scroll: {scroll.value}
-      mouseMove: {mouse.value.x}, {mouse.value.y}
-      click: {clickCount.value}
-    </button>
-  );
-});
-```
-
-Le but de `window:on`/`document:` est d'enregistrer un événement sur un emplacement courant du DOM du composant tout en lui permettant de recevoir des événements de `window`/`document`. Il y a deux avantages à cela :
-
-1. Les événements peuvent être enregistrés de manière déclarative dans votre JSX
-2. Les événements sont automatiquement nettoyés lorsque le composant est détruit (Aucune gestion et aucun nettoyage explicites ne sont nécessaires)
-
-
-## useOn Hooks
-
-- [useOn](./index.mdx#useon)
-- [useOnWindow](./index.mdx#useonwindow)
-- [useOnDocument](./index.mdx#useondocument)
-
-### useOn
-
-Le hook `useOn` ajoutera un écouteur d'événement basé sur le DOM au niveau du composant.
-
-```tsx
-import { component$, useSignal, useOn, $ } from '@builder.io/qwik';
-
-export const ClickableComponent = component$(() => {
-  useOn(
-    'click',
-    $(() => {
-      alert('Alerte à partir d\'un composant cliquable.');
-    })
-  );
-  return <div>clic depuis un autre composant 1</div>;
-});
-
-export const HoverComponent = component$(() => {
-  const isHover = useSignal(false);
-  useOn(
-    'mouseover',
-    $(() => {
-      isHover.value = true;
-    })
-  );
-  return <div>{isHover.value ? 'En survol' : 'Pas en survol'}</div>;
-});
-
-export default component$(() => {
-  return (
-    <>
-      <ClickableComponent />
-      <HoverComponent />
-    </>
-  );
-});
-```
-
-### useOnWindow
-
-Le hook `useOnWindow` ajoutera un écouteur d'événement à window.
-
-```tsx
-import { component$, useOnWindow, $ } from '@builder.io/qwik';
-
-export const Online = component$(() => {
-  useOnWindow(
-    'online',
-    $(() => {
-      alert('Votre appareil est en ligne');
-    })
-  );
-  useOnWindow(
-    'offline',
-    $(() => {
-      alert('Votre appareil est maintenant hors ligne');
-    })
-  );
-  return <div></div>;
-});
-
-export default component$(() => {
-  return <Online />;
-});
-```
-
-### useOnDocument
-
-Le hook `useOnDocument` ajoutera un écouteur d'événement à document.
-
-```tsx
-import { component$, useSignal, $, useOnDocument } from '@builder.io/qwik';
-
-export const KeyBoard = component$(() => {
-  const keyPressed = useSignal('');
+// Supposons une méthode use réutilisable qui n'a pas accès à JSX
+// mais doit enregistrer des gestionnaires d'événements.
+const useMousePosition = () => {
+  const position = useStore({ x: 0, y: 0 });
   useOnDocument(
-    'keydown',
+    'mousemove',
     $((event) => {
-      keyPressed.value = keyPressed.value + event.key;
+      const { x, y } = event as MouseEvent;
+      position.x = x;
+      position.y = y;
     })
   );
-  return <div>{keyPressed.value}</div>;
-});
+  return position;
+}
 
 export default component$(() => {
-  return <KeyBoard />;
+  const pos = useMousePosition();
+  return (
+    <div>
+      MousePosition: ({pos.x}, {pos.y})
+    </div>
+  );
 });
 ```
+</CodeSandbox>

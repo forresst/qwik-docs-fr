@@ -17,7 +17,10 @@ contributors:
   - almilo
   - estherbrunner
   - kumarasinghe
+  - mhevery
 ---
+
+import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 # Composants
 
@@ -27,112 +30,133 @@ Les composants sont les blocs de construction de base des applications Qwik. Les
 - Ils sont [resumables](../../concepts/resumable/index.mdx). (Un composant peut être créé sur un serveur et continuer son exécution sur le client).
 - Ils sont [réactifs](../../concepts/reactivity/index.mdx)  et peuvent effectuer un rendu indépendamment des autres composants de la page. Consultez le [rendu](../../components/rendering/index.mdx).
 
-
 ## `component$()`
 
 Un composant est un petit morceau de code réutilisable qui peut être utilisé pour construire une interface utilisateur.
 
 Dans Qwik, ils sont déclarés en utilisant la méthode `component$` :
 
+<CodeSandbox src="/src/routes/demo/component/simple/index.tsx" style={{ height: '3em' }}>
+```tsx /component$/
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  return <span>Hello World!</span>;
+});
+```
+</CodeSandbox>
+
+> La raison du `composant$` est que le `$` final permet à l'[Optimiseur](/docs/advanced/dollar/) de décomposer les composants d'une arborescence d'application en un morceau séparé de sorte que chaque morceau puisse être chargé (ou non chargé s'il n'est pas nécessaire) de manière indépendante. Sans le `$`, le composant serait toujours chargé si le composant parent doit être chargé.
+
+### Composition des composants
+
+Les composants peuvent être assemblés pour créer des composants plus complexes.
+
+<CodeSandbox src="/src/routes/demo/component/child/index.tsx" style={{ height: '6em' }}>
+```tsx {7}
+import { component$ } from '@builder.io/qwik';
+
+export default component$(() => {
+  return (
+    <>
+      <div>Texte du Parent</div>
+      <Child />
+    </>
+  );
+});
+
+const Child = component$(() => {
+  return <div>Texte du Child</div>;
+});
+```
+</CodeSandbox>
+
+### Exemple de compteur
+
+Un exemple un peu plus complexe de compteur.
+
+<CodeSandbox src="/src/routes/demo/state/counter/index.tsx" style={{ height: '6em' }}>
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
 
-export const MyCmp = component$((props: MyCmpProps) => {
-  // Déclare l'état local
+export default component$(() => {
   const count = useSignal(0);
 
-  // Returns JSX
   return (
     <>
-      <span>
-        Hello, {props.name} {count.value}
-      </span>
-      <div>Times: {count.value}</div>
-      <button
-        onClick$={() => {
-          // Cela va mettre à jour l'état local et provoquer un nouveau rendu.
-          // La réactivité est au cœur de Qwik !
-          count.value++;
-        }}
-      >
-        Increment
-      </button>
+      <div>Compteur : {count.value}</div>
+      <button onClick$={(e) => count.value++}>Incrémenter</button>
     </>
   );
 });
 ```
-
-> **REMARQUE**
->
-> - Pour une explication de `$`, voir le paragraphe sur le [chargement différé](../../advanced/qrl/index.mdx) et l'[Optimiseur](../../advanced/optimizer/index.mdx).
-> - Pour une exlication détaillée sur les props, voir le paragraphe sur les composants/props.
+</CodeSandbox>
 
 ## Props
 
-Les props sont utilisés pour transmettre des données dans le composant. Les props sont déclarés comme des arguments nommés du composant.
+Les props sont utilisés pour transmettre des données du parent au composant. Les Props sont accessibles via l'argument `props` de la fonction component$.
 
 Dans cet exemple, un composant `Item` déclare comme optionnels `name`, `quantity`, `description`, et `price`.
 
-```tsx
+<CodeSandbox src="/src/routes/demo/component/props/index.tsx" style={{ height: '10em' }}>
+```tsx {3-8, 27} /ItemProps/
 import { component$ } from '@builder.io/qwik';
 
 interface ItemProps {
-   name?: string;
-   quantity?: number;
-   description?: string;
-   price?: number;
+  name?: string;
+  quantity?: number;
+  description?: string;
+  price?: number;
 }
 
-export const Item = component$((props: ItemProps) => {
-  return ...;
-});
-```
-
-## Utilisation des composants
-
-Les composants Qwik peuvent utiliser d'autres composants.
-
-```tsx
-import { component$ } from '@builder.io/qwik';
-
-export const Counter = component$((props: {step?:number, initial?: number}) => {
-  ...
+export const Item = component$<ItemProps>((props) => {
+  return (
+    <ul>
+      <li>nom : {props.name}</li>
+      <li>quantité : {props.quantity}</li>
+      <li>description : {props.description}</li>
+      <li>prix : {props.price}</li>
+    </ul>
+  );
 });
 
-export const MyApp = component$(() => {
+export default component$(() => {
   return (
     <>
-      <div>Single: <Counter /></div>
-      <div>Dozens: <Counter step={12}/></div>
+      <h1>Props</h1>
+      <Item name="hammer" price={9.99} />
     </>
   );
 });
 ```
+</CodeSandbox>
 
-L'exemple ci-dessus montre comment le composant `MyApp` peut utiliser le composant `Counter`. Le deuxième exemple montre comment on peut utiliser la liaison pour passer des valeurs aux props du composant `Counter`.
+> Dans l'exemple ci-dessus, nous utilisons `component$<ItemProps>` pour fournir un type explicite pour les props. Ceci est optionnel mais permet au compilateur TypeScript de vérifier que les props sont utilisés correctement.
 
-## Re-rendu sur la réactivité
+## Rendu sur la réactivité
 
-Les composants Qwik sont réactifs au niveau du composant. Les props des composants, ainsi que les stores, sont des proxies. Ces proxies surveillent les lectures ainsi que les écritures.
+Les composants Qwik sont réactifs. Cela signifie qu'ils sont automatiquement mis à jour en cas de changement d'état. Il existe deux types de mises à jour :
 
-- Un proxie de lecture pendant l'exécution de la méthode OnRender permet à Qwik de savoir que la méthode OnRender dépend d'une propriété donnée. Une lecture crée un abonnement sur cette propriété. Dans notre [exemple](../../concepts/reactivity/#exemple-du-compteur), OnRender lit `{store.count}`, ce qui crée un abonnement qui indique à Qwik que chaque fois que `store.count` change, le composant doit être invalidé.
-- Un proxie d'écriture notifie à Qwik que toutes les abonnements associés doivent être invalidés.
+1. Un état est lié à un texte ou à un attribut du DOM. Ces changements mettent généralement à jour directement le DOM et ne nécessitent pas la ré-exécution de la fonction du composant.
+2. Un état entraîne une modification structurelle du DOM (des éléments sont créés ou supprimés). De tels changements exigent que la fonction du composant soit réexécutée.
 
-Lorsque les composants sont invalidés, ils sont ajoutés à la file d'attente d'invalidation, qui est vidée (rendu) sur la prochaine `requestAnimationFrame`. Cela agit comme une forme de coalescence pour le rendu des composants.
+Il convient de garder à l'esprit que lorsque l'état change, la fonction de votre composant peut s'exécuter zéro ou plusieurs fois en fonction de ce à quoi l'état est lié. C'est pourquoi la fonction doit être idempotente et vous ne devez pas vous fier au nombre de fois qu'elle s'exécute.
 
-Pour une description détaillée de la réactivité, voir la section correspondante.
+Un changement d'état entraîne l'invalidation du composant. Lorsque les composants sont invalidés, ils sont ajoutés à la file d'attente d'invalidation, qui est vidée (rendue) lors de la prochaine `requestAnimationFrame`. Ceci agit comme une forme de fusion pour le rendu des composants.
 
-## Stockage d'une référence
+## Prise en main d'un élément du DOM
 
-Qwik fournit la possibilité de stocker une référence pour tout composant. Pour ce faire, vous devez créer un signal et passer le signal comme attribut `ref` au composant. Après que le composant ait été monté, la référence a été stockée sur le signal. Regardez l'exemple ci-dessous :
+Utilisez `ref` pour obtenir un élément DOM. Créez un signal pour stocker l'élément DOM. Puis passez le signal à la propriété JSX `ref`.
 
-```tsx
+<CodeSandbox src="/src/routes/demo/component/ref/index.tsx" style={{ height: '10em' }}>
+```tsx /const outputRef = useSignal<Element>();/ /ref={outputRef}/
 import { component$, useVisibleTask$, useSignal } from '@builder.io/qwik';
 
 export default component$(() => {
   const width = useSignal(0);
   const height = useSignal(0);
   const outputRef = useSignal<Element>();
+
   useVisibleTask$(() => {
     if (outputRef.value) {
       const rect = outputRef.value.getBoundingClientRect();
@@ -147,12 +171,14 @@ export default component$(() => {
         Changez la valeur du texte ici pour étirer la boîte.
       </div>
       <div>
-        La boîte rouge ci-dessus a une hauteur de {height.value} pixels et une largeur de {width.value} pixels.
+        La boîte rouge ci-dessus a une hauteur de {height.value} pixels et une largeur de {width.value}{' '}
+        pixels.
       </div>
     </div>
   );
 });
 ```
+</CodeSandbox>
 
 ## Chargement différé
 
@@ -170,6 +196,9 @@ const Parent = () => (
 
 Dans l'exemple ci-dessus, la référence au composant `Parent` implique une référence transitive au composant `Child`. Lorsque le bundler crée un morceau, une référence à `Parent` nécessite d'empaqueter également `Child`. (`Parent` fait référence en interne à `Child`.) Ces dépendances transitives sont un problème car cela signifie qu'avoir une référence sur le composant racine fera transitivement référence au reste de l'application - quelque chose que Qwik essaie d'éviter explicitement.
 
+Pour éviter ce problème, nous ne nous référons pas directement aux composants, mais à l'enveloppe différée. Celui-ci est créé automatiquement par la fonction `component$()`.
+
+<CodeSandbox src="/src/routes/demo/component/lazy/index.tsx" style={{ height: '10em' }} sandbox={false}>
 ```tsx
 import { component$ } from '@builder.io/qwik';
 
@@ -185,6 +214,7 @@ export const Parent = component$(() => {
   );
 });
 ```
+</CodeSandbox>
 
 Dans l'exemple ci-dessus, l'Optimiseur transforme ce qui précède en :
 
@@ -204,21 +234,64 @@ const Parent_onRender = () => (
 
 Remarquez qu'après que l'Optimiseur ait transformé le code, le `Parent` ne fait plus directement référence au `Child`. Ceci est important car cela permet au bundler (et aux tree shakers) de déplacer librement les symboles dans différents morceaux sans entraîner le reste de l'application avec lui.
 
-Alors que se passe-t-il lorsque le composant `Parent` est rendu et que le composant `Child` n'a pas encore été chargé ? D'abord, le composant `Parent` rend son JSX comme ceci.
+Que se passe-t-il lorsque le composant `Parent` a besoin de rendre un composant `Enfant`, mais que ce dernier n'a pas encore été chargé ? Tout d'abord, le composant `Parent` rend son DOM comme suit.
 
 ```html
 <div>
   <section>
-    <div></div>
+    <!--qv--><!--/qv-->
   </section>
 </div>
 ```
 
-Comme vous pouvez le voir dans l'exemple ci-dessus, le `<div/>` agit comme un marqueur où le composant `Child` sera inséré une fois qu'il sera chargé de manière différée.
+Comme vous pouvez le voir dans l'exemple ci-dessus, le `<!--qv-->` agit comme un marqueur où le composant `Child` sera inséré une fois qu'il sera chargé de manière différée.
 
-## Modèle mental
+## Composants en ligne
 
-L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et le comportement du composant. L'élément hôte est empaqueté avec la méthode OnRender du composant parent, tandis que le comportement du composant est quelque chose qui est chargé de manière différée selon les besoins.
+En plus du composant standard `component$()` avec toutes ses propriétés
+différées, Qwik supporte également des composants légers (en ligne) qui agissent
+plus comme des composants dans les frameworks traditionnels.
+
+<CodeSandbox src="/src/routes/demo/component/inline-child/index.tsx" style={{height: '4em'}}>
+```tsx
+import { component$ } from '@builder.io/qwik';
+
+// Composant en ligne : déclaré à l'aide d'une fonction standard.
+export const MyButton = (props: { text: string }) => {
+  return <button>{props.text}</button>;
+};
+
+// Composant : déclarée à l'aide de `component$()`.
+export default component$(() => {
+  return (
+    <div>
+      Un peu de texte :
+      <MyButton text="Cliquez-moi" />
+    </div>
+  );
+});
+```
+</CodeSandbox>
+
+Dans l'exemple ci-dessus, `MyButton` est un composant en ligne.
+Contrairement au composant standard `component$()`, les composants en ligne ne peuvent pas être chargés individuellement.
+mais sont regroupés avec leur composant parent. Dans ce cas :
+
+- `MyButton` sera intégré au composant `default`.
+- Chaque fois que `default` est rendu, il garantira également que `MyButton` est
+rendu.
+
+Vous pouvez considérer que les composants en ligne sont intégrés dans le composant où ils sont instanciés.
+
+### Limitations
+Les composants en ligne présentent certaines limitations que le composant
+standard `component$()` n'a pas. Les composants en ligne :
+- Ne peuvent pas utiliser les méthodes `use` telles que `useSignal` ou `useStore`.
+
+Comme leur nom l'indique, les composants en ligne sont à utiliser avec parcimonie pour
+les éléments de balisage légers, car ils offrent l'avantage d'être
+regroupés avec le composant parent.
+
 
 ## Aperçu de l'API
 
@@ -241,25 +314,25 @@ L'Optimiseur divise les composants Qwik en deux parties : l'élément hôte et 
 - [`useOnWindow()`](../events/index.mdx) - ajoute un écouteur pour l'objet window par voie programmatique
 - [`useOnDocument()`](../events/index.mdx) - ajoute un écouteur pour l'objet document par voie programmatique
 
-### Cycles de vie
+### Tâches/Cycle de vie
 
-- [`useTask$()`](../lifecycle/index.mdx#usetask) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
-- [`useResource$()`](../resource/index.mdx) - crée une ressource pour charger des données de manière asynchrone
-- [`useVisibleTask$()`](../lifecycle/index.mdx#usevisibletask) - définit un callback qui sera appelé après le rendu, uniquement dans le client (navigateur)
+- [`useTask$()`](../tasks/index.mdx#usetask) - définit un callback qui sera appelé avant le rendu et/ou lorsqu'un store surveillé est modifié
+- [`useVisibleTask$()`](../tasks/index.mdx#usevisibletask) - defines a callback that will be called after render in the browser
+- [`useResource$()`](../tasks/index.mdx#useresource) - crée une ressource pour charger des données de manière asynchrone
 
 ### Autre
 
 - [`$()`](../../advanced/qrl/index.mdx) - crée un QRL
-- `noSerialize()`
+- [`noSerialize()`](/docs/components/state/#noserialize)
 - `useErrorBoundary()`
 
 ### Composants
 
-- [`<Slot>`](../projection/index.mdx) - déclare un emplacement de projection de contenu
+- [`<Slot>`](../slots/index.mdx) - déclare un emplacement de projection de contenu
 - `<SSRStreamBlock>` - déclare un bloc de stream
 - `<SSRStream>` - déclare un stream
 - `<Fragment>` - déclare un fragment JSX
 
 ## Voir aussi :
 
-- [Composants légers](../lite-components/index.mdx)
+- [Composants en ligne](../overview/index.mdx#composants-en-ligne)

@@ -41,7 +41,7 @@ export function updateClock(store: ClockStore) {
 
 export default component$(() => {
   return (
-    <div>
+    <main>
       <p>C'est un exemple d'exécution différée de code sur le composant lorsque celui-ci devient visible.</p>
 
       <p style={{ height: '800px' }}>
@@ -49,6 +49,6 @@ export default component$(() => {
       </p>
 
       <Clock />
-    </div>
+    </main>
   );
 });

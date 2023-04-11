@@ -15,13 +15,13 @@ export default component$(() => {
   });
 
   return (
-    <div>
-      <div style={{ border: '1px solid red', width: '100px' }} ref={outputRef}>
+    <main>
+      <aside style={{ border: '1px solid red', width: '100px' }} ref={outputRef}>
         Changez la valeur du texte ici pour étirer la boîte.
-      </div>
-      <div>
+      </aside>
+      <p>
         La boîte rouge ci-dessus a une hauteur de {store.height} pixels et une largeur de {store.width} pixels.
-      </div>
-    </div>
+      </p>
+    </main>
   );
 });

@@ -1,0 +1,132 @@
+---
+title: Bonnes pratiques
+contributors:
+  - mhevery
+  - the-r3aper7
+  - manucorporat
+  - jakovljevic-mladen
+  - kerbelp
+  - wfairclough
+  - cunzaizhuyi
+  - reemardelarosa
+  - un33k
+---
+
+# Bonnes pratiques
+
+## Éviter d'enregistrer des événements par anticipation avec `useVisibleTask$()`
+
+> ⚠ Utiliser `useVisibleTask$()` avec prudence ⚠
+
+**`Implantation non optimale`** :
+
+```tsx
+useVisibleTask$(() => {
+  const listener = (event) => {
+    const mouseEvent = event as MouseEvent;
+    console.log(mouseEvent.x, mouseEvent.y);
+  };
+  document.addEventListener('mousemove', listener);
+
+  return () => {
+    document.removeEventListener('mousemove', listener);
+  };
+});
+```
+
+**`Probléme`** :
+L'implémentation ci-dessus entraîne le chargement anticipé d'une plus grande quantité de JavaScript, au lieu de répondre précisément aux événements de l'utilisateur. L'augmentation du chargement de JavaScript en amont se traduit par un ralentissement des performances de l'application.
+
+De plus, cela exige que les développeurs soient plus conscients de la relation serveur/client, malgré la préférence initiale pour `use > Visible < Task`.
+
+Idéalement, le framework devrait minimiser la nécessité pour les développeurs de se concentrer sur cet aspect.
+
+De plus, l'implémentation nécessite un nettoyage manuel de l`écouteur, ce qui ajoute un effort supplémentaire pour les développeurs.
+
+**`Implantation optimale`** :
+
+```tsx
+useOnDocument(
+  'mousemove',
+  $((event) => {
+    const mouseEvent = event as MouseEvent;
+    console.log(mouseEvent.x, mouseEvent.y);
+    // Aucun nettoyage manuel n'est nécessaire !
+  })
+);
+```
+
+En cas de doute, au lieu de `useVisibleTask$()`, utilisez :
+- `useOn()` : écoute les événements sur l'élément racine du `composant courant`.
+- `useOnWindow()` : écoute les événements sur l'objet `window`.
+- `useOnDocument()` : écoute les événements sur l'objet `document`.
+
+> Plus d'informations :
+-
+> - [useOn / useOnDocument / useOnWindow docs](/docs/(qwik)/components/events/index.mdx#useon-hooks)
+> - [Exemple](https://qwik.builder.io/tutorial/hooks/use-on/#example)
+> - [Tutoriel](https://qwik.builder.io/tutorial/events/programmatic/)
+
+---
+
+## Éviter d'accéder à l'emplacement à partir de l'objet `window`.
+
+⚠ N'accédez pas directement à `window.location`. ⚠
+
+**Implantation(s) non optimale(s)**:
+
+```tsx
+useVisibleTask$(()=> {
+    if (window.location.href).includes('foo') {
+        //... faire quelque chose
+    }
+})
+```
+
+```tsx
+//(dans la racine d'un composant)
+if (typeof window !== "undefined") {
+    const queryParams = new URLSearchParams(window.location.search);
+    const query: Record<string, string> = {};
+    queryParams.forEach((value, key) => {
+        query[key] = value;
+    })
+    doTheThing(query);
+}
+```
+**`Problème`** :
+
+De nombreuses actions liées aux informations de localisation peuvent être exécutées lors du rendu initial côté serveur, ce qui permet d'obtenir un code HTML pur sans aucune surcharge de JavaScript.
+
+En forçant cette logique à s'exécuter du côté client, on introduit davantage de JavaScript en amont et on aboutit à un chargement anticipé.
+
+L'utilisation du motif if typeof window !== "undefined" peut faire sauter le code. Sur le serveur, le bloc de code sera ignoré puisque la fenêtre est toujours indéfinie.
+
+Alors que les développeurs peuvent être habitués à ce que le code soit exécuté deux fois, Qwik élimine cette nécessité en fournissant une approche plus efficace.
+
+**Implantation(s) optimale(s)** :
+
+```tsx
+const location = useLocation();
+
+if (location.url.href.includes('foo')) {
+  // Faire quelque chose
+}
+```
+
+```tsx
+const location = useLocation();
+
+doTheThing(location.url.searchParams);
+```
+
+## EXCEPTION
+
+Lorsque l'on utilise SSG pour des fichiers purement statiques, il est inévitable de s'appuyer sur le serveur sans informations sur la localisation actuelle pendant le temps de construction.
+
+Cependant, soyez prudent ! Si les informations requises (telles que les paramètres de requête) ne sont pas nécessaires tant qu'un événement utilisateur ne s'est pas produit, incorporez la vérification dans votre code de gestion des événements.
+
+Cette approche permet d'éviter le chargement anticipé de JavaScript et d'améliorer les performances.
+
+> Consultez : les [docs useLocation()](/docs/(qwikcity)/api/index.mdx#uselocation)
+

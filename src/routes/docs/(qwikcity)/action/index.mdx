@@ -5,46 +5,25 @@ contributors:
   - cunzaizhuyi
   - forresst
   - keuller
+  - hamatoyogi
 ---
 
 # `routeAction$()`
 
-Les actions sont similaires aux [loaders](/qwikcity/loader/) mais elles ne sont pas exécutées pendant le rendu. Au lieu de cela, elles sont exécutées lorsqu'elles sont appelées explicitement, c'est-à-dire qu'elles sont exécutées après une interaction avec l'utilisateur, comme un clic ou la soumission d'un formulaire.
+Les actions permettent de traiter les soumissions de formulaires côté serveur, ce qui permet d'effectuer des effets secondaires tels que l'écriture dans une base de données ou l'envoi d'un courrier électronique. Elles peuvent également renvoyer des données au client, ce qui permet de mettre à jour l'interface utilisateur en conséquence.
 
-## Déclaration d'une action
+Les actions peuvent être déclarées en utilisant les méthodes `routeAction$()` ou `globalAction$()` exportées depuis `@builder.io/qwik-city`.
 
-Les actions peuvent être déclarées en utilisant `routeAction$()` ou `globalAction$()`. Essentiellement, elles font la même chose et partagent exactement la même API, la seule différence entre les deux est que `routeAction$()` est limitée à une route, alors que `globalAction$()` est disponible globalement dans toute l'appli.
-
-
-- `routeAction$()` ne peut être déclaré que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et il DOIT être exporté, tout comme un `routeLoader$(). Comme les `routeAction$()` ne sont accessibles qu'à l'intérieur de la route déclarée, elles sont recommandées lorsque l'action a besoin d'accéder à des données utilisateur, ou qu'il s'agit d'une route protégée. Imaginez-les comme une action « privée ».
-
-```tsx
-export const useChangePassword = routeAction$((data) => {
-  // ...
-});
-```
-
-- Cependant, `globalAction$()` peut être déclarée n'importe où dans le dossier `src`. Comme les `globalAction$()` sont disponibles globalement, elles sont recommandées quand l'action doit être partagée à travers plusieurs routes, ou quand l'action n'a pas besoin d'accéder aux données de l'utilisateur. Par exemple, une action `useLogin` qui connecte un utilisateur.  Imaginez-la comme une action « publique ».
-
-```tsx
-export const useChangePassword = globalAction$((data) => {
-  // ...
-});
-```
-
-> Nous recommandons de commencer par `routeAction$()` et de n'utiliser `globalAction$()` que si vous avez besoin de partager une action entre plusieurs routes, ou si vous souhaitez utiliser l'action dans un composant qui n'est pas une route.
-
-## Utilisation d'une action
-
-Les actions sont référencées en utilisant la méthode `.use()` à l'intérieur d'un composant Qwik. La méthode `use()` renvoie un objet `ActionStore` avec des méthodes pour déclencher l'action et obtenir son état.
-
-```tsx
-// src/routes/layout.tsx
+```tsx {4,16} /useAddUser/ /firstName/#a /lastName/#b /email/#c title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
-import { routeAction$ } from '@builder.io/qwik-city';
+import { routeAction$, Form } from '@builder.io/qwik-city';
 
-export const useAddUser = routeAction$((user) => {
-  const userID = db.users.add(user);
+export const useAddUser = routeAction$(async (data) => {
+  // Cette action ne sera exécutée sur le serveur que lorsque l'utilisateur soumettra le formulaire (ou lorsque l'action sera appelée par programme).
+  const userID = await db.users.add({
+    firstName: data.firstName,
+    lastName: data.lastName,
+  });
   return {
     success: true,
     userID,
@@ -53,31 +32,36 @@ export const useAddUser = routeAction$((user) => {
 
 export default component$(() => {
   const action = useAddUser();
-  // action.actionPath: string;
-  // action.isRunning: boolean;
-  // action.status?: number;
-  // action.formData: FormData | undefined;
-  // action.value: {success: boolean, userID: string} | undefined;
-  // action.run: (data: any) => Promise<{success: boolean, userID: string}>;
 
-  return <>{...}</>
+  return (
+    <>
+      <Form action={action}>
+        <input name="firstName" />
+        <input name="lastName" />
+        <button type="submit">Add user</button>
+      </Form>
+      {action.value?.success && (
+        // Lorsque l'action est réalisée avec succès, la propriété `action.value` contient la valeur de retour de l'action.
+        <div>L'utilisateur {action.value.userID} a été ajouté avec succès</div>
+      )}
+    </>
+  );
 });
 ```
 
 > Comme les actions ne sont pas exécutées pendant le rendu, elles peuvent avoir des effets secondaires tels que l'écriture dans une base de données ou l'envoi d'un courriel. Une action ne s'exécute que lorsqu'elle est appelée explicitement.
 
+
 ## Utiliser des actions avec `<Form/>`
 
 La meilleure façon de déclencher une action est d'utiliser le composant `<Form/>` exporté dans `@builder.io/qwik-city`.
 
-```tsx
-// src/routes/index.tsx
-
+```tsx title="src/routes/index.tsx"
 import { routeAction$, Form } from '@builder.io/qwik-city';
 import { component$ } from '@builder.io/qwik';
 
-export const useAddUser = routeAction$((user) => {
-  const userID = db.users.add(user);
+export const useAddUser = routeAction$(async (user) => {
+  const userID = await db.users.add(user);
   return {
     success: true,
     userID,
@@ -102,14 +86,12 @@ Sous le capot, le composant `<Form/>` utilise un élément HTML natif `<form>`, 
 
 Les actions peuvent également être déclenchées par programme à l'aide de la méthode `action.run()`, c'est-à-dire que vous n'avez pas besoin d'un composant `<Form/>`, mais vous pouvez déclencher l'action à partir d'un clic sur un bouton ou de tout autre événement, tout comme vous le feriez avec une fonction.
 
-```tsx
-// src/routes/index.tsx
-
+```tsx {18} title="src/routes/index.tsx"
 import { routeAction$ } from '@builder.io/qwik-city';
 import { component$ } from '@builder.io/qwik';
 
-export const useAddUser = routeAction$((user) => {
-  const userID = db.users.add(user);
+export const useAddUser = routeAction$(async (user) => {
+  const userID = await db.users.add(user);
   return {
     success: true,
     userID,
@@ -122,7 +104,7 @@ export default component$(() => {
     <div>
       <button
         onClick={async () => {
-          const { value } = await action.run({ name: 'John' });
+          const { value } = await action.submit({ name: 'John' });
           console.log(value);
         }}
       >
@@ -140,75 +122,49 @@ Dans l'exemple ci-dessus, l'action `addUser` est déclenchée lorsque l'utilisat
 
 Lorsque vous soumettez des données à une action, par défaut, les données ne sont pas validées.
 
-```tsx
-// src/routes/index.tsx
+Heureusement, les actions ont un support de première classe pour [Zod](https://zod.dev/), une bibliothèque de validation de données TypeScript. Pour utiliser Zod, il suffit de passer le schéma Zod comme second argument à la fonction `routeAction$()`.
 
-import { routeAction$ } from '@builder.io/qwik-city';
-
-export const useAddUser = routeAction$((user) => {
-  // `user` est typé Record<string, any>
-  const userID = db.users.add(user);
-  return {
-    success: true,
-    userID,
-  };
-});
-```
-
-Heureusement, les actions bénéficient d'une prise en charge de première classe de [Zod](https://zod.dev/), une bibliothèque de validation de données orientée TypeScript. Pour utiliser Zod, il suffit de passer le schéma Zod comme deuxième argument à la fonction `action$()`.
-
-```tsx
-// src/routes/index.tsx
-
+```tsx {15-18} /firstName/#a /lastName/#b /email/#c title="src/routes/index.tsx"
 import { routeAction$, zod$, z } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(
-  (user) => {
-    // `user` est typé { name: string }
-    const userID = db.users.add(user);
+  async (user) => {
+    // `user` est typé { firstName: string, lastName: string }
+    const userID = await db.users.add({
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
     return {
       success: true,
       userID,
     };
   },
   zod$({
-    name: z.string(),
-  })
-);
-```
-
-Lorsque vous soumettez des données à une action, celles-ci sont validées par rapport au schéma de Zod. Si les données ne sont pas valides, l'action indique l'erreur de validation dans la propriété `action.fail`.
-
-```tsx
-import { component$ } from '@builder.io/qwik';
-import { routeAction$, Form, zod$, z } from '@builder.io/qwik-city';
-
-export const useAddUser = routeAction$(
-  (user) => {
-    // `user` est typé { name: string }
-    const userID = db.users.add(user);
-    return {
-      success: true,
-      userID,
-    };
-  },
-  zod$({
-    name: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
   })
 );
 
 export default component$(() => {
   const action = useAddUser();
   return (
-    <Form action={action}>
-      <input name="name" />
-      {action.fail?.fieldErrors.name && <div>{action.fail.message}</div>}
-      {action.value?.success && <div>Utilisateur ajouté avec succès</div>}
-      <button type="submit">Ajouter un utilisateur</button>
-    </Form>
+    <>
+      <Form action={action}>
+        <input name="firstName" />
+        <input name="lastName" />
+
+        {action.value?.failed && <div>{action.value.fieldErrors?.firstName}</div>}
+        <button type="submit">Ajouter un utilisateur</button>
+      </Form>
+      {action.value?.success && (
+        <div>L'utilisateur {action.value.userID} a été ajouté avec succès</div>
+      )}
+    </>
   );
 });
 ```
+
+Lorsque l'on soumet des données à une `routeAction()`, les données sont validées par rapport au schéma Zod. Si les données ne sont pas valides, l'action indiquera l'erreur de validation dans la propriété `routeAction.value`.
 
 Veuillez consulter la [documentation Zod](https://zod.dev/) pour plus d'informations sur l'utilisation des schémas Zod.
 
@@ -216,13 +172,13 @@ Veuillez consulter la [documentation Zod](https://zod.dev/) pour plus d'informat
 
 Afin de récupérer les valeurs en échec, l'action doit utiliser la méthode `fail()`.
 
-```tsx
+```tsx /fail/
 import { routeAction$, zod$, z } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(
-  (user, { fail }) => {
+  async (user, { fail }) => {
     // `user` est typé { name: string }
-    const userID = db.users.add(user);
+    const userID = await db.users.add(user);
     if (!userID) {
       return fail(500, {
         message: 'L\'utilisateur n\'a pas pu être ajouté',
@@ -263,22 +219,13 @@ Grâce à la discrimination par type de Typescript, vous pouvez utiliser la prop
 
 Lorsqu'une action est déclenchée, l'état précédent est stocké dans la propriété `action.formData`. Ceci est utile pour afficher un état de chargement pendant que l'action est en cours d'exécution.
 
-```tsx
+```tsx {12} /action.formData/
 import { component$ } from '@builder.io/qwik';
 import { routeAction$, Form, zod$, z } from '@builder.io/qwik-city';
 
-export const useAddUser = routeAction$(
-  (user) => {
-    // `user` est typé { name: string }
-    const userID = db.users.add(user);
-    return {
-      userID,
-    };
-  },
-  zod$({
-    name: z.string(),
-  })
-);
+export const useAddUser = routeAction$(async (user) => {
+  // gestion de l'action...
+});
 
 export default component$(() => {
   const action = useAddUser();
@@ -292,3 +239,33 @@ export default component$(() => {
 ```
 
 Le `action.formData` est particulièrement utile car il permet de conserver les données du formulaire rempli par l'utilisateur même lors d'un rafraîchissement de la page, permettant ainsi d'avoir une expérience SPA complète, même avec le JS désactivé.
+
+## Route vs actions globales
+
+Les actions peuvent être déclarées en utilisant `routeAction$()` ou `globalAction$()` exporté depuis `@builder.io/qwik-city`, la seule différence entre les deux est que `routeAction$()` est limitée à une route, alors que `globalAction$()` est disponible globalement à travers toute l'application.
+
+Nous recommandons de commencer par `routeAction$()` et de n'utiliser `globalAction$()` que si vous avez besoin de partager une action entre plusieurs routes, ou si vous souhaitez utiliser l'action dans un composant qui n'est pas une route.
+
+### `routeAction$()`
+
+`globalAction$()` ne peut être déclaré que dans le dossier `src/routes`, dans un fichier `layout.tsx` ou `index.tsx`, et il DOIT être exporté, tout comme un `routeLoader$()`. Comme les `routeAction$()` ne sont accessibles qu'à l'intérieur de la route déclarée, elles sont recommandées lorsque l'action a besoin d'accéder à des données utilisateur, ou qu'il s'agit d'une route protégée. Imaginez qu'il s'agit d'une action « privée ».
+
+```tsx title="src/routes/form/index.tsx"
+import { routeAction$ } from '@builder.io/qwik-city';
+
+export const useChangePassword = routeAction$((data) => {
+  // ...
+});
+```
+
+### `globalAction$()`
+
+`globalAction$()` peut être déclarée n'importe où dans le dossier `src`. Comme les `globalAction$()` sont disponibles globalement, elles sont recommandées quand l'action doit être partagée à travers plusieurs routes, ou quand l'action n'a pas besoin d'accéder aux données de l'utilisateur. Par exemple, une action `useLogin` qui connecte un utilisateur. Imaginez qu'il s'agit d'une action « publique ».
+
+```tsx title="src/components/login/login.tsx"
+import { globalAction$ } from '@builder.io/qwik-city';
+
+export const useLogin = globalAction$((data) => {
+  // ...
+});
+```

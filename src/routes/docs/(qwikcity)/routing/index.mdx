@@ -23,7 +23,7 @@ Seuls les noms des répertoires sont utilisés pour faire correspondre les requ�
 
 Par exemple, si vous avez un fichier à cet endroit `src/routes/some/path/index.tsx`, il sera mis en correspondance avec le chemin de l'URL `https://example.com/some/path`.
 
-```
+```bash
 src/
 └── routes/
     ├── contact/
@@ -55,7 +55,7 @@ src/routes/user/[username]/index.tsx → /user/:username (/user/foo)
 src/routes/post/[...all]/index.tsx → /post/* (/post/2020/id/title)
 ```
 
-```
+```bash
 src/
 └── routes/
     ├── blog/
@@ -70,8 +70,7 @@ src/
 
 > Le dossier `[username]` peut être n'importe lequel des milliers d'utilisateurs que vous avez dans votre base de données. Il serait peu pratique de créer une route pour chaque utilisateur. Au lieu de cela, nous devons définir un paramètre de route (une partie de l'URL) qui sera utilisé pour extraire le `[username]`.
 
-```tsx
-// src/routes/user/[username]/index.tsx
+```tsx title="src/routes/user/[username]/index.tsx"
 import { component$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 
@@ -91,8 +90,7 @@ Les pages/endpoints sont les nœuds feuilles de l'arbre de routage, c'est-à-dir
 
 Lorsque `index.tsx` ou `index.ts` exporte un composant Qwik en tant qu'exportation par défaut, Qwik City rendra le composant et retournera une réponse HTML en tant que page web.
 
-```tsx
-// src/routes/index.tsx
+```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -100,12 +98,11 @@ export default component$(() => {
 });
 ```
 
-### Endpoint `index.tsx`
+### Endpoint `index.ts`
 
 Un `index.ts` peut aussi accéder directement à la requête HTTP et retourner une réponse HTTP brute sans impliquer aucun composant Qwik. Ceci se fait en exportant une méthode `onRequest`, `onGet`, `onPost`, `onPut`  ou `onDelete` si vous voulez seulement gérer une requête spécifique en fonction de sa méthode HTTP.
 
-```tsx
-// src/routes/index.ts
+```tsx title="src/routes/index.ts"
 import { component$ } from '@builder.io/qwik';
 
 export const onGet = ({ json }) => {
@@ -119,8 +116,7 @@ export const onGet = ({ json }) => {
 
 Comme vous pouvez le voir dans Qwik City il n'y a pas de séparation claire entre les pages et les endpoints, dans les deux cas, c'est un fichier `index.tsx` qui exporte un composant Qwik ou une méthode `onRequest`. Cependant, il est possible de combiner les deux approches. Par exemple, vous pouvez exporter une méthode `onRequest` qui va gérer la requête, et ensuite rendre un composant Qwik.
 
-```tsx
-// src/routes/index.ts
+```tsx title="src/routes/index.ts"
 import { component$ } from '@builder.io/qwik';
 
 export const onRequest = ({ headers, query, json }) => {
@@ -150,7 +146,7 @@ Au lieu de répéter le même code dans chaque route, nous pouvons utiliser des 
 
 Prenez ce répertoire `src/routes` comme exemple :
 
-```
+```bash
 src/
 └── routes/
     ├── admin/

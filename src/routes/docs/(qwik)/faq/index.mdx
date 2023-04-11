@@ -4,6 +4,7 @@ contributors:
   - tidiview
   - adamdbradley
   - manucorporat
+  - hamatoyogi
   - fabien0102
   - the-r3aper7
   - ryankshaw
@@ -22,6 +23,7 @@ contributors:
   - ptu14
   - reemardelarosa
   - ETN-Tech
+  - spicyzboss
 ---
 
 # FAQ
@@ -34,6 +36,12 @@ Oui, et je suis très drôle aussi ! [Suivez-moi](https://twitter.com/QwikDev)
 
 A l'origine, il s'appelait *qoot*, mais nous avons pensé qu'il serait trop difficile à rechercher. Un de nos amis, [@patrickjs__](https://twitter.com/PatrickJS__) a proposé Qwik et après un sondage interne chez [builder.io](https://www.builder.io/), nous l'avons changé !
 
+## En quoi Qwik est-il différent des autres frameworks ?
+
+Qwik est le premier framework qui a une DX ( Expérience Développeur) similaire à _React_, _Vue_ ou _Svelte_ dans la façon dont vous créez des composants, tout en délivrant du **HTML Live** qui est instantanément interactif. Qwik atteint cette fonctionnalité, mais en supprimant complètement le besoin d'hydratation, au lieu de cela, les applications Qwik exécutent immédiatement les gestionnaires d'événements sur l'interaction de l'utilisateur, sans avoir à amorcer tout l'état de l'application. Cette technique est appelée [Resumabilité](../concepts/resumable/index.mdx).
+
+Le résultat est que les développeurs écrivent des applications extrêmement performantes par défaut, sans même avoir à s'en soucier. Les applications construites avec Qwik sont rapides quelle que soit la quantité de composants ou la complexité, elles sont O(1) (temps constant) en termes de charge utile JS.
+
 ## Pourquoi un autre framework ?
 
 La réponse courte est que Qwik résout un problème que les autres frameworks ne peuvent pas résoudre. Qwik a des performances de démarrage instantanées quelque soit la complexité de l'application. En d'autres termes, les applis Qwik délivrent la même quantité de JS initial quelque soit le nombre de composants. [Qwik est le premier framework open-source O(1)](https://www.builder.io/blog/our-current-frameworks-are-on-we-need-o1).
@@ -44,7 +52,7 @@ La réponse courte est que Qwik résout un problème que les autres frameworks n
 
 ## Est-ce que Qwik est compliqué à apprendre ?
 
-Nous avons conçu Qwik pour être [extrêmement facile à apprendre](../cheat/qwik-react/index.mdx) et devenir productif pour les développeurs React. La création de composants est à peu près la même que React, et le routage est inspiré de Nextjs et d'autres.
+Nous avons conçu Qwik pour être [extrêmement facile à apprendre](/docs/(qwikcity)/guides/qwik-react/index.mdx) et devenir productif pour les développeurs React. La création de composants est à peu près la même que React, et le routage est inspiré de Nextjs et d'autres.
 
 Cependant, il y a fondamentalement de [nouveaux concepts](../think-qwik/index.mdx) à apprendre, comme la [résumabilité](../concepts/resumable/index.mdx) et la réactivité fine, mais nous pensons que la courbe d'apprentissage n'est pas difficile.
 
@@ -52,7 +60,7 @@ Nous avons également mis en place un [tutoriel](../../tutorial/welcome/overview
 
 ## Qu'est-ce que c'est que tous ces `$` ?
 
-Vous avez peut-être remarqué qu'il y a plus de [`$`](../advanced/dollar/index.mdx) que d'habitude dans les applis Qwik tels que : [`component$()`](/docs/(qwik)/components/overview/index.mdx#component), [`useTask$()`](/docs/(qwik)/components/lifecycle/index.mdx#usetask) et `<div onClick$={() => console.log('click')} />`. Ce n'est pas pour rien. Qwik découpe votre application en petits morceaux; ces morceaux sont plus petits que le composant lui-même. Pour les gestionnaires d'évènements, les hooks, etc... le `$` signale à la fois à l'[Optimiseur](../advanced/optimizer/index.mdx) et au développeur quand cela se passe.
+Vous avez peut-être remarqué qu'il y a plus de [`$`](../advanced/dollar/index.mdx) que d'habitude dans les applis Qwik tels que : [`component$()`](/docs/(qwik)/components/overview/index.mdx#component), [`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) et `<div onClick$={() => console.log('click')} />`. Ce n'est pas pour rien. Qwik découpe votre application en petits morceaux; ces morceaux sont plus petits que le composant lui-même. Pour les gestionnaires d'évènements, les hooks, etc... le `$` signale à la fois à l'[Optimiseur](../advanced/optimizer/index.mdx) et au développeur quand cela se passe.
 
 **Exemple :**
 
@@ -67,9 +75,7 @@ export default component$(() => {
 
 Grâce à la syntaxe `$`, le composant ci-dessus est divisé en :
 
-**app.js**
-
-```js
+```js title="app.js"
 import { componentQrl, qrl } from '@builder.io/qwik';
 
 const App = /*#__PURE__*/ componentQrl(
@@ -79,9 +85,7 @@ const App = /*#__PURE__*/ componentQrl(
 export { App };
 ```
 
-**app_component_akbu84a8zes.js**
-
-```js
+```js title="app_component_akbu84a8zes.js"
 import { jsx as _jsx } from '@builder.io/qwik/jsx-runtime';
 import { qrl } from '@builder.io/qwik';
 export const App_component_AkbU84a8zes = () => {
@@ -96,11 +100,11 @@ export const App_component_AkbU84a8zes = () => {
 };
 ```
 
-**app_component_p_onclick_01pegc10cpw.js**
-
-```js
+```js title="app_component_p_onclick_01pegc10cpw.js"
 export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 ```
+
+> Remarque : Le `$` n'est pas lié à `jQuery`, Svelte ou tout autre framework.
 
 ## Est-ce que Qwik charge du JS quand l'utilisateur interagit ?
 
@@ -141,7 +145,7 @@ Oui ! [Qwik City](../../(qwikcity)/qwikcity/index.mdx) inclut un routeur basé 
 
 ## Ai-je besoin d'un serveur pour déployer les applis Qwik ?
 
-Vous pouvez déployer facilement une appli Qwik dans n'importe quel [environnement sans serveur grâce à nos adaptateurs](/deployments/index.mdx), nous supportons également un [adaptateur vanilla-node](/deployments/node/index.mdx) pour les serveurs basés sur Node.js, tel que Express.
+Vous pouvez déployer facilement une appli Qwik dans n'importe quel [environnement sans serveur grâce à nos adaptateurs](/docs/deployments/index.mdx), nous supportons également un [adaptateur vanilla-node](/docs/deployments/node/index.mdx) pour les serveurs basés sur Node.js, tel que Express.
 
 Vous pouvez déployer votre appli Qwik comme un site statique, s'il n'y a pas besoin du SSR, grâce à notre [adaptateur SSG (Génération de site statique)](/docs/(qwikcity)/guides/static-site-generation/index.mdx).
 
@@ -155,7 +159,7 @@ Qwik est le seul framework qui est à la fois MPA et SPA.
 
 ## Est-ce que Qwik peut faire du SPA ?
 
-Bien sûr ! [Qwik City](/docs/(quikcity/qwikcity/overview/index.mdx) inclut le composant `<Link>` qui déclenche une navigation SPA.
+Bien sûr ! [Qwik City](/docs/(quikcity)/qwikcity/overview/index.mdx) inclut le composant `<Link>` qui déclenche une navigation SPA.
 Avec Qwik, les développeurs n'ont pas besoin de choisir entre SPA et MPA, chaque site est les deux en même temps.
 
 MPA vs SPA n'est plus une décision architecturale prise au début du projet, mais une décision prise pour chaque lien.
@@ -176,7 +180,7 @@ Cela dépend. Si vous venez de React, le portage de vos composants vers Qwik dev
 
 ## Puis-je profiter du riche écosystème React ?
 
-Oui ! Qwik peut exécuter des composants React en natif, [consultez les docs](/integrations/react/index.mdx).
+Oui ! Qwik peut exécuter des composants React en natif, [consultez les docs](/docs/integrations/react/index.mdx).
 
 Vous serez étonnés !
 
@@ -212,7 +216,7 @@ Une équipe incroyable de contributeurs du monde entier partageant sur [Discord]
 
 Oui, [MIT](https://github.com/BuilderIO/qwik/blob/main/LICENSE) et [dépendances libres](https://github.com/BuilderIO/qwik/blob/main/packages/qwik/package.json), l'installation de Qwik ne gonflera pas vos node_modules ni vos avocats.
 
-# Est-ce que Qwik a des inconvénients ?
+## Est-ce que Qwik a des inconvénients ?
 
 Oui. Chaque framework, qui possède ses propres forces et faiblesses, implique un compromis.
 

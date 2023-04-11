@@ -40,7 +40,7 @@ D'abord, nous créons trois composants : `<Header>`, `<Footer>` et `<Menu>`.
 
 ### Répertoire des routes
 
-```
+```bash
 src/
 ├── components/
 │   ├── header.tsx         # Implémentation du composant Header
@@ -57,8 +57,7 @@ src/
 
 Il sera utilisé pour toutes les routes sous le répertoire `src/routes`. Il rendra les composants `Header`, `Menu` et `Footer`, et rendra également les routes imbriquées sous le composant `Slot`.
 
-```tsx
-// Fichier : src/routes/layout.tsx
+```tsx title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -77,8 +76,7 @@ export default component$(() => {
 
 Il s'agit de la route principale du site. Il sera rendu sous le composant `Slot` dans le fichier `src/routes/layout.tsx`, donc même s'il n'a aucun des composants `Header`, `Menu` ou `Footer`, il sera quand même rendu avec eux.
 
-```tsx
-// Fichier : src/routes/index.tsx
+```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
@@ -90,8 +88,7 @@ export default component$(() => {
 
 Comme pour le fichier `src/routes/index.tsx`, mais pour la route `about`, il sera rendu sous le composant `Slot` dans le fichier `src/routes/layout.tsx`, donc même si il n'a aucun des composants `Header`, `Menu` ou `Footer`, il sera quand même rendue avec eux.
 
-```tsx
-// Fichier : src/routes/about/index.tsx
+```tsx title="src/routes/about/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {

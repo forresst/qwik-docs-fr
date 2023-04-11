@@ -36,14 +36,38 @@ Utilisez la fonction `useDocumentHead()` pour récupérer les métadonnées du h
 
 `useDocumentHead()` récupère un objet `DocumentHead` qui vous permettra de :
 
-- modifier le `title` dans `<head>`.
-- modifier la balise `meta` dans `<head>`.
-- modifier la balise `link` dans `<head>`.
-- modifier la balise `style` dans `<head>`.
+```ts
+export interface DocumentHead {
+  /**
+   * Représente l'élément `<title>` du document.
+   */
+  readonly title?: string;
+  /**
+   * Utilisé pour définir manuellement les balises méta dans l'entête. De plus, la propriété `data`
+   * peut être utilisée pour définir des données arbitraires que le composant `<head>`
+   * peut ensuite utiliser pour générer des balises `<meta>`.
+   */
+  readonly meta?: readonly DocumentMeta[];
+  /**
+   * Utilisé pour ajouter manuellement des éléments `<link>` au `<head>`.
+   */
+  readonly links?: readonly DocumentLink[];
+  /**
+   * Utilisé pour ajouter manuellement des éléments `<style>` au `<head>`.
+   */
+  readonly styles?: readonly DocumentStyle[];
+  /**
+   * Objet arbitraire contenant des données personnalisées. Lorsque le head du document est créée à partir de
+   * fichiers markdown, les attributs frontmatter qui ne sont pas reconnus comme des méta-noms
+   * bien connus (tels que titre, description, auteur, etc...), sont stockés dans cette propriété.
+   */
+  readonly frontmatter?: Readonly<Record<string, any>>;
+}
+```
 
 La fonction `useDocumentHead()` peut être utilisée dans un composant Qwik, tel que `<RouterHead>`, pour créer les éléments internes dans `document.head`.
 
-```tsx
+```tsx title="src/components/router-head/router-head.tsx"
 import { component$ } from '@builder.io/qwik';
 import { useDocumentHead } from '@builder.io/qwik-city';
 
@@ -100,8 +124,7 @@ Supposez que vous ayez fait :
 - L'utilisateur navigue vers : `https://example.com/sku/1234`
 - Ensuite, vous pouvez récupérez le `skuId` via `useLocation().params.skuId`
 
-```tsx
-// src/routes/sku/[skuId]/index.tsx
+```tsx title="src/routes/sku/[skuId]/index.tsx"
 import { component$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 
@@ -171,13 +194,14 @@ Ce composant aura un bouton et quand il sera cliqué, Qwik City naviguera vers `
 
 ## `loader$()`
 
+÷
 La fonction `loader$()` est utilisée pour déclarer un nouveau Chargeur de Serveur (NdT: « Server Loader ») dans la page/endpoint ou layout donné. Qwik City exécutera tous les chargeurs déclarés pour la correspondance de la route donnée. Les composants Qwik peuvent ensuite référencer les chargeurs, en les important et en appelant la méthode `.use()` afin de récupérer les données.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
-import { loader$ } from '@builder.io/qwik-city';
+import { routeLoader$ } from '@builder.io/qwik-city';
 
-export const useGetTime = loader$(() => {
+export const useGetTime = routeLoader$(() => {
   return { time: new Date() }
 });
 export default component$(() => {
@@ -191,9 +215,9 @@ export default component$(() => {
 
 Veuillez consulter la section [Chargeur de route](/docs/(qwikcity)/route-loader/index.mdx) pour plus d'informations.
 
-## `action$()`
+## `routeAction$()`
 
-La fonction `action$()` est utilisée pour déclarer une nouvelle Action de Serveur dans la page/endpoint ou le layout donnée. Qwik City exécutera seulement l'action invoquée après une interaction avec l'utilisateur (comme un clic sur un bouton ou la soumission d'un formulaire).
+La fonction `routeAction$()` est utilisée pour déclarer une nouvelle Action de Serveur dans la page/endpoint ou le layout donnée. Qwik City exécutera seulement l'action invoquée après une interaction avec l'utilisateur (comme un clic sur un bouton ou la soumission d'un formulaire).
 
 Veuillez vous référer à la section [Actions de Serveur](/docs/(qwikcity)/action/index.mdx) pour plus d'informations.
 
@@ -203,7 +227,7 @@ Le composant `QwikCityProvider` initialise Qwik City dans le document existant, 
 
 Ce composant est généralement situé à la racine de votre application, dans la plupart des starter, vous le trouverez dans le fichier `src/root.tsx` :
 
-```tsx
+```tsx title="src/root.tsx"
 import { QwikCityProvider, RouterOutlet } from '@builder.io/qwik-city';
 
 export default function Root() {

@@ -1,0 +1,80 @@
+---
+title: Qwik City et Vanilla-Extract
+keywords: 'styles, styling, css-in-js, vanilla-extract, styled-components'
+contributors:
+  - manucorporat
+  - literalpie
+  - forresst
+  - reemardelarosa
+---
+
+# Styled Vanilla Extract
+
+Styled-vanilla-extract est un framework CSS construit sur [vanilla-extract](https://vanilla-extract.style/) qui fournit un CSS-in-JS moderne et performant avec zéro temps d'exécution.
+
+Cette intégration prend en charge deux manières de styliser :
+
+- Utilisation directement de [Vanilla Extract](https://vanilla-extract.style/).
+- [Styled-components](https://styled-components.com/) alimenté par Vanilla-extract
+
+## Utilisation
+
+Vous pouvez ajouter `styled-vanilla-extract` facilement en utilisant le script starter Qwik suivant :
+
+```shell
+npm run qwik add styled-vanilla-extract
+```
+
+Après l'installation, une nouvelle route sera créée dans votre projet, présentant l'utilisation de la bibliothèque dans un nouveau composant.
+
+### La méthode de Vanilla Extract
+
+Pour plus d'informations sur [Vanilla Extract](https://vanilla-extract.style/documentation/getting-started), veuillez consulter la documentation officielle.
+
+```tsx title="styles.css.ts"
+import { style } from 'styled-vanilla-extract/qwik';
+
+export const blueClass = style({
+  display: 'block',
+  width: '100%',
+  height: '500px',
+  background: 'blue',
+});
+```
+
+```tsx title="component.tsx"
+import { blueClass } from './styles.css';
+
+export const Cmp = component$(() => {
+  return <div class={blueClass} />;
+});
+```
+
+```shell
+npm run qwik add styled-vanilla-extract
+```
+
+> **Emotion ou d'autres librairies CSS-in-JS ?** Bien qu'extrêmement populaires, emotion et d'autres librairies CSS-in-JS ne sont pas le meilleur choix pour Qwik. [Elles ne sont pas optimisées pour les performances d'exécution et elles n'ont pas un bon support de streaming SSR](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), ce qui conduit à une dégradation des performances du serveur et du client.
+
+## Composants stylisés
+
+En utilisant la même intégration, vous avez un composant stylisé alimenté par Vanilla Extract, utilisez la fonction exportée `styled` pour créer vos composants.
+
+```tsx title="styles.css.ts"
+import { styled } from 'styled-vanilla-extract/qwik';
+
+export const BlueBox = styled.div`
+  display: block;
+  width: 100%;
+  height: 500px;
+  background: blue;
+`;
+```
+
+```tsx title="component.tsx"
+import { BlueBox } from './styles.css';
+
+export const Cmp = component$(() => {
+  return <BlueBox />;
+});
+```
