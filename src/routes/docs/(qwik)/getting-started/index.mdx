@@ -24,24 +24,24 @@ import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
 Qwik est un nouveau type de framework qui est [résumable](../concepts/resumable/index.mdx) (pas de JS et pas d'hydratation), construit pour le Edge et [familier pour les développeurs React](/docs/guides/qwik-react/).
 
-Si vous souhaitez jouer immédiatement, essayez nos aires de jeux dans le navigateur :
+Pour l'utiliser immédiatement, consultez nos aires de jeu dans le navigateur :
 
 - [Stackblitz Qwik](https://qwik.new) (Intégration complète de Qwik + Qwikcity)
 - [Exemples de terrains de jeux](/examples/reactivity/counter/) (Qwik uniquement (pas de routage))
 
 ## Prérequis
 
-Si vous souhaitez commencer à utiliser Qwik localement, vous aurez besoin des éléments suivants :
+Pour commencer à utiliser Qwik localement, vous avez besoin des éléments suivants :
 
 - [Node.js v16.8](https://nodejs.org/en/download/) ou supérieur
 - Votre IDE préféré ([vscode](https://code.visualstudio.com/) est recommandé)
-- Vous pouvez également lire [Pensez Qwik](../think-qwik/index.mdx)
+- En option, lisez [Pensez Qwik](../think-qwik/index.mdx)
 
 ## Création d'une appli à l'aide du CLI
 
-La première étape consiste à créer une application Qwik avec notre CLI. Le CLI créera une application vierge afin que vous puissiez vous familiariser rapidement avec elle. Qwik prend en charge NPM, yarn et pnpm.
+Tout d'abord, créez une application Qwik à l'aide du CLI Qwik, qui génère une application vierge afin que vous puissiez vous familiariser rapidement avec elle.
 
-Lancez le CLI de Qwik dans votre shell. Choisissez le gestionnaire de paquets que vous préférez et exécutez l'une des commandes suivantes :
+Lancez le CLI de Qwik dans votre shell. Qwik prend en charge NPM, yarn et pnpm. Choisissez le gestionnaire de paquets que vous préférez et exécutez l'une des commandes suivantes :
 
 ```shell
 npm create qwik@latest
@@ -49,9 +49,9 @@ pnpm create qwik@latest
 yarn create qwik@latest
 ```
 
-Le CLI vous guidera à travers un menu interactif pour définir le nom du projet, sélectionner l'un des _starters_ et vous demandera si vous voulez installer les dépendances. Pour en savoir plus sur les fichiers générés, lisez la [structure du projet](/docs/projet-structure/).
+Le CLI vous guide à travers un menu interactif pour définir le nom du projet, sélectionner l'un des starters et vous demander si vous souhaitez installer les dépendances. Pour en savoir plus sur les fichiers générés, consultez la documentation [Structure du projet](/docs/project-structure/).
 
-Démarrez le serveur de développement
+Démarrez le serveur de développement :
 
 ```shell
 npm start
@@ -61,16 +61,14 @@ yarn start
 
 ## Qwik Hello World
 
-Pour vous familiariser avec Qwik, nous avons créé un tutoriel d'application très simple "Hello World" qui aborde les concepts les plus importants de Qwik. Pour chaque partie abordée, nous vous renverrons à la documentation correspondante où vous pourrez en savoir plus sur le concept en question.
-
-Nous utiliserons https://icanhazdadjoke.com comme API pour obtenir une blague aléatoire. Nous allons créer une application simple qui affichera une blague aléatoire et un bouton pour obtenir une nouvelle blague.
+Le tutoriel Qwik Hello World vous guide dans la construction d'une application de blagues avec Qwik tout en couvrant les concepts Qwik les plus importants. L'application affiche une blague aléatoire à partir de https://icanhazdadjoke.com et comporte un bouton pour obtenir une nouvelle blague par simple clic.
 
 
 ## 1. Créer une route
 
-Tout commence par le service d'une page sur une route particulière. Construisons donc une application simple qui sert une blague aléatoire sur la route `/joke/`. Qwikcity (le méta-framework de Qwik) utilise le routage [basé sur les répertoires](/docs/routing/). Pour débuter :
+Commencez par servir une page sur une route particulière. Cette application de base sert une application aléatoire de blagues sur la route `/joke/`. Ce tutoriel s'appuie sur Qwikcity, le méta-framework de Qwik, qui utilise le routage [basé sur les répertoires] (/docs/routing/). Pour commencer :
 
-1. Créez un nouveau fichier `index.tsx` dans le répertoire `src/routes/joke/` de votre projet. (Vous devrez d'abord créer le répertoire `joke`).
+1. Dans votre projet, créez un nouveau répertoire `joke` dans `routes` contenant un fichier `index.tsx`.
 2. Le fichier `index.tsx` de chaque route doit avoir un `export default component$(...)` pour que Qwikcity sache quel contenu servir. Collez le contenu suivant dans `src/routes/joke/index.tsx` :
 
 <CodeSandbox src="/src/routes/demo/getting-started/01-route/index.tsx" style={{ height: '6em' }}>
@@ -92,7 +90,7 @@ export default component$(() => {
 
 ## 2. Chargement des données
 
-L'une des fonctions les plus courantes d'une page est de charger des données pour les afficher à l'utilisateur. Cette opération est réalisée à l'aide de [chargeurs de routes](/docs/route-loader/).
+Pour charger les données à afficher à l'utilisateur, utilisez les [chargeurs de routes](/docs/route-loader/).
 
 1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
 
@@ -120,17 +118,19 @@ export default component$(() => {
 });
 ```
 
-3. Naviguez vers "http://127.0.0.1:5173/" pour voir l'application fonctionner.
+3. Maintenant, sur `http://localhost:5173/joke/`, le navigateur affiche une blague aléatoire.
 
-Que fait le code ci-dessus ?
+Explication du code :
 
 - La fonction passée à `routeLoader$` est appelée sur le serveur par anticipation avant qu'un composant ne soit rendu et est responsable du chargement des données.
-- Le `routeLoader$` renvoie un use-hook (`useDadJoke`) qui peut être utilisé dans le composant pour récupérer les données du serveur.
+- Le `routeLoader$` renvoie un use-hook, `useDadJoke()`, qui peut être utilisé dans le composant pour récupérer les données du serveur.
 
 > REMARQUE :
 >
 > - Le `routeLoader$` est appelé avec anticipation sur le serveur avant qu'un composant ne soit rendu, même si son use-hook n'est pas appelé dans un composant.
 > - Le type de retour du `routeLoader$` est déduit dans le composant sans avoir besoin d'informations supplémentaires sur le type.
+
+Pour référence, l'extrait de code complet de cette section est le suivant :
 
 <CodeSandbox src="/src/routes/demo/getting-started/02-loading-data/index.tsx" style={{ height: '6em' }}>
 ```tsx /routeLoader$/ /useDadJoke/
@@ -161,13 +161,13 @@ export default component$(() => {
 
 ## 3. Envoi de données au serveur
 
-Précédemment, nous avons utilisé `routeLoader$` pour envoyer des données du serveur au client. Nous utilisons [`routeAction$`](/docs/action/) pour poster (envoyer) des données du client vers le serveur.
+Précédemment, nous avons utilisé `routeLoader$` pour envoyer des données du serveur au client. Pour poster (envoyer) des données du client vers le serveur, nous utilisons [`routeAction$`](/docs/action/) .
 
 REMARQUE : `routeAction$` est le meilleur moyen d'envoyer des données au serveur car il utilise l'API du formulaire natif du navigateur qui fonctionne même si JavaScript est désactivé.
 
 Pour déclarer une action :
 
-1. Ouvrez `src/routes/joke/index.tsx` et ajoutez ce code :
+1. Dans `src/routes/joke/index.tsx`, ajoutez ce code :
 
 
 ```tsx /routeAction\$/
@@ -179,7 +179,7 @@ export const useJokeVoteAction = routeAction$((props) => {
 });
 ```
 
-2. Mettez à jour le `export default` du composant pour qu'il utilise le hook `useJokeVoteAction`. Pour ce faire, ajoutez l'élément `<Form>`.
+2. Mettez à jour le `export default` du composant pour qu'il utilise le hook `useJokeVoteAction` avec `<Form>`.
 
 ```tsx {3,7-11} /favoriteJokeAction/
 export default component$(() => {
@@ -198,13 +198,13 @@ export default component$(() => {
 });
 ```
 
-3. Naviguez vers "http://127.0.0.1:5173/" pour voir l'application fonctionner.
+3. Maintenant, sur `http://localhost:5173/joke/`, les boutons s'affichent et si vous cliquez dessus, leur valeur est inscrite dans la console.
 
-Que fait le code ci-dessus ?
+Explication du code :
 
-- `routeAction$` est utilisé pour recevoir des données.
+- `routeAction$` reçoit des données.
 - La fonction passée à `routeAction$` est appelée sur le serveur à chaque fois que le formulaire est posté.
-  - La `routeAction$` renvoie un use-hook (`useJokeVoteAction`) qui peut être utilisé dans le composant postant les données du formulaire.
+  - La `routeAction$` renvoie un use-hook, `useJokeVoteAction`, qu vous pouvez utiliser dans le composant pour poster les données du formulaire.
 - `Form` est un composant de commodité qui enveloppe l'élément natif `<form>` du navigateur.
 
 À noter :
@@ -212,6 +212,8 @@ Que fait le code ci-dessus ?
 - Pour la validation, consultez la [validation de zod](/docs/action/#validation-de-zod).
   - La `routeAction$` fonctionne même si JavaScript est désactivé.
 - Si JavaScript est activé, le composant `Form` empêchera le navigateur d'afficher le formulaire et affichera à la place les données en utilisant JavaScript et émulera le comportement natif du navigateur sans un rafraîchissement complet.
+
+Pour référence, l'extrait de code complet de cette section est le suivant :
 
 <CodeSandbox src="/src/routes/demo/getting-started/03-posting-data/index.tsx" style={{ height: '8em' }}>
 ```tsx {21,25-29} /favoriteJokeAction/
@@ -256,11 +258,15 @@ Garder une trace de l'état et mettre à jour l'interface utilisateur est au coe
 
 Pour déclarer l'état :
 
-1. Déclarer l'état du composant en utilisant `useSignal()`.
+1. Importer `useSignal` depuis `qwik`.
+   ```tsx /useSignal/
+   import { component$, useSignal } from "@builder.io/qwik";
+   ```
+2. Déclarer l'état du composant en utilisant `useSignal()`.
    ```tsx /useSignal/
    const isFavoriteSignal = useSignal(false);
    ```
-2. Ajoutez un bouton au composant qui modifiera l'état.
+3. Après la balise de fermeture `Form`, ajoutez un bouton au composant pour modifier l'état.
    ```tsx /isFavoriteSignal/
    <button 
     onClick$={() => {
@@ -270,7 +276,9 @@ Pour déclarer l'état :
    </button>
    ```
 
-REMARQUE : En cliquant sur le bouton, l'état est mis à jour et l'interface utilisateur est actualisée.
+REMARQUE : le fait de cliquer sur le bouton met à jour l'état, qui à son tour met à jour l'interface utilisateur.
+
+Pour référence, l'extrait de code complet de cette section est le suivant :
 
 <CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/04-state/index.tsx" style={{ height: '10em' }}>
 ```tsx /isFavoriteSignal/
@@ -318,7 +326,7 @@ export default component$(() => {
 
 ## 5. Tâches et appel au code du serveur
 
-Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vous-avez-besoin-de) est un travail qui doit être effectué lorsqu'un état change (similaire à un « effect » dans d'autres frameworks). Dans cet exemple, nous utiliserons la tâche pour appeler du code sur le serveur.
+Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vous-avez-besoin-de) est un travail qui doit être effectué lorsqu'un état change (c'est similaire à un « effect » dans d'autres frameworks). Dans cet exemple, nous utilisons la tâche pour appeler du code sur le serveur.
 
 1. Créez une nouvelle tâche qui traque l'état `isFavoriteSignal` :
    ```tsx /useTask\$/
@@ -350,9 +358,11 @@ Dans Qwik, une [tâche](/docs/components/lifecycle/#utilisez-usetask-lorsque-vou
 
 REMARQUE :
 
-- Notice that the body of `useTask$` is executed on both the server and the client (isomorphic).
-- On SSR server prints `FAVORITE (isomorphic) false` and `FAVORITE (server) false`.
-- When the user interacts with favorite, the client prints `FAVORITE (isomorphic) true` and the server prints `FAVORITE (server) true`.
+- Le corps de `useTask$` est exécuté à la fois sur le serveur et sur le client (isomorphe).
+- En SSR, le serveur imprime `FAVORITE (isomorphic) false` et `FAVORITE (server) false`.
+- Lorsque l'utilisateur interagit avec favorite, le client imprime `FAVORITE (isomorphic) true` et le serveur imprime `FAVORITE (server) true`.
+
+Pour référence, l'extrait de code complet de cette section est le suivant :
 
 <CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/05-tasks/index.tsx" style={{ height: '10em' }}>
 ```tsx {28-34}
@@ -436,11 +446,13 @@ Pour ajouter des styles :
    useStylesScoped$(STYLES);
    ```
 
-REMARQUE :
+Explication du code :
 
 - Le paramètre de requête `?inline` indique à Vite d'intégrer les styles dans le composant.
 - L'appel `useStylesScoped$` indique à Qwik d'associer les styles au composant uniquement (portée).
 - Les styles ne sont chargés que s'ils ne sont pas déjà intégrés dans le cadre du SSR et uniquement pour le premier composant.
+
+Pour référence, l'extrait de code complet de cette section est le suivant :
 
 <CodeSandbox maxHeight={500} src="/src/routes/demo/getting-started/06-styling/index.tsx" style={{ height: '10em' }}>
 ```tsx /useStylesScoped\$/
@@ -506,14 +518,14 @@ export default component$(() => {
 
 ## 7. Prévisualisation
 
-Nous avons construit une application très simple qui vous a donné un aperçu des concepts clés de Qwik et de l'API. L'application fonctionne en mode dev, qui utilise le hot-module-reloading (HMR) pour mettre à jour continuellement l'application tout en changeant le code.
+Nous avons créé une application minimale qui vous a donné un aperçu des concepts clés de Qwik et de l'API. L'application fonctionne en mode dev, qui utilise le hot-module-reloading (HMR) pour mettre à jour continuellement l'application tout en changeant le code.
 
 En mode développement :
 
 - Chaque fichier est chargé individuellement, ce qui peut provoquer des cascades dans l'onglet réseau.
 - Il n'y a pas de chargement spéculatif des bundles, il peut donc y avoir un délai lors de la première interaction.
 
-Créons une version de production pour voir comment l'application sera livrée à l'utilisateur et comment le problème ci-dessus est résolu.
+Créons une version de production qui élimine ces problèmes.
 
 Pour créer une version de prévisualisation :
 
@@ -526,8 +538,8 @@ REMARQUE :
 
 ## Bilan
 
-Félicitations ! Vous avez réussi à débuter. Cette vue d'ensemble est intentionnellement courte pour vous familiariser avec les différentes parties de Qwik. Nous vous recommandons de vous plonger dans les concepts ci-dessus pour en savoir plus. Voici quelques points clés à retenir :
-
+Félicitations ! Vous avez beaucoup appris sur Qwik ! 
+Pour en savoir plus sur tout ce que vous pouvez réaliser avec Qwik, nous vous recommandons de lire les documents dédiés à chacun des sujets abordés dans ce tutoriel :
 
 - [Structure du projet](/docs/project-structure/)
 - Routage [Basé sur les répertoires](/docs/routing/)
